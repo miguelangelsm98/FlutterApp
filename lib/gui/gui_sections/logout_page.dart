@@ -4,18 +4,15 @@ import 'package:provider/provider.dart';
 
 import '../../main.dart';
 
-class LoginPage extends StatefulWidget {
+class LogoutPage extends StatefulWidget {
   @override
-  State<LoginPage> createState() => _LoginPageState();
+  State<LogoutPage> createState() => _LogoutPageState();
 }
 
-class _LoginPageState extends State<LoginPage> {
+class _LogoutPageState extends State<LogoutPage> {
   @override
   Widget build(BuildContext context) {
     var appState = context.watch<MyAppState>();
-
-    final emailController = TextEditingController();
-    final passwordController = TextEditingController();
 
     return Scaffold(
       resizeToAvoidBottomInset: false,
@@ -44,7 +41,7 @@ class _LoginPageState extends State<LoginPage> {
                 Column(
                   children: [
                     Text(
-                      "Login",
+                      "Logout",
                       style: TextStyle(
                         fontSize: 30,
                         fontWeight: FontWeight.bold,
@@ -54,7 +51,7 @@ class _LoginPageState extends State<LoginPage> {
                       height: 20,
                     ),
                     Text(
-                      "Welcome back ! Login with your credentials",
+                      "Page to logout",
                       style: TextStyle(
                         fontSize: 15,
                         color: Colors.grey[700],
@@ -64,18 +61,6 @@ class _LoginPageState extends State<LoginPage> {
                       height: 30,
                     )
                   ],
-                ),
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 40),
-                  child: Column(
-                    children: [
-                      makeInput(label: "Email", controller: emailController),
-                      makeInput(
-                          label: "Password",
-                          controller: passwordController,
-                          obsureText: true),
-                    ],
-                  ),
                 ),
                 Padding(
                   padding: EdgeInsets.symmetric(horizontal: 40),
@@ -93,15 +78,8 @@ class _LoginPageState extends State<LoginPage> {
                       height: 60,
                       onPressed: () async {
                         try {
-                          final userCredential = await FirebaseAuth.instance
-                              .signInWithEmailAndPassword(
-                                  email: emailController.text,
-                                  password: passwordController.text);
-                          if (FirebaseAuth.instance.currentUser != null) {
-                            //final user = userCredential.user;
-                            appState.doUserLogin();
-                            //print(FirebaseAuth.instance.currentUser?.uid);
-                          }
+                          await FirebaseAuth.instance.signOut();
+                          appState.doUserLogout();
                         } on FirebaseAuthException catch (e) {
                           print(e.toString());
                         }
@@ -110,7 +88,7 @@ class _LoginPageState extends State<LoginPage> {
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(40)),
                       child: Text(
-                        "Login",
+                        "Logout",
                         style: TextStyle(
                             fontWeight: FontWeight.w600,
                             fontSize: 16,
@@ -119,20 +97,6 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                   ),
                 ),
-                SizedBox(
-                  height: 20,
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text("Dont have an account?"),
-                    Text(
-                      "Sign Up",
-                      style:
-                          TextStyle(fontWeight: FontWeight.w600, fontSize: 18),
-                    ),
-                  ],
-                )
               ],
             ),
           ],
@@ -140,37 +104,4 @@ class _LoginPageState extends State<LoginPage> {
       ),
     );
   }
-}
-
-Widget makeInput({label, controller, obsureText = false}) {
-  return Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: [
-      Text(
-        label,
-        style: TextStyle(
-            fontSize: 15, fontWeight: FontWeight.w400, color: Colors.black87),
-      ),
-      SizedBox(
-        height: 5,
-      ),
-      TextField(
-        controller: controller,
-        obscureText: obsureText,
-        decoration: InputDecoration(
-          contentPadding: EdgeInsets.symmetric(vertical: 0, horizontal: 10),
-          enabledBorder: OutlineInputBorder(
-            borderSide: BorderSide(
-              color: Colors.grey,
-            ),
-          ),
-          border:
-              OutlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
-        ),
-      ),
-      SizedBox(
-        height: 30,
-      )
-    ],
-  );
 }

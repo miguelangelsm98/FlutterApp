@@ -1,27 +1,25 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_application/models/user.dart';
 
-class CustomUser {
-  final String email;
-  final String password;
-  //final String name;
-  //final String lastname;
+class Post {
+  final String name;
+  final String description;
 
-  CustomUser(this.email, this.password);
+  Post(this.name, this.description);
 
   //User(this.email, this.name, this.lastname);
 
   Map<String, dynamic> toJson() => <String, dynamic>{
-        'email': email,
-        'password': password,
-        // 'name': name,
-        // 'lastname': lastname,
+        'name': name,
+        'description': description,
+        'user uid': FirebaseAuth.instance.currentUser?.uid,
       };
 
   void save() async {
     await FirebaseFirestore.instance
-        .collection('users')
-        .doc(email)
-        .set(toJson());
+        .collection('posts')
+        .add(toJson());
   }
 
   // Django Model
@@ -38,6 +36,6 @@ class CustomUser {
   // date_joined = models.DateTimeField(default = timezone.now)
 }
 
-CustomUser userFromJson(Map<String, dynamic> json) {
-  return CustomUser(json['email'] as String, json['password'] as String);
+Post userFromJson(Map<String, dynamic> json) {
+  return Post(json['name'] as String, json['description'] as String);
 }

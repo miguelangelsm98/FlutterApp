@@ -41,8 +41,19 @@ class MyApp extends StatelessWidget {
 class MyAppState extends ChangeNotifier {
   var current = WordPair.random();
   var history = <WordPair>[];
+  bool isLoggedIn = false;
 
   GlobalKey? historyListKey;
+
+  void doUserLogin() {
+    isLoggedIn = true;
+    notifyListeners();
+  }
+
+  void doUserLogout() {
+    isLoggedIn = false;
+    notifyListeners();
+  }
 
   void getNext() {
     history.insert(0, current);
