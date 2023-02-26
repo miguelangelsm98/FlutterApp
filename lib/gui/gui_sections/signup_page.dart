@@ -1,12 +1,17 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application/models/user.dart';
+import 'package:provider/provider.dart';
 
 import '../../auth.dart';
+import '../../main.dart';
 
 class SignupPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    var appState = context.watch<MyAppState>();
+
+
     final emailController = TextEditingController();
     final password1Controller = TextEditingController();
     final password2Controller = TextEditingController();
@@ -97,9 +102,17 @@ class SignupPage extends StatelessWidget {
                             if (password1Controller.text ==
                                 password2Controller.text) {
                               try {
-                                await Auth().createUserWithEmailAndPassword(
-                                    email: emailController.text,
-                                    password: password1Controller.text);
+                                await FirebaseAuth.instance
+                                    .createUserWithEmailAndPassword(
+                                        email: emailController.text,
+                                        password: password1Controller.text);
+                                await FirebaseAuth.instance
+                                    .signInWithEmailAndPassword(
+                                        email: emailController.text,
+                                        password: password1Controller.text);
+                                if (FirebaseAuth.instance.currentUser != null) {
+                                  appState.doUserLogin();
+                                }
                               } on FirebaseAuthException catch (e) {
                                 print(e.toString());
                               }

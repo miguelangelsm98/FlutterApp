@@ -1,5 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_application/gui/gui_sections/posts_add_page.dart';
+import 'package:flutter_application/gui/gui_sections/posts_list_page.dart';
 import 'package:provider/provider.dart';
 
 import '../../main.dart';
@@ -25,19 +27,17 @@ class _MyHomePageState extends State<MyHomePage> {
     var colorScheme = Theme.of(context).colorScheme;
 
     if (!isLoggedIn) {
-      print("User not logged in!!");
-
       Widget page;
 
       switch (selectedIndex) {
         case 0:
-          page = SignupPage();
-          break;
-        case 1:
           page = LoginPage();
           break;
+        case 1:
+          page = SignupPage();
+          break;
         default:
-          selectedIndex = 1;
+          selectedIndex = 0;
           page = LoginPage();
           break;
       }
@@ -65,12 +65,12 @@ class _MyHomePageState extends State<MyHomePage> {
                     child: BottomNavigationBar(
                       items: [
                         BottomNavigationBarItem(
-                          icon: Icon(Icons.app_registration),
-                          label: 'Signup',
-                        ),
-                        BottomNavigationBarItem(
                           icon: Icon(Icons.login),
                           label: 'Login',
+                        ),
+                        BottomNavigationBarItem(
+                          icon: Icon(Icons.app_registration),
+                          label: 'Signup',
                         ),
                       ],
                       currentIndex: selectedIndex,
@@ -91,12 +91,12 @@ class _MyHomePageState extends State<MyHomePage> {
                       extended: constraints.maxWidth >= 600,
                       destinations: [
                         NavigationRailDestination(
-                          icon: Icon(Icons.app_registration),
-                          label: Text('Signup'),
-                        ),
-                        NavigationRailDestination(
                           icon: Icon(Icons.login),
                           label: Text('Login'),
+                        ),
+                        NavigationRailDestination(
+                          icon: Icon(Icons.app_registration),
+                          label: Text('Signup'),
                         ),
                       ],
                       selectedIndex: selectedIndex,
@@ -125,6 +125,12 @@ class _MyHomePageState extends State<MyHomePage> {
           page = FavoritesPage();
           break;
         case 2:
+          page = PostsAddPage();
+          break;
+        case 3:
+          page = PostsListPage();
+          break;
+        case 4:
           page = LogoutPage();
           break;
         default:
@@ -162,6 +168,14 @@ class _MyHomePageState extends State<MyHomePage> {
                           label: 'Favorites',
                         ),
                         BottomNavigationBarItem(
+                          icon: Icon(Icons.post_add),
+                          label: 'Add Post',
+                        ),
+                        BottomNavigationBarItem(
+                          icon: Icon(Icons.list),
+                          label: 'Posts',
+                        ),
+                        BottomNavigationBarItem(
                           icon: Icon(Icons.logout),
                           label: 'Logout',
                         ),
@@ -195,6 +209,14 @@ class _MyHomePageState extends State<MyHomePage> {
                         NavigationRailDestination(
                           icon: Icon(Icons.favorite),
                           label: Text('Favorites'),
+                        ),
+                        NavigationRailDestination(
+                          icon: Icon(Icons.post_add),
+                          label: Text('Add Post'),
+                        ),
+                        NavigationRailDestination(
+                          icon: Icon(Icons.list),
+                          label: Text('Posts'),
                         ),
                         NavigationRailDestination(
                           icon: Icon(Icons.logout),

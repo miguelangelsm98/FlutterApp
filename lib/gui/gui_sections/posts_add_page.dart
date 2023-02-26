@@ -1,21 +1,22 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_application/models/post.dart';
 import 'package:provider/provider.dart';
 
 import '../../main.dart';
 
-class LoginPage extends StatefulWidget {
+class PostsAddPage extends StatefulWidget {
   @override
-  State<LoginPage> createState() => _LoginPageState();
+  State<PostsAddPage> createState() => _PostsAddPageState();
 }
 
-class _LoginPageState extends State<LoginPage> {
+class _PostsAddPageState extends State<PostsAddPage> {
   @override
   Widget build(BuildContext context) {
     var appState = context.watch<MyAppState>();
 
-    final emailController = TextEditingController();
-    final passwordController = TextEditingController();
+    final nameController = TextEditingController();
+    final descriptionController = TextEditingController();
 
     return Scaffold(
       resizeToAvoidBottomInset: false,
@@ -44,7 +45,7 @@ class _LoginPageState extends State<LoginPage> {
                 Column(
                   children: [
                     Text(
-                      "Login",
+                      "Posts",
                       style: TextStyle(
                         fontSize: 30,
                         fontWeight: FontWeight.bold,
@@ -54,7 +55,7 @@ class _LoginPageState extends State<LoginPage> {
                       height: 20,
                     ),
                     Text(
-                      "Welcome back ! Login with your credentials",
+                      "Create a Post with Name and Description",
                       style: TextStyle(
                         fontSize: 15,
                         color: Colors.grey[700],
@@ -69,11 +70,11 @@ class _LoginPageState extends State<LoginPage> {
                   padding: EdgeInsets.symmetric(horizontal: 40),
                   child: Column(
                     children: [
-                      makeInput(label: "Email", controller: emailController),
+                      makeInput(label: "Name", controller: nameController),
                       makeInput(
-                          label: "Password",
-                          controller: passwordController,
-                          obsureText: true),
+                        label: "Description",
+                        controller: descriptionController,
+                      )
                     ],
                   ),
                 ),
@@ -92,23 +93,15 @@ class _LoginPageState extends State<LoginPage> {
                       minWidth: double.infinity,
                       height: 60,
                       onPressed: () async {
-                        try {
-                          await FirebaseAuth.instance
-                              .signInWithEmailAndPassword(
-                                  email: emailController.text,
-                                  password: passwordController.text);
-                          if (FirebaseAuth.instance.currentUser != null) {
-                            appState.doUserLogin();
-                          }
-                        } on FirebaseAuthException catch (e) {
-                          print(e.toString());
-                        }
+                        Post post = Post(
+                            nameController.text, descriptionController.text, FirebaseAuth.instance.currentUser?.uid,);
+                        post.save();
                       },
                       color: Colors.indigoAccent[400],
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(40)),
                       child: Text(
-                        "Login",
+                        "Create Post",
                         style: TextStyle(
                             fontWeight: FontWeight.w600,
                             fontSize: 16,
@@ -117,20 +110,6 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                   ),
                 ),
-                SizedBox(
-                  height: 20,
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text("Dont have an account?"),
-                    Text(
-                      "Sign Up",
-                      style:
-                          TextStyle(fontWeight: FontWeight.w600, fontSize: 18),
-                    ),
-                  ],
-                )
               ],
             ),
           ],
