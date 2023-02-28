@@ -1,5 +1,8 @@
+import 'dart:io';
+
 import 'package:file_picker/file_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application/gui/gui_sections/home_page.dart';
 import 'package:flutter_application/gui/gui_sections/login_page.dart';
@@ -9,7 +12,15 @@ import 'package:provider/provider.dart';
 import '../../auth.dart';
 import '../../main.dart';
 
-class UserInfoPage extends StatelessWidget {
+class UserInfoPage extends StatefulWidget {
+  @override
+  State<UserInfoPage> createState() => _UserInfoPageState();
+}
+
+class _UserInfoPageState extends State<UserInfoPage> {
+  PlatformFile? pickedFile;
+  UploadTask? uploadTask;
+
   @override
   Widget build(BuildContext context) {
     var appState = context.watch<MyAppState>();
@@ -43,80 +54,95 @@ class UserInfoPage extends StatelessWidget {
             children: [
               Column(
                 children: [
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        "Add additional information",
-                        style: TextStyle(
-                          fontSize: 30,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      SizedBox(
-                        height: 20,
-                      ),
-                      Text(
-                        "User info",
-                        style: TextStyle(
-                          fontSize: 15,
-                          color: Colors.grey[700],
-                        ),
-                      ),
-                      SizedBox(
-                        height: 30,
-                      )
-                    ],
-                  ),
+                  // Column(
+                  //   mainAxisAlignment: MainAxisAlignment.center,
+                  //   children: [
+                  //     Text(
+                  //       "Add additional information",
+                  //       style: TextStyle(
+                  //         fontSize: 30,
+                  //         fontWeight: FontWeight.bold,
+                  //       ),
+                  //     ),
+                  //     SizedBox(
+                  //       height: 20,
+                  //     ),
+                  //     Text(
+                  //       "User info",
+                  //       style: TextStyle(
+                  //         fontSize: 15,
+                  //         color: Colors.grey[700],
+                  //       ),
+                  //     ),
+                  //     SizedBox(
+                  //       height: 30,
+                  //     )
+                  //   ],
+                  // ),
+                  // Padding(
+                  //   padding: EdgeInsets.symmetric(horizontal: 40),
+                  //   child: Column(
+                  //     children: [
+                  //       makeInput(label: "Name", controller: nameController),
+                  //       makeInput(
+                  //           label: "Surname", controller: surnameController),
+                  //     ],
+                  //   ),
+                  // ),
                   Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 40),
+                    padding: const EdgeInsets.all(8.0),
                     child: Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        makeInput(label: "Name", controller: nameController),
-                        makeInput(
-                            label: "Surname", controller: surnameController),
+                        if (pickedFile != null)
+                          Expanded(
+                            child: Container(
+                              color: Colors.blue[200],
+                              child: Center(
+                                  child: Image.file(
+                                File(pickedFile!.path!),
+                                width: double.infinity,
+                                fit: BoxFit.cover,
+                              )),
+                            ),
+                          ),
+                        ElevatedButton(
+                            onPressed: selectFile,
+                            child: const Text("Select File")),
+                        ElevatedButton(
+                            onPressed: uploadFile,
+                            child: const Text("Upload FIle")),
                       ],
                     ),
                   ),
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      ElevatedButton(
-                          onPressed: selectfile,
-                          child: const Text("Select File")),
-                      ElevatedButton(
-                          onPressed: uploadfile,
-                          child: const Text("Upload FIle")),
-                    ],
-                  ),
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 40),
-                    child: Container(
-                      padding: EdgeInsets.only(top: 3, left: 3),
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(40),
-                          border: Border(
-                              bottom: BorderSide(color: Colors.black),
-                              top: BorderSide(color: Colors.black),
-                              right: BorderSide(color: Colors.black),
-                              left: BorderSide(color: Colors.black))),
-                      child: MaterialButton(
-                        minWidth: double.infinity,
-                        height: 60,
-                        onPressed: () {},
-                        color: Colors.redAccent,
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(40)),
-                        child: Text(
-                          "Add user info",
-                          style: TextStyle(
-                            fontWeight: FontWeight.w600,
-                            fontSize: 16,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
+                  // Padding(
+                  //   padding: EdgeInsets.symmetric(horizontal: 40),
+                  //   child: Container(
+                  //     padding: EdgeInsets.only(top: 3, left: 3),
+                  //     decoration: BoxDecoration(
+                  //         borderRadius: BorderRadius.circular(40),
+                  //         border: Border(
+                  //             bottom: BorderSide(color: Colors.black),
+                  //             top: BorderSide(color: Colors.black),
+                  //             right: BorderSide(color: Colors.black),
+                  //             left: BorderSide(color: Colors.black))),
+                  //     child: MaterialButton(
+                  //       minWidth: double.infinity,
+                  //       height: 60,
+                  //       onPressed: () {},
+                  //       color: Colors.redAccent,
+                  //       shape: RoundedRectangleBorder(
+                  //           borderRadius: BorderRadius.circular(40)),
+                  //       child: Text(
+                  //         "Add user info",
+                  //         style: TextStyle(
+                  //           fontWeight: FontWeight.w600,
+                  //           fontSize: 16,
+                  //         ),
+                  //       ),
+                  //     ),
+                  //   ),
+                  // ),
                 ],
               ),
             ],
@@ -126,10 +152,26 @@ class UserInfoPage extends StatelessWidget {
     );
   }
 
-  get uploadfile => uploadfile;
+  Future uploadFile() async {
+    final path = 'files/image.jpg';
+    final file = File(pickedFile!.path!);
 
-  Future selectfile() async {
+    final ref = FirebaseStorage.instance.ref().child(path);
+    ref.putFile(file);
+
+    final snapshot = await uploadTask!.whenComplete(() => {});
+
+    final urlDownload = await snapshot.ref.getDownloadURL();
+    print('Download Link: $urlDownload');
+  }
+
+  Future selectFile() async {
     final result = await FilePicker.platform.pickFiles();
+    if (result == null) return;
+
+    setState(() {
+      pickedFile = result.files.first;
+    });
   }
 }
 
