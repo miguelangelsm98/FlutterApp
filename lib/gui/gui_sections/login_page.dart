@@ -1,5 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_application/gui/gui_sections/signup_page.dart';
+import 'package:flutter_application/gui/gui_sections/user_info_page.dart';
 import 'package:provider/provider.dart';
 
 import '../../main.dart';
@@ -14,8 +16,10 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     var appState = context.watch<MyAppState>();
 
-    final emailController = TextEditingController();
-    final passwordController = TextEditingController();
+    final emailController =
+        TextEditingController(text: "123@gmail.com"); // For testing purposes
+    final passwordController =
+        TextEditingController(text: "123123"); // For testing purposes
 
     return Scaffold(
       resizeToAvoidBottomInset: false,
@@ -124,10 +128,16 @@ class _LoginPageState extends State<LoginPage> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text("Dont have an account?"),
-                    Text(
-                      "Sign Up",
-                      style:
-                          TextStyle(fontWeight: FontWeight.w600, fontSize: 18),
+                    MaterialButton(
+                      onPressed: () async {                        
+                        Navigator.of(context).push(MaterialPageRoute(
+                            builder: (context) => UserInfoPage()));
+                      },
+                      child: Text(
+                        "Sign Up",
+                        style: TextStyle(
+                            fontWeight: FontWeight.w600, fontSize: 18),
+                      ),
                     ),
                   ],
                 )

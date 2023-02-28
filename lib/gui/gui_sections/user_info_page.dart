@@ -1,3 +1,4 @@
+import 'package:file_picker/file_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application/gui/gui_sections/home_page.dart';
@@ -8,14 +9,14 @@ import 'package:provider/provider.dart';
 import '../../auth.dart';
 import '../../main.dart';
 
-class SignupPage extends StatelessWidget {
+class UserInfoPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var appState = context.watch<MyAppState>();
 
-    final emailController = TextEditingController();
-    final password1Controller = TextEditingController();
-    final password2Controller = TextEditingController();
+    final nameController = TextEditingController();
+    final surnameController = TextEditingController();
+    final photoController = TextEditingController();
 
     return Scaffold(
       resizeToAvoidBottomInset: false,
@@ -46,7 +47,7 @@ class SignupPage extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
-                        "Sign up",
+                        "Add additional information",
                         style: TextStyle(
                           fontSize: 30,
                           fontWeight: FontWeight.bold,
@@ -56,7 +57,7 @@ class SignupPage extends StatelessWidget {
                         height: 20,
                       ),
                       Text(
-                        "Create an Account",
+                        "User info",
                         style: TextStyle(
                           fontSize: 15,
                           color: Colors.grey[700],
@@ -71,17 +72,22 @@ class SignupPage extends StatelessWidget {
                     padding: EdgeInsets.symmetric(horizontal: 40),
                     child: Column(
                       children: [
-                        makeInput(label: "Email", controller: emailController),
+                        makeInput(label: "Name", controller: nameController),
                         makeInput(
-                            label: "Password",
-                            controller: password1Controller,
-                            obsureText: true),
-                        makeInput(
-                            label: "Confirm Pasword",
-                            controller: password2Controller,
-                            obsureText: true),                        
+                            label: "Surname", controller: surnameController),
                       ],
                     ),
+                  ),
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      ElevatedButton(
+                          onPressed: selectfile,
+                          child: const Text("Select File")),
+                      ElevatedButton(
+                          onPressed: uploadfile,
+                          child: const Text("Upload FIle")),
+                    ],
                   ),
                   Padding(
                     padding: EdgeInsets.symmetric(horizontal: 40),
@@ -97,35 +103,12 @@ class SignupPage extends StatelessWidget {
                       child: MaterialButton(
                         minWidth: double.infinity,
                         height: 60,
-                        onPressed: () async {
-                          if (password1Controller.text ==
-                              password2Controller.text) {
-                            try {
-                              await FirebaseAuth.instance
-                                  .createUserWithEmailAndPassword(
-                                      email: emailController.text,
-                                      password: password1Controller.text);
-                              await FirebaseAuth.instance
-                                  .signInWithEmailAndPassword(
-                                      email: emailController.text,
-                                      password: password1Controller.text);
-                              if (FirebaseAuth.instance.currentUser != null) {
-                                appState.doUserLogin();
-                                Navigator.of(context).push(MaterialPageRoute(
-                                    builder: (context) => MyHomePage()));
-                              }
-                            } on FirebaseAuthException catch (e) {
-                              print(e.toString());
-                            }
-                          } else {
-                            print("Passwords are not equal");
-                          }
-                        },
+                        onPressed: () {},
                         color: Colors.redAccent,
                         shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(40)),
                         child: Text(
-                          "Sign Up",
+                          "Add user info",
                           style: TextStyle(
                             fontWeight: FontWeight.w600,
                             fontSize: 16,
@@ -134,26 +117,6 @@ class SignupPage extends StatelessWidget {
                       ),
                     ),
                   ),
-                  SizedBox(
-                    height: 20,
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text("Already have an account? "),
-                      MaterialButton(
-                        onPressed: () async {
-                          Navigator.of(context).push(MaterialPageRoute(
-                              builder: (context) => MyHomePage()));
-                        },
-                        child: Text(
-                          "Log In",
-                          style: TextStyle(
-                              fontWeight: FontWeight.w600, fontSize: 18),
-                        ),
-                      ),
-                    ],
-                  )
                 ],
               ),
             ],
@@ -161,6 +124,12 @@ class SignupPage extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  get uploadfile => uploadfile;
+
+  Future selectfile() async {
+    final result = await FilePicker.platform.pickFiles();
   }
 }
 

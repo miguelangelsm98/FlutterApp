@@ -8,7 +8,6 @@ import '../../main.dart';
 import 'favorites_page.dart';
 import 'generator_page.dart';
 import 'logout_page.dart';
-import 'signup_page.dart';
 import 'login_page.dart';
 
 class MyHomePage extends StatefulWidget {
@@ -27,94 +26,11 @@ class _MyHomePageState extends State<MyHomePage> {
     var colorScheme = Theme.of(context).colorScheme;
 
     if (!isLoggedIn) {
-      Widget page;
-
-      switch (selectedIndex) {
-        case 0:
-          page = LoginPage();
-          break;
-        case 1:
-          page = SignupPage();
-          break;
-        default:
-          selectedIndex = 0;
-          page = LoginPage();
-          break;
-      }
-
-      // The container for the current page, with its background color
-      // and subtle switching animation.
-      var mainArea = ColoredBox(
-        color: colorScheme.surfaceVariant,
-        child: AnimatedSwitcher(
-          duration: Duration(milliseconds: 200),
-          child: page,
-        ),
-      );
-
-      return Scaffold(
-        body: LayoutBuilder(
-          builder: (context, constraints) {
-            if (constraints.maxWidth < 450) {
-              // Use a more mobile-friendly layout with BottomNavigationBar
-              // on narrow screens.
-              return Column(
-                children: [
-                  Expanded(child: mainArea),
-                  SafeArea(
-                    child: BottomNavigationBar(
-                      items: [
-                        BottomNavigationBarItem(
-                          icon: Icon(Icons.login),
-                          label: 'Login',
-                        ),
-                        BottomNavigationBarItem(
-                          icon: Icon(Icons.app_registration),
-                          label: 'Signup',
-                        ),
-                      ],
-                      currentIndex: selectedIndex,
-                      onTap: (value) {
-                        setState(() {
-                          selectedIndex = value;
-                        });
-                      },
-                    ),
-                  )
-                ],
-              );
-            } else {
-              return Row(
-                children: [
-                  SafeArea(
-                    child: NavigationRail(
-                      extended: constraints.maxWidth >= 600,
-                      destinations: [
-                        NavigationRailDestination(
-                          icon: Icon(Icons.login),
-                          label: Text('Login'),
-                        ),
-                        NavigationRailDestination(
-                          icon: Icon(Icons.app_registration),
-                          label: Text('Signup'),
-                        ),
-                      ],
-                      selectedIndex: selectedIndex,
-                      onDestinationSelected: (value) {
-                        setState(() {
-                          selectedIndex = value;
-                        });
-                      },
-                    ),
-                  ),
-                  Expanded(child: mainArea),
-                ],
-              );
-            }
-          },
-        ),
-      );
+      return LoginPage();
     } else {
+      final user = FirebaseAuth.instance.currentUser;
+      print('This is my photo: ${user?.photoURL}');
+
       Widget page;
 
       switch (selectedIndex) {
