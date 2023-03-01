@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_application/gui/gui_sections/image_page.dart';
 import 'package:flutter_application/gui/gui_sections/posts_add_page.dart';
 import 'package:flutter_application/gui/gui_sections/posts_list_page.dart';
 import 'package:provider/provider.dart';
@@ -28,25 +29,19 @@ class _MyHomePageState extends State<MyHomePage> {
     if (!isLoggedIn) {
       return LoginPage();
     } else {
-      final user = FirebaseAuth.instance.currentUser;
-      print('This is my photo: ${user?.photoURL}');
-
       Widget page;
 
       switch (selectedIndex) {
         case 0:
-          page = GeneratorPage();
-          break;
-        case 1:
-          page = FavoritesPage();
-          break;
-        case 2:
           page = PostsAddPage();
           break;
-        case 3:
+        case 1:
           page = PostsListPage();
           break;
-        case 4:
+        case 2:
+          page = ImagePage();
+          break;
+        case 3:
           page = LogoutPage();
           break;
         default:
@@ -76,29 +71,20 @@ class _MyHomePageState extends State<MyHomePage> {
                     child: BottomNavigationBar(
                       items: [
                         BottomNavigationBarItem(
-                          icon: Icon(Icons.home),
-                          label: 'Home',
-                        ),
-                        BottomNavigationBarItem(
-                          icon: Icon(Icons.favorite),
-                          label: 'Favorites',
-                        ),
-                        BottomNavigationBarItem(
                           icon: Icon(Icons.post_add),
                           label: 'Add Post',
                         ),
                         BottomNavigationBarItem(
-                          icon: Icon(Icons.list),
+                          icon: Icon(Icons.favorite),
                           label: 'Posts',
+                        ),
+                        BottomNavigationBarItem(
+                          icon: Icon(Icons.image),
+                          label: 'Image',
                         ),
                         BottomNavigationBarItem(
                           icon: Icon(Icons.logout),
                           label: 'Logout',
-                        ),
-                        BottomNavigationBarItem(
-                          icon: Icon(Icons.verified_user),
-                          label: FirebaseAuth.instance.currentUser!.email
-                              .toString(),
                         ),
                       ],
                       currentIndex: selectedIndex,
@@ -119,20 +105,16 @@ class _MyHomePageState extends State<MyHomePage> {
                       extended: constraints.maxWidth >= 600,
                       destinations: [
                         NavigationRailDestination(
-                          icon: Icon(Icons.home),
-                          label: Text('Home'),
-                        ),
-                        NavigationRailDestination(
-                          icon: Icon(Icons.favorite),
-                          label: Text('Favorites'),
-                        ),
-                        NavigationRailDestination(
                           icon: Icon(Icons.post_add),
                           label: Text('Add Post'),
                         ),
                         NavigationRailDestination(
-                          icon: Icon(Icons.list),
+                          icon: Icon(Icons.favorite),
                           label: Text('Posts'),
+                        ),
+                        NavigationRailDestination(
+                          icon: Icon(Icons.image),
+                          label: Text('Image'),
                         ),
                         NavigationRailDestination(
                           icon: Icon(Icons.logout),

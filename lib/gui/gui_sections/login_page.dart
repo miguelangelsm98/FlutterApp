@@ -1,7 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application/gui/gui_sections/signup_page.dart';
-import 'package:flutter_application/gui/gui_sections/user_info_page.dart';
+import 'package:flutter_application/gui/gui_sections/image_page.dart';
 import 'package:provider/provider.dart';
 
 import '../../main.dart';
@@ -129,9 +129,9 @@ class _LoginPageState extends State<LoginPage> {
                   children: [
                     Text("Dont have an account?"),
                     MaterialButton(
-                      onPressed: () async {                        
+                      onPressed: () async {
                         Navigator.of(context).push(MaterialPageRoute(
-                            builder: (context) => UserInfoPage()));
+                            builder: (context) => SignupPage()));
                       },
                       child: Text(
                         "Sign Up",
