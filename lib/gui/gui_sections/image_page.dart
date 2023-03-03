@@ -25,6 +25,8 @@ class _ImagePageState extends State<ImagePage> {
   File? pickedImage;
   Uint8List webImage = Uint8List(8);
 
+  String imagePath = "";
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -63,16 +65,21 @@ class _ImagePageState extends State<ImagePage> {
                                 : kIsWeb
                                     ? Image.memory(webImage, fit: BoxFit.fill)
                                     : Image.file(pickedImage!,
-                                        fit: BoxFit.fill)),
+                                        fit: BoxFit.scaleDown)),
                         ElevatedButton(
                             onPressed: selectImage,
-                            child: const Text("Select File")),
+                            child: const Text("Select Image")),
                         ElevatedButton(
                             onPressed: uploadImage,
-                            child: const Text("Upload FIle")),
+                            child: const Text("Upload Image")),
                         ElevatedButton(
                             onPressed: downloadImage,
                             child: const Text("Download Image")),
+                        Container(
+                          child: imagePath == ""
+                              ? Text("No profile picture")
+                              : Image.network(imagePath, fit: BoxFit.scaleDown),
+                        )
                       ],
                     ),
                   ),
@@ -89,7 +96,11 @@ class _ImagePageState extends State<ImagePage> {
     final userUid = FirebaseAuth.instance.currentUser?.uid;
 
     // upload file
-    await FirebaseStorage.instance.ref('pictures/$userUid').putData(webImage);
+    await FirebaseStorage.instance
+        .ref('pictures/$userUid.jpg')
+        .putData(webImage);
+
+    await downloadImage();
   }
 
   Future selectImage() async {
@@ -121,47 +132,36 @@ class _ImagePageState extends State<ImagePage> {
     }
   }
 
-  Future downloadImage() async {
+  Future<String> downloadUrl() async {
     final userUid = FirebaseAuth.instance.currentUser?.uid;
-    final storageRef = FirebaseStorage.instance.ref();
-    final pathReference = storageRef.child("pictures/$userUid");
+    String downloadUrl = await FirebaseStorage.instance
+        .ref("pictures/$userUid.jpg")
+        .getDownloadURL();
+    return downloadUrl;
+  }
 
-    // Create a reference to a file from a Google Cloud Storage URI
-    final gsReference = FirebaseStorage.instance
-        .refFromURL("gs://YOUR_BUCKET/images/stars.jpg");
+  Future<ListResult> listFiles() async {
+    final userUid = FirebaseAuth.instance.currentUser?.uid;
+    String downloadURL = await FirebaseStorage.instance
+        .ref("pictures/$userUid.jpg")
+        .getDownloadURL();
 
-    // Create a reference from an HTTPS URL
-    // Note that in the URL, characters are URL escaped!
-    final httpsReference = FirebaseStorage.instance.refFromURL(
-        "https://firebasestorage.googleapis.com/b/YOUR_BUCKET/o/images%20stars.jpg");
+    ListResult results =
+        await FirebaseStorage.instance.ref('pictures').listAll();
 
-    final islandRef = storageRef.child("pictures/$userUid");
-
-    try {
-      const oneMegabyte = 1024 * 1024;
-      final Uint8List? data =
-          await FirebaseStorage.instance.ref('pictures/$userUid').getData();
-      // Data for "images/island.jpg" is returned, use this as needed.
-      if (data != null) {
-        setState(() {
-          webImage = data;
-          pickedImage = File('a');
-        });
-      }
-    } on FirebaseException catch (e) {
-      // Handle any errors.
+    for (var ref in results.items) {
+      print("Found file: $ref");
     }
 
-    // final userUid = FirebaseAuth.instance.currentUser?.uid;
+    return results;
+  }
 
-    // var image =
-    //     await FirebaseStorage.instance.ref('pictures/$userUid').getData();
-    // if (image != null) {
-    //   setState(() {
-    //     webImage = image;
-    //     pickedImage = File('a');
-    //   });
-    // }
+  Future downloadImage() async {
+    String downloadPath = await downloadUrl();
+    setState(() {
+      imagePath = downloadPath;
+    });
+    return;
   }
 }
 
