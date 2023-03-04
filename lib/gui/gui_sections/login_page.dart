@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application/gui/gui_sections/signup_page.dart';
 import 'package:flutter_application/gui/gui_sections/image_page.dart';
+import 'package:flutter_application/models/user.dart';
 import 'package:provider/provider.dart';
 
 import '../../main.dart';
@@ -97,13 +98,9 @@ class _LoginPageState extends State<LoginPage> {
                       height: 60,
                       onPressed: () async {
                         try {
-                          await FirebaseAuth.instance
-                              .signInWithEmailAndPassword(
-                                  email: emailController.text,
-                                  password: passwordController.text);
-                          if (FirebaseAuth.instance.currentUser != null) {
-                            appState.doUserLogin();
-                          }
+                          await login(
+                              emailController.text, passwordController.text);
+                          appState.doUserLogin();
                         } on FirebaseAuthException catch (e) {
                           print(e.toString());
                         }

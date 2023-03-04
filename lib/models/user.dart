@@ -1,27 +1,89 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class CustomUser {
-  final String email;
-  final String password;
-  //final String name;
-  //final String lastname;
+  String userUid = "";
+  String email = "";
+  String password = "";
+  String name = "";
+  String lastName = "";
+  String avatarPath = "";
+  String birthDate = "";
+  String joinedDate = "";
 
   CustomUser(this.email, this.password);
 
-  //User(this.email, this.name, this.lastname);
+  CustomUser.fromJson(Map<String, dynamic> json) {
+    userUid = json['userUid'] as String;
+    email = json['email'] as String;
+    name = json['name'] as String;
+    lastName = json['lastName'] as String;
+    avatarPath = json['avatarPath'] as String;
+    birthDate = json['birthDate'] as String;
+    joinedDate = json['joinedDate'] as String;
+  }
 
   Map<String, dynamic> toJson() => <String, dynamic>{
+        'userUid': userUid,
         'email': email,
-        'password': password,
-        // 'name': name,
-        // 'lastname': lastname,
+        'name': name,
+        'lastName': lastName,
+        'avatarPath': avatarPath,
+        'birthDate': birthDate,
+        'joinedDate': joinedDate,
       };
 
-  void save() async {
-    await FirebaseFirestore.instance
+  void setUserUid(String userUid) {
+    userUid = userUid;
+  }
+
+  void setEmail(String email) {
+    email = email;
+  }
+
+  void setPassword(String password) {
+    password = password;
+  }
+
+  void setName(String name) {
+    name = name;
+  }
+
+  void setLastName(String lastName) {
+    lastName = lastName;
+  }
+
+  void setAvatarPath(String avatarPath) {
+    avatarPath = avatarPath;
+  }
+
+  void setBirthDate(String birthDate) {
+    birthDate = birthDate;
+  }
+
+  void setJoinedDate(String joinedDate) {
+    joinedDate = joinedDate;
+  }
+
+  Future saveAuth() {
+    return FirebaseAuth.instance
+        .createUserWithEmailAndPassword(email: email, password: password);
+  }
+
+  Future saveDatabase() async {
+    return FirebaseFirestore.instance
         .collection('users')
-        .doc(email)
+        .doc(userUid)
         .set(toJson());
+  }
+
+  Future login() async {
+    var result = FirebaseAuth.instance
+        .signInWithEmailAndPassword(email: email, password: password);
+    if (FirebaseAuth.instance.currentUser != null) {
+      userUid = FirebaseAuth.instance.currentUser!.uid;
+    }
+    return result;
   }
 
   // Django Model
@@ -38,6 +100,16 @@ class CustomUser {
   // date_joined = models.DateTimeField(default = timezone.now)
 }
 
-CustomUser userFromJson(Map<String, dynamic> json) {
-  return CustomUser(json['email'] as String, json['password'] as String);
+Future<CustomUser> signUp(String email, String password) async {
+  CustomUser u = CustomUser(email, password);
+  await u.saveAuth();
+  await u.login();
+  await u.saveDatabase();
+  return u;
+}
+
+Future<CustomUser> login(String email, String password) async {
+  CustomUser u = CustomUser(email, password);
+  await u.login();
+  return u;
 }

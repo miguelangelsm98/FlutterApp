@@ -24,7 +24,6 @@ class ImagePage extends StatefulWidget {
 class _ImagePageState extends State<ImagePage> {
   File? pickedImage;
   Uint8List webImage = Uint8List(8);
-
   String imagePath = "";
 
   @override
@@ -60,8 +59,11 @@ class _ImagePageState extends State<ImagePage> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Container(
+                            width: 80,
+                            height: 80,
                             child: pickedImage == null
-                                ? Text("No image selected")
+                                ? Text("No image selected",
+                                    textAlign: TextAlign.center)
                                 : kIsWeb
                                     ? Image.memory(webImage, fit: BoxFit.fill)
                                     : Image.file(pickedImage!,
@@ -76,8 +78,13 @@ class _ImagePageState extends State<ImagePage> {
                             onPressed: downloadImage,
                             child: const Text("Download Image")),
                         Container(
+                          width: 80,
+                          height: 80,
                           child: imagePath == ""
-                              ? Text("No profile picture")
+                              ? Text(
+                                  "No profile picture",
+                                  textAlign: TextAlign.center,
+                                )
                               : Image.network(imagePath, fit: BoxFit.scaleDown),
                         )
                       ],
@@ -90,17 +97,6 @@ class _ImagePageState extends State<ImagePage> {
         ),
       ),
     );
-  }
-
-  Future uploadImage() async {
-    final userUid = FirebaseAuth.instance.currentUser?.uid;
-
-    // upload file
-    await FirebaseStorage.instance
-        .ref('pictures/$userUid.jpg')
-        .putData(webImage);
-
-    await downloadImage();
   }
 
   Future selectImage() async {
@@ -132,28 +128,23 @@ class _ImagePageState extends State<ImagePage> {
     }
   }
 
+  Future uploadImage() async {
+    final userUid = FirebaseAuth.instance.currentUser?.uid;
+
+    // upload file
+    await FirebaseStorage.instance
+        .ref('pictures/$userUid.jpg')
+        .putData(webImage);
+
+    await downloadImage();
+  }
+
   Future<String> downloadUrl() async {
     final userUid = FirebaseAuth.instance.currentUser?.uid;
     String downloadUrl = await FirebaseStorage.instance
         .ref("pictures/$userUid.jpg")
         .getDownloadURL();
     return downloadUrl;
-  }
-
-  Future<ListResult> listFiles() async {
-    final userUid = FirebaseAuth.instance.currentUser?.uid;
-    String downloadURL = await FirebaseStorage.instance
-        .ref("pictures/$userUid.jpg")
-        .getDownloadURL();
-
-    ListResult results =
-        await FirebaseStorage.instance.ref('pictures').listAll();
-
-    for (var ref in results.items) {
-      print("Found file: $ref");
-    }
-
-    return results;
   }
 
   Future downloadImage() async {
@@ -163,6 +154,22 @@ class _ImagePageState extends State<ImagePage> {
     });
     return;
   }
+
+  // Future<ListResult> listFiles() async {
+  //   final userUid = FirebaseAuth.instance.currentUser?.uid;
+  //   String downloadURL = await FirebaseStorage.instance
+  //       .ref("pictures/$userUid.jpg")
+  //       .getDownloadURL();
+
+  //   ListResult results =
+  //       await FirebaseStorage.instance.ref('pictures').listAll();
+
+  //   for (var ref in results.items) {
+  //     print("Found file: $ref");
+  //   }
+
+  //   return results;
+  // }
 }
 
 Widget makeInput({label, controller, obsureText = false}) {

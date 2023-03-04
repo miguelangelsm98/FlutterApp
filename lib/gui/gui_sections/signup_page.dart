@@ -79,7 +79,7 @@ class SignupPage extends StatelessWidget {
                         makeInput(
                             label: "Confirm Pasword",
                             controller: password2Controller,
-                            obsureText: true),                        
+                            obsureText: true),
                       ],
                     ),
                   ),
@@ -100,20 +100,12 @@ class SignupPage extends StatelessWidget {
                         onPressed: () async {
                           if (password1Controller.text ==
                               password2Controller.text) {
-                            try {
-                              await FirebaseAuth.instance
-                                  .createUserWithEmailAndPassword(
-                                      email: emailController.text,
-                                      password: password1Controller.text);
-                              await FirebaseAuth.instance
-                                  .signInWithEmailAndPassword(
-                                      email: emailController.text,
-                                      password: password1Controller.text);
-                              if (FirebaseAuth.instance.currentUser != null) {
-                                appState.doUserLogin();
-                                Navigator.of(context).push(MaterialPageRoute(
-                                    builder: (context) => MyHomePage()));
-                              }
+                            try {                              
+                              await signUp(emailController.text,
+                                  password1Controller.text);
+                              appState.doUserLogin();
+                              Navigator.of(context).push(MaterialPageRoute(
+                                  builder: (context) => MyHomePage()));
                             } on FirebaseAuthException catch (e) {
                               print(e.toString());
                             }
