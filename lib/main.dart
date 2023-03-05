@@ -44,6 +44,12 @@ class MyAppState extends ChangeNotifier {
 
   bool isLoggedIn = false;
   CustomUser? currentUser = CustomUser(email: "", password: "");
+  int selectedIndex = 0;
+
+  void changeSelectedIndex(int index) {
+    selectedIndex = index;
+    notifyListeners();
+  }
 
   Future<void> doUserLogin() async {
     isLoggedIn = true;
@@ -56,6 +62,8 @@ class MyAppState extends ChangeNotifier {
     isLoggedIn = false;
     currentUser = null;
     currentUser?.posts = <Post>[];
+    selectedIndex = 0;
+
     notifyListeners();
   }
 
@@ -70,8 +78,6 @@ class MyAppState extends ChangeNotifier {
         for (var docSnapshot in querySnapshot.docs) {
           Post p = Post.fromFirestore(docSnapshot, null);
           currentUser?.posts.add(p);
-          // result = '$result ${docSnapshot.id} => ${docSnapshot.data()} \n';
-          // result = p.toString();
         }
       },
       onError: (e) => print("Error completing: $e"),

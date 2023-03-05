@@ -12,19 +12,20 @@ class CustomUser {
   String? name;
   String? lastName;
   String? avatarPath;
-  String? birthDate;
-  String? joinedDate;
+  DateTime? birthDate;
+  DateTime? joinedDate;
   List<Post> posts = <Post>[];
 
-  CustomUser(
-      {this.userUid,
-      required this.email,
-      required this.password,
-      this.name,
-      this.lastName,
-      this.avatarPath = defaultAvatarPath,
-      this.birthDate,
-      this.joinedDate});
+  CustomUser({
+    this.userUid,
+    required this.email,
+    required this.password,
+    this.name,
+    this.lastName,
+    this.avatarPath = defaultAvatarPath,
+    this.birthDate,
+    this.joinedDate,
+  });
 
   factory CustomUser.fromFirestore(
     DocumentSnapshot<Map<String, dynamic>> snapshot,
@@ -38,8 +39,12 @@ class CustomUser {
       name: data?['name'],
       lastName: data?['lastName'],
       avatarPath: data?['avatarPath'],
-      birthDate: data?['birthDate'],
-      joinedDate: data?['joinedDate'],
+      birthDate: data?['birthDate'] != null
+          ? DateTime.parse(data?['birthDate'])
+          : null,
+      joinedDate: data?['joinedDate'] != null
+          ? DateTime.parse(data?['joinedDate'])
+          : null,
     );
   }
 
@@ -50,8 +55,8 @@ class CustomUser {
       if (name != null) "name": name,
       if (lastName != null) "lastName": lastName,
       if (avatarPath != null) "avatarPath": avatarPath,
-      if (birthDate != null) "birthDate": birthDate,
-      if (joinedDate != null) "joinedDate": joinedDate,
+      if (birthDate != null) "birthDate": birthDate?.toIso8601String(),
+      if (joinedDate != null) "joinedDate": joinedDate?.toIso8601String(),
     };
   }
 
@@ -100,6 +105,10 @@ Future<CustomUser> signUp(String email, String password) async {
   CustomUser u = CustomUser(email: email, password: password);
   await u.saveAuth();
   await u.login();
+  u.joinedDate = DateTime.now();
+  u.name = "Default Name";
+  u.lastName = "Default Last Name";
+  u.birthDate = DateTime(1990, 1, 1);
   await u.saveDatabase();
   return u;
 }

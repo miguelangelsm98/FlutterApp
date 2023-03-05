@@ -1,7 +1,8 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_application/gui/gui_sections/image_page.dart';
-import 'package:flutter_application/gui/gui_sections/posts_add_page.dart';
-import 'package:flutter_application/gui/gui_sections/posts_list_page.dart';
+import 'package:flutter_application/gui/gui_sections/update_user_page.dart';
+import 'package:flutter_application/gui/gui_sections/add_posts_page.dart';
+import 'package:flutter_application/gui/gui_sections/list_posts_page.dart';
 import 'package:flutter_application/gui/gui_sections/user_info_page.dart';
 import 'package:provider/provider.dart';
 
@@ -16,13 +17,12 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  var selectedIndex = 0;
+  // var selectedIndex = 0;
 
   @override
   Widget build(BuildContext context) {
     var appState = context.watch<MyAppState>();
     bool isLoggedIn = appState.isLoggedIn;
-
     var colorScheme = Theme.of(context).colorScheme;
 
     if (!isLoggedIn) {
@@ -30,24 +30,21 @@ class _MyHomePageState extends State<MyHomePage> {
     } else {
       Widget page;
 
-      switch (selectedIndex) {
+      switch (appState.selectedIndex) {
         case 0:
-          page = LogoutPage();
-          break;
-        case 1:
           page = PostsAddPage();
           break;
-        case 2:
+        case 1:
           page = PostsListPage();
           break;
-        case 3:
-          page = ImagePage();
+        case 2:
+          page = UpdateUserPage();
           break;
-        case 4:
+        case 3:
           page = UserInfoPage();
           break;
         default:
-          throw UnimplementedError('no widget for $selectedIndex');
+          throw UnimplementedError('no widget for ${appState.selectedIndex}');
       }
 
       // The container for the current page, with its background color
@@ -93,12 +90,11 @@ class _MyHomePageState extends State<MyHomePage> {
                           label: 'User',
                         ),
                       ],
-                      currentIndex: selectedIndex,
+                      currentIndex: appState.selectedIndex,
                       onTap: (value) {
-                        setState(() {
-                          selectedIndex = value;
-                        });
+                        appState.changeSelectedIndex(value);
                       },
+                      // TODO addapt with changes
                     ),
                   ),
                 ],
@@ -111,10 +107,6 @@ class _MyHomePageState extends State<MyHomePage> {
                       extended: constraints.maxWidth >= 600,
                       destinations: [
                         NavigationRailDestination(
-                          icon: Icon(Icons.logout),
-                          label: Text('Logout'),
-                        ),
-                        NavigationRailDestination(
                           icon: Icon(Icons.post_add),
                           label: Text('Add Post'),
                         ),
@@ -123,23 +115,22 @@ class _MyHomePageState extends State<MyHomePage> {
                           label: Text('Posts'),
                         ),
                         NavigationRailDestination(
-                          icon: Icon(Icons.image),
-                          label: Text('Image'),
+                          icon: Icon(Icons.supervised_user_circle),
+                          label: Text('Update User'),
                         ),
                         NavigationRailDestination(
                           icon: Icon(Icons.verified_user),
-                          label: Text('User'),
+                          label: Text('Check User'),
                         ),
                       ],
-                      selectedIndex: selectedIndex,
+                      selectedIndex: appState.selectedIndex,
                       onDestinationSelected: (value) {
-                        setState(() {
-                          selectedIndex = value;
-                        });
+                        appState.changeSelectedIndex(value);
                       },
                     ),
                   ),
                   Expanded(child: mainArea),
+                  SafeArea(child: profileWidget(context)),
                 ],
               );
             }
@@ -148,4 +139,48 @@ class _MyHomePageState extends State<MyHomePage> {
       );
     }
   }
+}
+
+Widget profileWidget(BuildContext context) {
+  var appState = context.watch<MyAppState>();
+  var imagePath = appState.currentUser!.avatarPath;
+
+  return Column(
+    children: [
+      SizedBox(
+        height: 60,
+      ),
+      Text(
+        "Hello " "${appState.currentUser!.name}!",
+        style: TextStyle(
+            fontSize: 15, fontWeight: FontWeight.w400, color: Colors.black87),
+      ),
+      SizedBox(
+        height: 20,
+      ),
+      SizedBox(
+          height: 60, child: Image.network(imagePath!, fit: BoxFit.scaleDown)),
+      SizedBox(
+        height: 20,
+      ),
+      MaterialButton(
+        // height: 5,
+        onPressed: () async {
+          try {
+            await FirebaseAuth.instance.signOut();
+            appState.doUserLogout();
+          } on FirebaseAuthException catch (e) {
+            print(e.toString());
+          }
+        },
+        color: Color.fromARGB(255, 30, 226, 72),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(40)),
+        child: Text(
+          "Logout",
+          style: TextStyle(
+              fontSize: 15, fontWeight: FontWeight.w400, color: Colors.black87),
+        ),
+      ),
+    ],
+  );
 }

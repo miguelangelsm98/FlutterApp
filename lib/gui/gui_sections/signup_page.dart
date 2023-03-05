@@ -11,9 +11,9 @@ class SignupPage extends StatelessWidget {
   Widget build(BuildContext context) {
     var appState = context.watch<MyAppState>();
 
-    final emailController = TextEditingController();
-    final password1Controller = TextEditingController();
-    final password2Controller = TextEditingController();
+    final emailController = TextEditingController(text: "@gmail.com");
+    final password1Controller = TextEditingController(text: "123123");
+    final password2Controller = TextEditingController(text: "123123");
 
     return Scaffold(
       resizeToAvoidBottomInset: false,
@@ -101,8 +101,7 @@ class SignupPage extends StatelessWidget {
                             try {
                               await signUp(emailController.text,
                                   password1Controller.text);
-                              appState.doUserLogin();                             
-
+                              await appState.doUserLogin();
                               Navigator.of(context).push(MaterialPageRoute(
                                   builder: (context) => MyHomePage()));
                             } on FirebaseAuthException catch (e) {

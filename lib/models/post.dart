@@ -1,11 +1,17 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Post {
-  String? name;
+  String name;
   String? description;
   String? userUid;
+  DateTime? createdDate;
 
-  Post({this.name, this.description, this.userUid});
+  Post({
+    required this.name,
+    this.description,
+    this.userUid,
+    this.createdDate,
+  });
 
   factory Post.fromFirestore(
     DocumentSnapshot<Map<String, dynamic>> snapshot,
@@ -16,14 +22,20 @@ class Post {
       name: data?['name'],
       description: data?['description'],
       userUid: data?['userUid'],
+      createdDate: data?['createdDate'] != null
+          ? DateTime.parse(data?['createdDate'])
+          : null,
     );
   }
 
-  Map<String, dynamic> toFirestore() => <String, dynamic>{
-        'name': name,
-        'description': description,
-        'userUid': userUid,
-      };
+  Map<String, dynamic> toFirestore() {
+    return {
+      "name": name,
+      if (description != null) "description": description,
+      if (userUid != null) "userUid": userUid,
+      if (createdDate != null) "createdDate": createdDate?.toIso8601String(),
+    };
+  }
 
   void save() async {
     await FirebaseFirestore.instance.collection('posts').add(toFirestore());

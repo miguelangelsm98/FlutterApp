@@ -33,18 +33,18 @@ class _PostsAddPageState extends State<PostsAddPage> {
               color: Colors.black,
             )),
       ),
-      body: Container(
+      body: SizedBox(
         height: MediaQuery.of(context).size.height,
         width: double.infinity,
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
             Column(
               children: [
                 Column(
                   children: [
                     Text(
-                      "Posts",
+                      "Add Posts",
                       style: TextStyle(
                         fontSize: 30,
                         fontWeight: FontWeight.bold,
@@ -96,9 +96,11 @@ class _PostsAddPageState extends State<PostsAddPage> {
                           name: nameController.text,
                           description: descriptionController.text,
                           userUid: appState.currentUser?.userUid,
+                          createdDate: DateTime.now(),
                         );
                         post.save();
                         await appState.doGetPosts();
+                        setState(() {});
                       },
                       color: Colors.indigoAccent[400],
                       shape: RoundedRectangleBorder(
