@@ -1,5 +1,6 @@
 import 'package:english_words/english_words.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_application/models/post.dart';
 import 'package:flutter_application/models/user.dart';
 import 'package:provider/provider.dart';
 
@@ -39,21 +40,49 @@ class MyApp extends StatelessWidget {
 }
 
 class MyAppState extends ChangeNotifier {
-  var current = WordPair.random();
-  var history = <WordPair>[];
+  // My App
+
   bool isLoggedIn = false;
+  CustomUser? currentUser = CustomUser(email: "", password: "");
 
-  GlobalKey? historyListKey;
-
-  void doUserLogin() {
+  Future<void> doUserLogin() async {
     isLoggedIn = true;
+    currentUser = await getUserObject();
+    await doGetPosts();
     notifyListeners();
   }
 
   void doUserLogout() {
     isLoggedIn = false;
+    currentUser = null;
+    currentUser?.posts = <Post>[];
     notifyListeners();
   }
+
+  Future<void> doGetPosts() async {
+    currentUser?.posts = <Post>[];
+    await FirebaseFirestore.instance
+        .collection("posts")
+        .where("userUid", isEqualTo: currentUser?.userUid)
+        .get()
+        .then(
+      (querySnapshot) {
+        for (var docSnapshot in querySnapshot.docs) {
+          Post p = Post.fromFirestore(docSnapshot, null);
+          currentUser?.posts.add(p);
+          // result = '$result ${docSnapshot.id} => ${docSnapshot.data()} \n';
+          // result = p.toString();
+        }
+      },
+      onError: (e) => print("Error completing: $e"),
+    );
+  }
+
+  // Example App
+
+  var current = WordPair.random();
+  var history = <WordPair>[];
+  GlobalKey? historyListKey;
 
   void getNext() {
     history.insert(0, current);

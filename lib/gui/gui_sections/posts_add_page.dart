@@ -1,4 +1,3 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application/models/post.dart';
 import 'package:provider/provider.dart';
@@ -94,8 +93,12 @@ class _PostsAddPageState extends State<PostsAddPage> {
                       height: 60,
                       onPressed: () async {
                         Post post = Post(
-                            nameController.text, descriptionController.text, FirebaseAuth.instance.currentUser?.uid,);
+                          name: nameController.text,
+                          description: descriptionController.text,
+                          userUid: appState.currentUser?.userUid,
+                        );
                         post.save();
+                        await appState.doGetPosts();
                       },
                       color: Colors.indigoAccent[400],
                       shape: RoundedRectangleBorder(

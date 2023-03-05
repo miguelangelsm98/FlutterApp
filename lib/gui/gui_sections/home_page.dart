@@ -1,13 +1,12 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application/gui/gui_sections/image_page.dart';
 import 'package:flutter_application/gui/gui_sections/posts_add_page.dart';
 import 'package:flutter_application/gui/gui_sections/posts_list_page.dart';
+import 'package:flutter_application/gui/gui_sections/user_info_page.dart';
 import 'package:provider/provider.dart';
 
 import '../../main.dart';
-import 'favorites_page.dart';
-import 'generator_page.dart';
+
 import 'logout_page.dart';
 import 'login_page.dart';
 
@@ -33,16 +32,19 @@ class _MyHomePageState extends State<MyHomePage> {
 
       switch (selectedIndex) {
         case 0:
-          page = PostsAddPage();
+          page = LogoutPage();
           break;
         case 1:
-          page = PostsListPage();
+          page = PostsAddPage();
           break;
         case 2:
-          page = ImagePage();
+          page = PostsListPage();
           break;
         case 3:
-          page = LogoutPage();
+          page = ImagePage();
+          break;
+        case 4:
+          page = UserInfoPage();
           break;
         default:
           throw UnimplementedError('no widget for $selectedIndex');
@@ -71,6 +73,10 @@ class _MyHomePageState extends State<MyHomePage> {
                     child: BottomNavigationBar(
                       items: [
                         BottomNavigationBarItem(
+                          icon: Icon(Icons.logout),
+                          label: 'Logout',
+                        ),
+                        BottomNavigationBarItem(
                           icon: Icon(Icons.post_add),
                           label: 'Add Post',
                         ),
@@ -83,8 +89,8 @@ class _MyHomePageState extends State<MyHomePage> {
                           label: 'Image',
                         ),
                         BottomNavigationBarItem(
-                          icon: Icon(Icons.logout),
-                          label: 'Logout',
+                          icon: Icon(Icons.verified_user),
+                          label: 'User',
                         ),
                       ],
                       currentIndex: selectedIndex,
@@ -105,6 +111,10 @@ class _MyHomePageState extends State<MyHomePage> {
                       extended: constraints.maxWidth >= 600,
                       destinations: [
                         NavigationRailDestination(
+                          icon: Icon(Icons.logout),
+                          label: Text('Logout'),
+                        ),
+                        NavigationRailDestination(
                           icon: Icon(Icons.post_add),
                           label: Text('Add Post'),
                         ),
@@ -117,13 +127,8 @@ class _MyHomePageState extends State<MyHomePage> {
                           label: Text('Image'),
                         ),
                         NavigationRailDestination(
-                          icon: Icon(Icons.logout),
-                          label: Text('Logout'),
-                        ),
-                        NavigationRailDestination(
                           icon: Icon(Icons.verified_user),
-                          label: Text(FirebaseAuth.instance.currentUser!.email
-                              .toString()),
+                          label: Text('User'),
                         ),
                       ],
                       selectedIndex: selectedIndex,

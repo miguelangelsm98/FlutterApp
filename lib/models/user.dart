@@ -1,68 +1,63 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_application/models/post.dart';
+
+const defaultAvatarPath =
+    "https://firebasestorage.googleapis.com/v0/b/tfg-project-a9320.appspot.com/o/pictures%2Fprofile1.png?alt=media&token=6edb382b-14d5-47f2-a17e-d274624c3e89";
 
 class CustomUser {
-  String userUid = "";
-  String email = "";
-  String password = "";
-  String name = "";
-  String lastName = "";
-  String avatarPath = "";
-  String birthDate = "";
-  String joinedDate = "";
+  String? userUid;
+  String email;
+  String password;
+  String? name;
+  String? lastName;
+  String? avatarPath;
+  String? birthDate;
+  String? joinedDate;
+  List<Post> posts = <Post>[];
 
-  CustomUser(this.email, this.password);
+  CustomUser(
+      {this.userUid,
+      required this.email,
+      required this.password,
+      this.name,
+      this.lastName,
+      this.avatarPath = defaultAvatarPath,
+      this.birthDate,
+      this.joinedDate});
 
-  CustomUser.fromJson(Map<String, dynamic> json) {
-    userUid = json['userUid'] as String;
-    email = json['email'] as String;
-    name = json['name'] as String;
-    lastName = json['lastName'] as String;
-    avatarPath = json['avatarPath'] as String;
-    birthDate = json['birthDate'] as String;
-    joinedDate = json['joinedDate'] as String;
+  factory CustomUser.fromFirestore(
+    DocumentSnapshot<Map<String, dynamic>> snapshot,
+    SnapshotOptions? options,
+  ) {
+    final data = snapshot.data();
+    return CustomUser(
+      userUid: data?['userUid'],
+      email: data?['email'],
+      password: "DefaultPassword",
+      name: data?['name'],
+      lastName: data?['lastName'],
+      avatarPath: data?['avatarPath'],
+      birthDate: data?['birthDate'],
+      joinedDate: data?['joinedDate'],
+    );
   }
 
-  Map<String, dynamic> toJson() => <String, dynamic>{
-        'userUid': userUid,
-        'email': email,
-        'name': name,
-        'lastName': lastName,
-        'avatarPath': avatarPath,
-        'birthDate': birthDate,
-        'joinedDate': joinedDate,
-      };
-
-  void setUserUid(String userUid) {
-    userUid = userUid;
+  Map<String, dynamic> toFirestore() {
+    return {
+      if (userUid != null) "userUid": userUid,
+      "email": email,
+      if (name != null) "name": name,
+      if (lastName != null) "lastName": lastName,
+      if (avatarPath != null) "avatarPath": avatarPath,
+      if (birthDate != null) "birthDate": birthDate,
+      if (joinedDate != null) "joinedDate": joinedDate,
+    };
   }
 
-  void setEmail(String email) {
-    email = email;
-  }
-
-  void setPassword(String password) {
-    password = password;
-  }
-
-  void setName(String name) {
-    name = name;
-  }
-
-  void setLastName(String lastName) {
-    lastName = lastName;
-  }
-
-  void setAvatarPath(String avatarPath) {
-    avatarPath = avatarPath;
-  }
-
-  void setBirthDate(String birthDate) {
-    birthDate = birthDate;
-  }
-
-  void setJoinedDate(String joinedDate) {
-    joinedDate = joinedDate;
+  @override
+  String toString() {
+    return toFirestore().toString();
   }
 
   Future saveAuth() {
@@ -74,12 +69,13 @@ class CustomUser {
     return FirebaseFirestore.instance
         .collection('users')
         .doc(userUid)
-        .set(toJson());
+        .set(toFirestore());
   }
 
   Future login() async {
     var result = FirebaseAuth.instance
         .signInWithEmailAndPassword(email: email, password: password);
+
     if (FirebaseAuth.instance.currentUser != null) {
       userUid = FirebaseAuth.instance.currentUser!.uid;
     }
@@ -101,7 +97,7 @@ class CustomUser {
 }
 
 Future<CustomUser> signUp(String email, String password) async {
-  CustomUser u = CustomUser(email, password);
+  CustomUser u = CustomUser(email: email, password: password);
   await u.saveAuth();
   await u.login();
   await u.saveDatabase();
@@ -109,7 +105,31 @@ Future<CustomUser> signUp(String email, String password) async {
 }
 
 Future<CustomUser> login(String email, String password) async {
-  CustomUser u = CustomUser(email, password);
+  CustomUser u = CustomUser(email: email, password: password);
   await u.login();
   return u;
+}
+
+Future<CustomUser?> getUserObject() async {
+  final ref = FirebaseFirestore.instance
+      .collection("users")
+      .doc(FirebaseAuth.instance.currentUser!.uid)
+      .withConverter(
+        fromFirestore: CustomUser.fromFirestore,
+        toFirestore: (CustomUser user, _) => user.toFirestore(),
+      );
+  final docSnap = await ref.get();
+  final user = docSnap.data(); // Convert to User object
+  return user;
+}
+
+Future<CustomUser?> getUserObjectFromUid(String userUid) async {
+  final ref =
+      FirebaseFirestore.instance.collection("users").doc(userUid).withConverter(
+            fromFirestore: CustomUser.fromFirestore,
+            toFirestore: (CustomUser user, _) => user.toFirestore(),
+          );
+  final docSnap = await ref.get();
+  final user = docSnap.data(); // Convert to User object
+  return user;
 }

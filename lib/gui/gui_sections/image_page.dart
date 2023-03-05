@@ -1,19 +1,14 @@
-import 'dart:convert';
 import 'dart:io';
-import 'dart:typed_data';
 
-import 'package:file_picker/file_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_application/gui/gui_sections/home_page.dart';
-import 'package:flutter_application/gui/gui_sections/login_page.dart';
+
 import 'package:flutter_application/models/user.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 
-import '../../auth.dart';
 import '../../main.dart';
 
 class ImagePage extends StatefulWidget {
@@ -26,8 +21,16 @@ class _ImagePageState extends State<ImagePage> {
   Uint8List webImage = Uint8List(8);
   String imagePath = "";
 
+  CustomUser user = CustomUser(email: "", password: "");
+
   @override
   Widget build(BuildContext context) {
+    var appState = context.watch<MyAppState>();
+    user = appState.currentUser!;
+    setState(() {
+      imagePath = user.avatarPath!;
+    });
+
     return Scaffold(
       resizeToAvoidBottomInset: false,
       backgroundColor: Colors.white,
@@ -59,11 +62,15 @@ class _ImagePageState extends State<ImagePage> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Container(
-                            width: 80,
-                            height: 80,
+                            height: 100,
                             child: pickedImage == null
-                                ? Text("No image selected",
-                                    textAlign: TextAlign.center)
+                                ? Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Text("No image selected",
+                                          textAlign: TextAlign.center),
+                                    ],
+                                  )
                                 : kIsWeb
                                     ? Image.memory(webImage, fit: BoxFit.fill)
                                     : Image.file(pickedImage!,
@@ -74,16 +81,17 @@ class _ImagePageState extends State<ImagePage> {
                         ElevatedButton(
                             onPressed: uploadImage,
                             child: const Text("Upload Image")),
-                        ElevatedButton(
-                            onPressed: downloadImage,
-                            child: const Text("Download Image")),
                         Container(
-                          width: 80,
-                          height: 80,
+                          height: 100,
                           child: imagePath == ""
-                              ? Text(
-                                  "No profile picture",
-                                  textAlign: TextAlign.center,
+                              ? Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Text(
+                                      "No profile picture",
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  ],
                                 )
                               : Image.network(imagePath, fit: BoxFit.scaleDown),
                         )
@@ -129,30 +137,18 @@ class _ImagePageState extends State<ImagePage> {
   }
 
   Future uploadImage() async {
-    final userUid = FirebaseAuth.instance.currentUser?.uid;
-
     // upload file
     await FirebaseStorage.instance
-        .ref('pictures/$userUid.jpg')
+        .ref('pictures/${user.userUid}')
         .putData(webImage);
-
-    await downloadImage();
-  }
-
-  Future<String> downloadUrl() async {
-    final userUid = FirebaseAuth.instance.currentUser?.uid;
-    String downloadUrl = await FirebaseStorage.instance
-        .ref("pictures/$userUid.jpg")
+    user.avatarPath = await FirebaseStorage.instance
+        .ref("pictures/${user.userUid}")
         .getDownloadURL();
-    return downloadUrl;
-  }
 
-  Future downloadImage() async {
-    String downloadPath = await downloadUrl();
+    await user.saveDatabase();
     setState(() {
-      imagePath = downloadPath;
+      imagePath = user.avatarPath!;
     });
-    return;
   }
 
   // Future<ListResult> listFiles() async {

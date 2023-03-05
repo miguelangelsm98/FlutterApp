@@ -1,11 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Post {
-  final String? name;
-  final String? description;
-  final String? userUid;
+  String? name;
+  String? description;
+  String? userUid;
 
-  Post(this.name, this.description, this.userUid);
+  Post({this.name, this.description, this.userUid});
 
   factory Post.fromFirestore(
     DocumentSnapshot<Map<String, dynamic>> snapshot,
@@ -13,20 +13,25 @@ class Post {
   ) {
     final data = snapshot.data();
     return Post(
-      data?['name'],
-      data?['description'],
-      data?['userUid'],
+      name: data?['name'],
+      description: data?['description'],
+      userUid: data?['userUid'],
     );
   }
 
   Map<String, dynamic> toFirestore() => <String, dynamic>{
         'name': name,
         'description': description,
-        'user uid': userUid,
+        'userUid': userUid,
       };
 
   void save() async {
     await FirebaseFirestore.instance.collection('posts').add(toFirestore());
+  }
+
+  @override
+  String toString() {
+    return toFirestore().toString();
   }
 
   // Django Model
@@ -42,5 +47,3 @@ class Post {
   // is_active = models.BooleanField(default = True)
   // date_joined = models.DateTimeField(default = timezone.now)
 }
-
-
