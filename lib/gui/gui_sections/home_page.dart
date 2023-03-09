@@ -4,6 +4,7 @@ import 'package:flutter_application/gui/gui_sections/update_user_page.dart';
 import 'package:flutter_application/gui/gui_sections/add_posts_page.dart';
 import 'package:flutter_application/gui/gui_sections/list_posts_page.dart';
 import 'package:flutter_application/gui/gui_sections/user_info_page.dart';
+import 'package:flutter_application/gui/gui_sections/users_page.dart';
 import 'package:provider/provider.dart';
 
 import '../../main.dart';
@@ -42,6 +43,9 @@ class _MyHomePageState extends State<MyHomePage> {
           break;
         case 3:
           page = UserInfoPage();
+          break;
+        case 4:
+          page = UsersPage();
           break;
         default:
           throw UnimplementedError('no widget for ${appState.selectedIndex}');
@@ -121,6 +125,10 @@ class _MyHomePageState extends State<MyHomePage> {
                         NavigationRailDestination(
                           icon: Icon(Icons.verified_user),
                           label: Text('Check User'),
+                        ),
+                        NavigationRailDestination(
+                          icon: Icon(Icons.face ),
+                          label: Text('Users'),
                         ),
                       ],
                       selectedIndex: appState.selectedIndex,

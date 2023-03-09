@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application/gui/gui_sections/home_page.dart';
+import 'package:flutter_application/gui/gui_sections/update_user_page.dart';
 import 'package:flutter_application/models/user.dart';
 import 'package:provider/provider.dart';
 
@@ -99,11 +100,13 @@ class SignupPage extends StatelessWidget {
                           if (password1Controller.text ==
                               password2Controller.text) {
                             try {
-                              await signUp(emailController.text,
-                                  password1Controller.text);
+                              CustomUser u = CustomUser(
+                                  email: emailController.text,
+                                  password: password1Controller.text);
+                              await u.signUp();
                               await appState.doUserLogin();
                               Navigator.of(context).push(MaterialPageRoute(
-                                  builder: (context) => MyHomePage()));
+                                  builder: (context) => UpdateUserPage()));
                             } on FirebaseAuthException catch (e) {
                               print(e.toString());
                             }

@@ -45,9 +45,11 @@ class MyAppState extends ChangeNotifier {
   bool isLoggedIn = false;
   CustomUser? currentUser = CustomUser(email: "", password: "");
   int selectedIndex = 0;
+  List<CustomUser> users = <CustomUser>[];
 
   void changeSelectedIndex(int index) {
     selectedIndex = index;
+
     notifyListeners();
   }
 
@@ -55,14 +57,17 @@ class MyAppState extends ChangeNotifier {
     isLoggedIn = true;
     currentUser = await getUserObject();
     await doGetPosts();
+    await doGetUsers();
+
     notifyListeners();
   }
 
   void doUserLogout() {
+    selectedIndex = 0;
     isLoggedIn = false;
     currentUser = null;
-    currentUser?.posts = <Post>[];
-    selectedIndex = 0;
+    //currentUser?.posts = <Post>[];
+    users = <CustomUser>[];
 
     notifyListeners();
   }
@@ -78,6 +83,23 @@ class MyAppState extends ChangeNotifier {
         for (var docSnapshot in querySnapshot.docs) {
           Post p = Post.fromFirestore(docSnapshot, null);
           currentUser?.posts.add(p);
+        }
+      },
+      onError: (e) => print("Error completing: $e"),
+    );
+  }
+
+  Future<void> doGetUsers() async {
+    users = <CustomUser>[];
+    await FirebaseFirestore.instance
+        .collection("users")
+        .where("userUid", isNotEqualTo: currentUser?.userUid)
+        .get()
+        .then(
+      (querySnapshot) {
+        for (var docSnapshot in querySnapshot.docs) {
+          CustomUser u = CustomUser.fromFirestore(docSnapshot, null);
+          users.add(u);
         }
       },
       onError: (e) => print("Error completing: $e"),

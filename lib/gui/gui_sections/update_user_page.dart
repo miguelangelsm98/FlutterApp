@@ -36,6 +36,7 @@ class _UpdateUserPageState extends State<UpdateUserPage> {
     var dateController = TextEditingController(
         text: DateFormat('dd-MM-yyyy').format(user.birthDate!));
     var dateIso = user.birthDate!.toIso8601String();
+    DateTime? pickedDate = DateTime.now();
 
     return Scaffold(
       resizeToAvoidBottomInset: false,
@@ -58,7 +59,7 @@ class _UpdateUserPageState extends State<UpdateUserPage> {
           Column(
             children: [
               Text(
-                "Update User",
+                "Add User Information",
                 style: TextStyle(
                   fontSize: 30,
                   fontWeight: FontWeight.bold,
@@ -68,7 +69,7 @@ class _UpdateUserPageState extends State<UpdateUserPage> {
                 height: 20,
               ),
               Text(
-                "Update your information",
+                "Introduce your information",
                 style: TextStyle(
                   fontSize: 15,
                   color: Colors.grey[700],
@@ -110,12 +111,6 @@ class _UpdateUserPageState extends State<UpdateUserPage> {
                               ElevatedButton(
                                   onPressed: selectImage,
                                   child: const Text("Select Image")),
-                              SizedBox(
-                                width: 30,
-                              ),
-                              ElevatedButton(
-                                  onPressed: uploadImage,
-                                  child: const Text("Update Image")),
                             ],
                           )
                         ],
@@ -144,17 +139,17 @@ class _UpdateUserPageState extends State<UpdateUserPage> {
                         ),
                     readOnly: true, // when true user cannot edit text
                     onTap: () async {
-                      DateTime? pickedDate = await showDatePicker(
+                      pickedDate = await showDatePicker(
                           context: context,
-                          initialDate: DateTime.now(), //get today's date
+                          initialDate: pickedDate!, //get today's date
                           firstDate: DateTime(
                               1910), //DateTime.now() - not to allow to choose before today.
                           lastDate: DateTime(2100));
                       if (pickedDate != null) {
                         String formattedDate = DateFormat('dd-MM-yyyy').format(
-                            pickedDate); // format date in required form here we use yyyy-MM-dd that means time is removed
+                            pickedDate!); // format date in required form here we use yyyy-MM-dd that means time is removed
                         dateController.text = formattedDate;
-                        dateIso = pickedDate.toIso8601String();
+                        dateIso = pickedDate!.toIso8601String();
                       }
 
                       // setState(() {
@@ -185,10 +180,21 @@ class _UpdateUserPageState extends State<UpdateUserPage> {
                 minWidth: double.infinity,
                 height: 60,
                 onPressed: () async {
+                  await FirebaseStorage.instance
+                      .ref('pictures/${user.userUid}')
+                      .putData(webImage);
+                  user.avatarPath = await FirebaseStorage.instance
+                      .ref("pictures/${user.userUid}")
+                      .getDownloadURL();
                   user.name = nameController.text;
                   user.lastName = lastNameController.text;
-                  // user.birthDate = birthDateController.text;
                   user.birthDate = DateTime.parse(dateIso);
+                  await FirebaseStorage.instance
+                      .ref('pictures/${user.userUid}')
+                      .putData(webImage);
+                  user.avatarPath = await FirebaseStorage.instance
+                      .ref("pictures/${user.userUid}")
+                      .getDownloadURL();
                   user.saveDatabase();
                   setState(() {});
                   Navigator.of(context).push(
@@ -241,19 +247,19 @@ class _UpdateUserPageState extends State<UpdateUserPage> {
     }
   }
 
-  Future uploadImage() async {
-    // upload file
-    await FirebaseStorage.instance
-        .ref('pictures/${user.userUid}')
-        .putData(webImage);
-    user.avatarPath = await FirebaseStorage.instance
-        .ref("pictures/${user.userUid}")
-        .getDownloadURL();
-    await user.saveDatabase();
-    setState(() {});
-    Navigator.of(context)
-        .push(MaterialPageRoute(builder: (context) => MyHomePage()));
-  }
+  // Future uploadImage() async {
+  //   // upload file
+  //   await FirebaseStorage.instance
+  //       .ref('pictures/${user.userUid}')
+  //       .putData(webImage);
+  //   user.avatarPath = await FirebaseStorage.instance
+  //       .ref("pictures/${user.userUid}")
+  //       .getDownloadURL();
+  //   await user.saveDatabase();
+  //   setState(() {});
+  //   Navigator.of(context)
+  //       .push(MaterialPageRoute(builder: (context) => MyHomePage()));
+  // }
 }
 
 Widget makeInput({label, controller, obsureText = false}) {

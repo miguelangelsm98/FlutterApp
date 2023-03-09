@@ -78,13 +78,22 @@ class CustomUser {
   }
 
   Future login() async {
-    var result = FirebaseAuth.instance
+    await FirebaseAuth.instance
         .signInWithEmailAndPassword(email: email, password: password);
-
     if (FirebaseAuth.instance.currentUser != null) {
       userUid = FirebaseAuth.instance.currentUser!.uid;
     }
-    return result;
+  }
+
+  Future signUp() async {
+    //CustomUser u = CustomUser(email: email, password: password);
+    await saveAuth();
+    await login();
+    joinedDate = DateTime.now();
+    name = "";
+    lastName = "";
+    birthDate = DateTime(1900, 1, 1);
+    await saveDatabase();
   }
 
   // Django Model
@@ -99,24 +108,6 @@ class CustomUser {
   // is_staff = models.BooleanField(default = False)
   // is_active = models.BooleanField(default = True)
   // date_joined = models.DateTimeField(default = timezone.now)
-}
-
-Future<CustomUser> signUp(String email, String password) async {
-  CustomUser u = CustomUser(email: email, password: password);
-  await u.saveAuth();
-  await u.login();
-  u.joinedDate = DateTime.now();
-  u.name = "Default Name";
-  u.lastName = "Default Last Name";
-  u.birthDate = DateTime(1990, 1, 1);
-  await u.saveDatabase();
-  return u;
-}
-
-Future<CustomUser> login(String email, String password) async {
-  CustomUser u = CustomUser(email: email, password: password);
-  await u.login();
-  return u;
 }
 
 Future<CustomUser?> getUserObject() async {

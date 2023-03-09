@@ -97,8 +97,10 @@ class _LoginPageState extends State<LoginPage> {
                       height: 60,
                       onPressed: () async {
                         try {
-                          await login(
-                              emailController.text, passwordController.text);
+                          CustomUser u = CustomUser(
+                              email: emailController.text,
+                              password: passwordController.text);
+                          await u.login();
                           await appState.doUserLogin();
                         } on FirebaseAuthException catch (e) {
                           print(e.toString());
