@@ -180,21 +180,17 @@ class _UpdateUserPageState extends State<UpdateUserPage> {
                 minWidth: double.infinity,
                 height: 60,
                 onPressed: () async {
-                  await FirebaseStorage.instance
-                      .ref('pictures/${user.userUid}')
-                      .putData(webImage);
-                  user.avatarPath = await FirebaseStorage.instance
-                      .ref("pictures/${user.userUid}")
-                      .getDownloadURL();
+                  if (pickedImage != null) {
+                    await FirebaseStorage.instance
+                        .ref('pictures/${user.userUid}')
+                        .putData(webImage);
+                    user.avatarPath = await FirebaseStorage.instance
+                        .ref("pictures/${user.userUid}")
+                        .getDownloadURL();
+                  }
                   user.name = nameController.text;
                   user.lastName = lastNameController.text;
                   user.birthDate = DateTime.parse(dateIso);
-                  await FirebaseStorage.instance
-                      .ref('pictures/${user.userUid}')
-                      .putData(webImage);
-                  user.avatarPath = await FirebaseStorage.instance
-                      .ref("pictures/${user.userUid}")
-                      .getDownloadURL();
                   user.saveDatabase();
                   setState(() {});
                   Navigator.of(context).push(

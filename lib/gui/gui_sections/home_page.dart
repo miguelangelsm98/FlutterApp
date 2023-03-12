@@ -42,9 +42,6 @@ class _MyHomePageState extends State<MyHomePage> {
           page = UpdateUserPage();
           break;
         case 3:
-          page = UserInfoPage();
-          break;
-        case 4:
           page = UsersPage();
           break;
         default:
@@ -123,11 +120,7 @@ class _MyHomePageState extends State<MyHomePage> {
                           label: Text('Update User'),
                         ),
                         NavigationRailDestination(
-                          icon: Icon(Icons.verified_user),
-                          label: Text('Check User'),
-                        ),
-                        NavigationRailDestination(
-                          icon: Icon(Icons.face ),
+                          icon: Icon(Icons.face),
                           label: Text('Users'),
                         ),
                       ],

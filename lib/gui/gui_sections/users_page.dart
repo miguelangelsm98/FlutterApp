@@ -11,10 +11,16 @@ class UsersPage extends StatefulWidget {
 }
 
 class _UsersPageState extends State<UsersPage> {
+  var listener;
+
   @override
   Widget build(BuildContext context) {
     var appState = context.watch<MyAppState>();
-    final ScrollController _firstController = ScrollController();
+    final ScrollController firstController = ScrollController();
+    getUsers(appState);
+
+    final Stream<QuerySnapshot> usersStream =
+        FirebaseFirestore.instance.collection('users').snapshots();
 
     return Scaffold(
       resizeToAvoidBottomInset: false,
@@ -59,46 +65,123 @@ class _UsersPageState extends State<UsersPage> {
               SizedBox(
                 height: 30,
               ),
+              // StreamBuilder<QuerySnapshot>(
+              //     stream: usersStream,
+              //     builder: (context, snapshot) {
+              //       if (snapshot.hasError) {
+              //         return Text('Something went wrong');
+              //       }
+              //       if (snapshot.connectionState == ConnectionState.waiting) {
+              //         return Text("Loading");
+              //       }
+              //       return
+
               ListView.builder(
                   physics: NeverScrollableScrollPhysics(),
                   shrinkWrap: true,
-                  controller: _firstController,
+                  controller: firstController,
                   itemCount: appState.users.length,
                   itemBuilder: (BuildContext context, int index) {
-                    return userWidget(user: appState.users[index]);
+                    return userWidget(
+                      currentUser: appState.currentUser!,
+                      user: appState.users[index],
+                      appState: appState,
+                    );
                   }),
+
+              // }),
             ],
           ),
         ),
       ),
     );
   }
-}
 
-Widget userWidget({required CustomUser user}) {
-  return Column(children: [
-    Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      SizedBox(
-        width: 10,
-      ),
-      SizedBox(
-          height: 100,
-          child: Image.network(user.avatarPath!, fit: BoxFit.scaleDown)),
-      SizedBox(
-        width: 10,
-      ),
-      SizedBox(
+  Widget userWidget(
+      {required CustomUser currentUser,
+      required CustomUser user,
+      required MyAppState appState}) {
+    return Column(children: [
+      Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        SizedBox(
+          width: 10,
+        ),
+        SizedBox(
+            height: 100,
+            child: Image.network(user.avatarPath!, fit: BoxFit.scaleDown)),
+        SizedBox(
+          width: 10,
+        ),
+        SizedBox(
+            height: 100,
+            child: Center(
+              child: Text("${user.name} ${user.lastName!}",
+                  textAlign: TextAlign.center),
+            )),
+        SizedBox(
+          width: 10,
+        ),
+        SizedBox(
           height: 100,
           child: Center(
-            child: Text("${user.name} ${user.lastName!}",
-                textAlign: TextAlign.center),
-          )),
+            child: friendWidget(
+                currentUser: currentUser, user: user, appState: appState),
+          ),
+        ),
+      ]),
       SizedBox(
-        width: 10,
+        height: 25,
       ),
-    ]),
-    SizedBox(
-      height: 25,
-    ),
-  ]);
+    ]);
+  }
+
+  Widget friendWidget(
+      {required CustomUser currentUser,
+      required CustomUser user,
+      required MyAppState appState}) {
+    Widget widget;
+
+    print("My own requests: ${currentUser.ownRequests}");
+    print("My friend requests: ${currentUser.friendRequests}");
+    print("My friends: ${currentUser.friends}");
+
+    if (currentUser.friends.contains(user.userUid)) {
+      widget = Text("Already a friend!!");
+    } else if (currentUser.ownRequests.contains(user.userUid)) {
+      widget = Text("Already sent friend request");
+    } else if (currentUser.friendRequests.contains(user.userUid)) {
+      widget = ElevatedButton(
+        onPressed: () async {
+          await currentUser.acceptFriendRequest(user);
+          await appState.doGetFriends();
+          setState(() {});
+        },
+        child: Text("Accept friend request"),
+      );
+    } else {
+      widget = ElevatedButton(
+        onPressed: () async {
+          await currentUser.addFriendRequest(user);
+          await appState.doGetFriends();
+          setState(() {});
+        },
+        child: Text("Send friend request"),
+      );
+    }
+    return widget;
+  }
+
+  void getUsers(MyAppState appState) {
+    final users = FirebaseFirestore.instance
+        .collection("users")
+        .withConverter(
+            fromFirestore: CustomUser.fromFirestore,
+            toFirestore: (CustomUser user, options) => user.toFirestore());
+
+    listener = users.snapshots().listen((event) async {
+      print("There was a change");
+      await appState.doGetUsers();
+      await appState.doGetFriends();
+    });
+  }
 }

@@ -14,7 +14,11 @@ class CustomUser {
   String? avatarPath;
   DateTime? birthDate;
   DateTime? joinedDate;
+
   List<Post> posts = <Post>[];
+  List<String> ownRequests = <String>[];
+  List<String> friendRequests = <String>[];
+  List<String> friends = <String>[];
 
   CustomUser({
     this.userUid,
@@ -25,6 +29,8 @@ class CustomUser {
     this.avatarPath = defaultAvatarPath,
     this.birthDate,
     this.joinedDate,
+    // this.ownRequests,
+    // this.friendRequests,
   });
 
   factory CustomUser.fromFirestore(
@@ -45,6 +51,12 @@ class CustomUser {
       joinedDate: data?['joinedDate'] != null
           ? DateTime.parse(data?['joinedDate'])
           : null,
+      // ownRequests: data?['ownRequests'] != null
+      //     ? data!['ownRequests'] as List<String>?
+      //     : <String>[],
+      // friendRequests: data?['friendRequests'] != null
+      //     ? data!['friendRequests'] as List<String>?
+      //     : <String>[],
     );
   }
 
@@ -57,6 +69,8 @@ class CustomUser {
       if (avatarPath != null) "avatarPath": avatarPath,
       if (birthDate != null) "birthDate": birthDate?.toIso8601String(),
       if (joinedDate != null) "joinedDate": joinedDate?.toIso8601String(),
+      // "ownRequests": ownRequests,
+      // "friendRequests": friendRequests,
     };
   }
 
@@ -86,7 +100,6 @@ class CustomUser {
   }
 
   Future signUp() async {
-    //CustomUser u = CustomUser(email: email, password: password);
     await saveAuth();
     await login();
     joinedDate = DateTime.now();
@@ -94,6 +107,43 @@ class CustomUser {
     lastName = "";
     birthDate = DateTime(1900, 1, 1);
     await saveDatabase();
+  }
+
+//todo
+  Future addFriendRequest(CustomUser friend) async {
+    // Add friend to own requests of user
+    await FirebaseFirestore.instance.collection('users').doc(userUid).update({
+      "ownRequests": FieldValue.arrayUnion([friend.userUid]),
+    });
+
+    // Add user to friend requests of friend
+    await FirebaseFirestore.instance
+        .collection('users')
+        .doc(friend.userUid)
+        .update({
+      "friendRequests": FieldValue.arrayUnion([userUid]),
+    });
+  }
+
+  Future acceptFriendRequest(CustomUser friend) async {
+    // Remove friend from friend requests of user
+    await FirebaseFirestore.instance.collection('users').doc(userUid).update({
+      "friendRequests": FieldValue.arrayRemove([friend.userUid]),
+    });
+
+    // Remove user from own requests of friend
+    await FirebaseFirestore.instance
+        .collection('users')
+        .doc(friend.userUid)
+        .update({
+      "ownRequests": FieldValue.arrayRemove([userUid]),
+    });
+
+    // Add friend relationship
+    await FirebaseFirestore.instance.collection('friends').add({
+      "firstUserUid": friend.userUid,
+      "secondUserUid": userUid,
+    });
   }
 
   // Django Model

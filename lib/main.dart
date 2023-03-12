@@ -45,7 +45,7 @@ class MyAppState extends ChangeNotifier {
   bool isLoggedIn = false;
   CustomUser? currentUser = CustomUser(email: "", password: "");
   int selectedIndex = 0;
-  List<CustomUser> users = <CustomUser>[];
+  var users = <CustomUser>[];
 
   void changeSelectedIndex(int index) {
     selectedIndex = index;
@@ -56,8 +56,14 @@ class MyAppState extends ChangeNotifier {
   Future<void> doUserLogin() async {
     isLoggedIn = true;
     currentUser = await getUserObject();
+    currentUser?.ownRequests = <String>[];
+    currentUser?.friendRequests = <String>[];
+    currentUser?.friends = <String>[];
+    currentUser?.posts = <Post>[];
+
     await doGetPosts();
     await doGetUsers();
+    await doGetFriends();
 
     notifyListeners();
   }
@@ -66,14 +72,13 @@ class MyAppState extends ChangeNotifier {
     selectedIndex = 0;
     isLoggedIn = false;
     currentUser = null;
-    //currentUser?.posts = <Post>[];
-    users = <CustomUser>[];
+    users.clear();
 
     notifyListeners();
   }
 
   Future<void> doGetPosts() async {
-    currentUser?.posts = <Post>[];
+    currentUser?.posts.clear();
     await FirebaseFirestore.instance
         .collection("posts")
         .where("userUid", isEqualTo: currentUser?.userUid)
@@ -90,7 +95,7 @@ class MyAppState extends ChangeNotifier {
   }
 
   Future<void> doGetUsers() async {
-    users = <CustomUser>[];
+    users.clear();
     await FirebaseFirestore.instance
         .collection("users")
         .where("userUid", isNotEqualTo: currentUser?.userUid)
@@ -106,43 +111,100 @@ class MyAppState extends ChangeNotifier {
     );
   }
 
+  Future<void> doGetFriends() async {
+    currentUser?.ownRequests.clear();
+    currentUser?.friendRequests.clear();
+    currentUser?.friends.clear();
+
+    FirebaseFirestore.instance
+        .collection("users")
+        .doc(currentUser?.userUid)
+        .get()
+        .then(
+      (DocumentSnapshot doc) {
+        final data = doc.data() as Map<String, dynamic>;
+        if (data["ownRequests"] != null) {
+          for (var request in data["ownRequests"]) {
+            print("var ownRequests is $request");
+            currentUser!.ownRequests.add(request);
+            print("own requests: ${currentUser!.ownRequests}");
+          }
+        }
+        if (data["friendRequests"] != null) {
+          for (var request in data["friendRequests"]) {
+            print("var friendRequests is $request");
+            currentUser!.friendRequests.add(request);
+            print("friend requests: ${currentUser!.friendRequests}");
+          }
+        }
+      },
+      onError: (e) => print("Error getting document: $e"),
+    );
+
+    FirebaseFirestore.instance
+        .collection("friends")
+        .where("firstUserUid", isEqualTo: currentUser?.userUid)
+        .get()
+        .then(
+      (querySnapshot) {
+        for (var docSnapshot in querySnapshot.docs) {
+          currentUser!.friends.add(docSnapshot.data()["secondUserUid"]);
+        }
+      },
+      onError: (e) => print("Error getting document: $e"),
+    );
+
+    FirebaseFirestore.instance
+        .collection("friends")
+        .where("secondUserUid", isEqualTo: currentUser?.userUid)
+        .get()
+        .then(
+      (querySnapshot) {
+        for (var docSnapshot in querySnapshot.docs) {
+          currentUser!.friends.add(docSnapshot.data()["firstUserUid"]);
+        }
+      },
+      onError: (e) => print("Error getting document: $e"),
+    );
+  }
+
   // Example App
 
-  var current = WordPair.random();
-  var history = <WordPair>[];
-  GlobalKey? historyListKey;
+  // var current = WordPair.random();
+  // var history = <WordPair>[];
+  // GlobalKey? historyListKey;
 
-  void getNext() {
-    history.insert(0, current);
-    var animatedList = historyListKey?.currentState as AnimatedListState?;
-    animatedList?.insertItem(0);
-    current = WordPair.random();
-    notifyListeners();
-  }
+  // void getNext() {
+  //   history.insert(0, current);
+  //   var animatedList = historyListKey?.currentState as AnimatedListState?;
+  //   animatedList?.insertItem(0);
+  //   current = WordPair.random();
+  //   notifyListeners();
+  // }
 
-  var favorites = <WordPair>[];
+  // var favorites = <WordPair>[];
 
-  void toggleFavorite([WordPair? pair]) {
-    pair = pair ?? current;
-    if (favorites.contains(pair)) {
-      favorites.remove(pair);
-    } else {
-      favorites.add(pair);
-      createFavorite(name: pair.toString());
-    }
-    notifyListeners();
-  }
+  // void toggleFavorite([WordPair? pair]) {
+  //   pair = pair ?? current;
+  //   if (favorites.contains(pair)) {
+  //     favorites.remove(pair);
+  //   } else {
+  //     favorites.add(pair);
+  //     createFavorite(name: pair.toString());
+  //   }
+  //   notifyListeners();
+  // }
 
-  void removeFavorite(WordPair pair) {
-    favorites.remove(pair);
-    notifyListeners();
-  }
+  // void removeFavorite(WordPair pair) {
+  //   favorites.remove(pair);
+  //   notifyListeners();
+  // }
 
-  void createFavorite({required String name}) async {
-    final docFavorite = FirebaseFirestore.instance.collection('favorites');
-    final json = {
-      'name': name,
-    };
-    await docFavorite.add(json);
-  }
+  // void createFavorite({required String name}) async {
+  //   final docFavorite = FirebaseFirestore.instance.collection('favorites');
+  //   final json = {
+  //     'name': name,
+  //   };
+  //   await docFavorite.add(json);
+  // }
 }

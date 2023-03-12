@@ -17,7 +17,7 @@ class _LoginPageState extends State<LoginPage> {
     var appState = context.watch<MyAppState>();
 
     final emailController =
-        TextEditingController(text: "123@gmail.com"); // For testing purposes
+        TextEditingController(text: "david@gmail.com"); // For testing purposes
     final passwordController =
         TextEditingController(text: "123123"); // For testing purposes
 
