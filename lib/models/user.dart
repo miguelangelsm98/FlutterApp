@@ -109,7 +109,6 @@ class CustomUser {
     await saveDatabase();
   }
 
-//todo
   Future addFriendRequest(CustomUser friend) async {
     // Add friend to own requests of user
     await FirebaseFirestore.instance.collection('users').doc(userUid).update({
@@ -144,6 +143,22 @@ class CustomUser {
       "firstUserUid": friend.userUid,
       "secondUserUid": userUid,
     });
+  }
+
+  Future declineFriendRequest(CustomUser friend) async {
+    // Remove friend from friend requests of user
+    await FirebaseFirestore.instance.collection('users').doc(userUid).update({
+      "friendRequests": FieldValue.arrayRemove([friend.userUid]),
+    });
+
+    // Remove user from own requests of friend
+    await FirebaseFirestore.instance
+        .collection('users')
+        .doc(friend.userUid)
+        .update({
+      "ownRequests": FieldValue.arrayRemove([userUid]),
+    });
+    
   }
 
   // Django Model
@@ -182,4 +197,17 @@ Future<CustomUser?> getUserObjectFromUid(String userUid) async {
   final docSnap = await ref.get();
   final user = docSnap.data(); // Convert to User object
   return user;
+}
+
+Future<List<CustomUser>> getUserObjects(String userUid) async {
+  List<CustomUser> users = <CustomUser>[];
+  final ref = FirebaseFirestore.instance.collection("users").where("userUid", isNotEqualTo: userUid).withConverter(
+        fromFirestore: CustomUser.fromFirestore,
+        toFirestore: (CustomUser user, _) => user.toFirestore(),
+      );
+  final querySnap = await ref.get();
+  for (var element in querySnap.docs) {
+    users.add(element.data());
+  } // Convert to User object
+  return users;
 }

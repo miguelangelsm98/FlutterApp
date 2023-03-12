@@ -66,6 +66,8 @@ class MyAppState extends ChangeNotifier {
     await doGetFriends();
 
     notifyListeners();
+
+    print("--- New user logged in: ${currentUser!.name} ---");
   }
 
   void doUserLogout() {
@@ -96,19 +98,8 @@ class MyAppState extends ChangeNotifier {
 
   Future<void> doGetUsers() async {
     users.clear();
-    await FirebaseFirestore.instance
-        .collection("users")
-        .where("userUid", isNotEqualTo: currentUser?.userUid)
-        .get()
-        .then(
-      (querySnapshot) {
-        for (var docSnapshot in querySnapshot.docs) {
-          CustomUser u = CustomUser.fromFirestore(docSnapshot, null);
-          users.add(u);
-        }
-      },
-      onError: (e) => print("Error completing: $e"),
-    );
+    users = await getUserObjects(currentUser!.userUid!);
+    notifyListeners();
   }
 
   Future<void> doGetFriends() async {
@@ -116,7 +107,7 @@ class MyAppState extends ChangeNotifier {
     currentUser?.friendRequests.clear();
     currentUser?.friends.clear();
 
-    FirebaseFirestore.instance
+    await FirebaseFirestore.instance
         .collection("users")
         .doc(currentUser?.userUid)
         .get()
@@ -124,24 +115,20 @@ class MyAppState extends ChangeNotifier {
       (DocumentSnapshot doc) {
         final data = doc.data() as Map<String, dynamic>;
         if (data["ownRequests"] != null) {
-          for (var request in data["ownRequests"]) {
-            print("var ownRequests is $request");
+          for (var request in data["ownRequests"]!) {
             currentUser!.ownRequests.add(request);
-            print("own requests: ${currentUser!.ownRequests}");
           }
         }
         if (data["friendRequests"] != null) {
-          for (var request in data["friendRequests"]) {
-            print("var friendRequests is $request");
+          for (var request in data["friendRequests"]!) {
             currentUser!.friendRequests.add(request);
-            print("friend requests: ${currentUser!.friendRequests}");
           }
         }
       },
       onError: (e) => print("Error getting document: $e"),
     );
 
-    FirebaseFirestore.instance
+    await FirebaseFirestore.instance
         .collection("friends")
         .where("firstUserUid", isEqualTo: currentUser?.userUid)
         .get()
@@ -154,7 +141,7 @@ class MyAppState extends ChangeNotifier {
       onError: (e) => print("Error getting document: $e"),
     );
 
-    FirebaseFirestore.instance
+    await FirebaseFirestore.instance
         .collection("friends")
         .where("secondUserUid", isEqualTo: currentUser?.userUid)
         .get()
@@ -166,6 +153,8 @@ class MyAppState extends ChangeNotifier {
       },
       onError: (e) => print("Error getting document: $e"),
     );
+
+    notifyListeners();
   }
 
   // Example App

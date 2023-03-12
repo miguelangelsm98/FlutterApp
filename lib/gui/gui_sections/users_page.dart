@@ -17,7 +17,8 @@ class _UsersPageState extends State<UsersPage> {
   Widget build(BuildContext context) {
     var appState = context.watch<MyAppState>();
     final ScrollController firstController = ScrollController();
-    getUsers(appState);
+
+    // getUsers(appState);
 
     final Stream<QuerySnapshot> usersStream =
         FirebaseFirestore.instance.collection('users').snapshots();
@@ -150,20 +151,32 @@ class _UsersPageState extends State<UsersPage> {
     } else if (currentUser.ownRequests.contains(user.userUid)) {
       widget = Text("Already sent friend request");
     } else if (currentUser.friendRequests.contains(user.userUid)) {
-      widget = ElevatedButton(
-        onPressed: () async {
-          await currentUser.acceptFriendRequest(user);
-          await appState.doGetFriends();
-          setState(() {});
-        },
-        child: Text("Accept friend request"),
+      widget = Row(
+        children: [
+          ElevatedButton(
+            onPressed: () async {
+              await currentUser.acceptFriendRequest(user);
+              await appState.doGetFriends();
+              // setState(() {});
+            },
+            child: Text("Accept Request"),
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              await currentUser.declineFriendRequest(user);
+              await appState.doGetFriends();
+              // setState(() {});
+            },
+            child: Text("Decline Request"),
+          ),
+        ],
       );
     } else {
       widget = ElevatedButton(
         onPressed: () async {
           await currentUser.addFriendRequest(user);
           await appState.doGetFriends();
-          setState(() {});
+          // setState(() {});
         },
         child: Text("Send friend request"),
       );
@@ -171,17 +184,21 @@ class _UsersPageState extends State<UsersPage> {
     return widget;
   }
 
-  void getUsers(MyAppState appState) {
-    final users = FirebaseFirestore.instance
-        .collection("users")
-        .withConverter(
-            fromFirestore: CustomUser.fromFirestore,
-            toFirestore: (CustomUser user, options) => user.toFirestore());
+  // void getUsers(MyAppState appState) {
+  //   final users = FirebaseFirestore.instance.collection("users").withConverter(
+  //       fromFirestore: CustomUser.fromFirestore,
+  //       toFirestore: (CustomUser user, options) => user.toFirestore());
 
-    listener = users.snapshots().listen((event) async {
-      print("There was a change");
-      await appState.doGetUsers();
-      await appState.doGetFriends();
-    });
-  }
+  //   listener = users.snapshots().listen((event) async {
+  //     print("There was a change");
+  //     await appState.doGetUsers();
+  //     await appState.doGetFriends();
+  //   });
+
+  //   List<CustomUser> usersList(QuerySnapshot snapshot) {
+  //     return snapshot.docs.map((doc) {
+  //       return CustomUser.fromFirestore(doc, null);
+  //     }).toList();
+  //   }
+  // }
 }
