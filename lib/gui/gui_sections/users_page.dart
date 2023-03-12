@@ -66,17 +66,6 @@ class _UsersPageState extends State<UsersPage> {
               SizedBox(
                 height: 30,
               ),
-              // StreamBuilder<QuerySnapshot>(
-              //     stream: usersStream,
-              //     builder: (context, snapshot) {
-              //       if (snapshot.hasError) {
-              //         return Text('Something went wrong');
-              //       }
-              //       if (snapshot.connectionState == ConnectionState.waiting) {
-              //         return Text("Loading");
-              //       }
-              //       return
-
               ListView.builder(
                   physics: NeverScrollableScrollPhysics(),
                   shrinkWrap: true,
@@ -89,8 +78,6 @@ class _UsersPageState extends State<UsersPage> {
                       appState: appState,
                     );
                   }),
-
-              // }),
             ],
           ),
         ),
@@ -142,22 +129,31 @@ class _UsersPageState extends State<UsersPage> {
       required MyAppState appState}) {
     Widget widget;
 
-    print("My own requests: ${currentUser.ownRequests}");
-    print("My friend requests: ${currentUser.friendRequests}");
-    print("My friends: ${currentUser.friends}");
-
     if (currentUser.friends.contains(user.userUid)) {
-      widget = Text("Already a friend!!");
-    } else if (currentUser.ownRequests.contains(user.userUid)) {
-      widget = Text("Already sent friend request");
-    } else if (currentUser.friendRequests.contains(user.userUid)) {
+      widget = ElevatedButton(
+        onPressed: () async {
+          await currentUser.removeFriend(user);
+          await appState.doGetFriends();
+          await appState.doGetPosts();
+        },
+        child: Text("Delete friend"),
+      );
+    } else if (currentUser.ownRequests!.contains(user.userUid)) {
+      widget = ElevatedButton(
+        onPressed: () async {
+          await currentUser.removeFriendRequest(user);
+          await appState.doGetFriends();
+        },
+        child: Text("Cancel friend request"),
+      );
+    } else if (currentUser.friendRequests!.contains(user.userUid)) {
       widget = Row(
         children: [
           ElevatedButton(
             onPressed: () async {
               await currentUser.acceptFriendRequest(user);
               await appState.doGetFriends();
-              // setState(() {});
+              await appState.doGetPosts();
             },
             child: Text("Accept Request"),
           ),
@@ -165,7 +161,6 @@ class _UsersPageState extends State<UsersPage> {
             onPressed: () async {
               await currentUser.declineFriendRequest(user);
               await appState.doGetFriends();
-              // setState(() {});
             },
             child: Text("Decline Request"),
           ),
@@ -176,29 +171,10 @@ class _UsersPageState extends State<UsersPage> {
         onPressed: () async {
           await currentUser.addFriendRequest(user);
           await appState.doGetFriends();
-          // setState(() {});
         },
         child: Text("Send friend request"),
       );
     }
     return widget;
   }
-
-  // void getUsers(MyAppState appState) {
-  //   final users = FirebaseFirestore.instance.collection("users").withConverter(
-  //       fromFirestore: CustomUser.fromFirestore,
-  //       toFirestore: (CustomUser user, options) => user.toFirestore());
-
-  //   listener = users.snapshots().listen((event) async {
-  //     print("There was a change");
-  //     await appState.doGetUsers();
-  //     await appState.doGetFriends();
-  //   });
-
-  //   List<CustomUser> usersList(QuerySnapshot snapshot) {
-  //     return snapshot.docs.map((doc) {
-  //       return CustomUser.fromFirestore(doc, null);
-  //     }).toList();
-  //   }
-  // }
 }

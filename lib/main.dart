@@ -53,19 +53,23 @@ class MyAppState extends ChangeNotifier {
     notifyListeners();
   }
 
+  // Future<void> refreshCurrentUser() async {
+  //   currentUser = await getUserObject();
+
+  //   notifyListeners();
+  // }
+
   Future<void> doUserLogin() async {
     isLoggedIn = true;
     currentUser = await getUserObject();
-    currentUser?.ownRequests = <String>[];
-    currentUser?.friendRequests = <String>[];
     currentUser?.friends = <String>[];
     currentUser?.posts = <Post>[];
 
-    await doGetPosts();
     await doGetUsers();
     await doGetFriends();
+    await doGetPosts();
 
-    notifyListeners();
+    // notifyListeners();
 
     print("--- New user logged in: ${currentUser!.name} ---");
   }
@@ -83,17 +87,20 @@ class MyAppState extends ChangeNotifier {
     currentUser?.posts.clear();
     await FirebaseFirestore.instance
         .collection("posts")
-        .where("userUid", isEqualTo: currentUser?.userUid)
+        .where("userUid", whereIn: currentUser?.closeFriends())
+        .orderBy("createdDate")
         .get()
         .then(
-      (querySnapshot) {
+      (querySnapshot) async {
         for (var docSnapshot in querySnapshot.docs) {
           Post p = Post.fromFirestore(docSnapshot, null);
+          p.user = await getUserObjectFromUid(p.userUid!);
           currentUser?.posts.add(p);
         }
       },
       onError: (e) => print("Error completing: $e"),
     );
+    notifyListeners();
   }
 
   Future<void> doGetUsers() async {
@@ -103,30 +110,7 @@ class MyAppState extends ChangeNotifier {
   }
 
   Future<void> doGetFriends() async {
-    currentUser?.ownRequests.clear();
-    currentUser?.friendRequests.clear();
     currentUser?.friends.clear();
-
-    await FirebaseFirestore.instance
-        .collection("users")
-        .doc(currentUser?.userUid)
-        .get()
-        .then(
-      (DocumentSnapshot doc) {
-        final data = doc.data() as Map<String, dynamic>;
-        if (data["ownRequests"] != null) {
-          for (var request in data["ownRequests"]!) {
-            currentUser!.ownRequests.add(request);
-          }
-        }
-        if (data["friendRequests"] != null) {
-          for (var request in data["friendRequests"]!) {
-            currentUser!.friendRequests.add(request);
-          }
-        }
-      },
-      onError: (e) => print("Error getting document: $e"),
-    );
 
     await FirebaseFirestore.instance
         .collection("friends")
@@ -156,44 +140,4 @@ class MyAppState extends ChangeNotifier {
 
     notifyListeners();
   }
-
-  // Example App
-
-  // var current = WordPair.random();
-  // var history = <WordPair>[];
-  // GlobalKey? historyListKey;
-
-  // void getNext() {
-  //   history.insert(0, current);
-  //   var animatedList = historyListKey?.currentState as AnimatedListState?;
-  //   animatedList?.insertItem(0);
-  //   current = WordPair.random();
-  //   notifyListeners();
-  // }
-
-  // var favorites = <WordPair>[];
-
-  // void toggleFavorite([WordPair? pair]) {
-  //   pair = pair ?? current;
-  //   if (favorites.contains(pair)) {
-  //     favorites.remove(pair);
-  //   } else {
-  //     favorites.add(pair);
-  //     createFavorite(name: pair.toString());
-  //   }
-  //   notifyListeners();
-  // }
-
-  // void removeFavorite(WordPair pair) {
-  //   favorites.remove(pair);
-  //   notifyListeners();
-  // }
-
-  // void createFavorite({required String name}) async {
-  //   final docFavorite = FirebaseFirestore.instance.collection('favorites');
-  //   final json = {
-  //     'name': name,
-  //   };
-  //   await docFavorite.add(json);
-  // }
 }

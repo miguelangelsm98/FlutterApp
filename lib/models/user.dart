@@ -14,10 +14,10 @@ class CustomUser {
   String? avatarPath;
   DateTime? birthDate;
   DateTime? joinedDate;
+  List<String>? ownRequests;
+  List<String>? friendRequests;
 
   List<Post> posts = <Post>[];
-  List<String> ownRequests = <String>[];
-  List<String> friendRequests = <String>[];
   List<String> friends = <String>[];
 
   CustomUser({
@@ -29,8 +29,8 @@ class CustomUser {
     this.avatarPath = defaultAvatarPath,
     this.birthDate,
     this.joinedDate,
-    // this.ownRequests,
-    // this.friendRequests,
+    this.ownRequests,
+    this.friendRequests,
   });
 
   factory CustomUser.fromFirestore(
@@ -38,6 +38,22 @@ class CustomUser {
     SnapshotOptions? options,
   ) {
     final data = snapshot.data();
+
+    List<String> ownRequests = <String>[];
+    List<String> friendRequests = <String>[];
+
+    if (data?["ownRequests"] != null) {
+      for (var request in data?["ownRequests"]) {
+        ownRequests.add(request);
+      }
+    }
+
+    if (data?["friendRequests"] != null) {
+      for (var request in data?["friendRequests"]) {
+        friendRequests.add(request);
+      }
+    }
+
     return CustomUser(
       userUid: data?['userUid'],
       email: data?['email'],
@@ -51,12 +67,8 @@ class CustomUser {
       joinedDate: data?['joinedDate'] != null
           ? DateTime.parse(data?['joinedDate'])
           : null,
-      // ownRequests: data?['ownRequests'] != null
-      //     ? data!['ownRequests'] as List<String>?
-      //     : <String>[],
-      // friendRequests: data?['friendRequests'] != null
-      //     ? data!['friendRequests'] as List<String>?
-      //     : <String>[],
+      ownRequests: ownRequests,
+      friendRequests: friendRequests,
     );
   }
 
@@ -69,8 +81,8 @@ class CustomUser {
       if (avatarPath != null) "avatarPath": avatarPath,
       if (birthDate != null) "birthDate": birthDate?.toIso8601String(),
       if (joinedDate != null) "joinedDate": joinedDate?.toIso8601String(),
-      // "ownRequests": ownRequests,
-      // "friendRequests": friendRequests,
+      if (ownRequests != null) "ownRequests": ownRequests,
+      if (friendRequests != null) "friendRequests": friendRequests,
     };
   }
 
@@ -122,6 +134,25 @@ class CustomUser {
         .update({
       "friendRequests": FieldValue.arrayUnion([userUid]),
     });
+
+    ownRequests?.add(friend.userUid!);
+  }
+
+  Future removeFriendRequest(CustomUser friend) async {
+    // Remove friend from own requests of user
+    await FirebaseFirestore.instance.collection('users').doc(userUid).update({
+      "ownRequests": FieldValue.arrayRemove([friend.userUid]),
+    });
+
+    // Remove user from friend requests of friend
+    await FirebaseFirestore.instance
+        .collection('users')
+        .doc(friend.userUid)
+        .update({
+      "friendRequests": FieldValue.arrayRemove([userUid]),
+    });
+
+    ownRequests?.remove(friend.userUid!);
   }
 
   Future acceptFriendRequest(CustomUser friend) async {
@@ -139,10 +170,16 @@ class CustomUser {
     });
 
     // Add friend relationship
-    await FirebaseFirestore.instance.collection('friends').add({
+    await FirebaseFirestore.instance
+        .collection('friends')
+        .doc(friend.userUid! + userUid!)
+        .set({
       "firstUserUid": friend.userUid,
       "secondUserUid": userUid,
     });
+
+    friendRequests?.remove(friend.userUid!);
+    friends.add(friend.userUid!);
   }
 
   Future declineFriendRequest(CustomUser friend) async {
@@ -158,21 +195,28 @@ class CustomUser {
         .update({
       "ownRequests": FieldValue.arrayRemove([userUid]),
     });
-    
+
+    friendRequests?.remove(friend.userUid!);
   }
 
-  // Django Model
-  // email = models.EmailField(('email address'), unique=True)
+  Future removeFriend(CustomUser friend) async {
+    // Remove friend relationship
+    await FirebaseFirestore.instance
+        .collection('friends')
+        .doc(friend.userUid! + userUid!)
+        .delete();
+    await FirebaseFirestore.instance
+        .collection('friends')
+        .doc(userUid! + friend.userUid!)
+        .delete();
+    friends.remove(friend.userUid);
+  }
 
-  // # Optional attributes
-  // name = models.CharField(max_length = 32, blank=True, null=True)
-  // lastname = models.CharField(max_length = 32, blank=True, null=True)
-  // birth_date = models.DateField(blank=True, null=True)
-  // avatar = models.ImageField(default="pictures/default.png", upload_to='pictures/')
-  // is_company = models.BooleanField(default = False)
-  // is_staff = models.BooleanField(default = False)
-  // is_active = models.BooleanField(default = True)
-  // date_joined = models.DateTimeField(default = timezone.now)
+  List<String> closeFriends() {
+    List<String> result = friends;
+    result.add(userUid!);
+    return result;
+  }
 }
 
 Future<CustomUser?> getUserObject() async {
@@ -201,7 +245,10 @@ Future<CustomUser?> getUserObjectFromUid(String userUid) async {
 
 Future<List<CustomUser>> getUserObjects(String userUid) async {
   List<CustomUser> users = <CustomUser>[];
-  final ref = FirebaseFirestore.instance.collection("users").where("userUid", isNotEqualTo: userUid).withConverter(
+  final ref = FirebaseFirestore.instance
+      .collection("users")
+      .where("userUid", isNotEqualTo: userUid)
+      .withConverter(
         fromFirestore: CustomUser.fromFirestore,
         toFirestore: (CustomUser user, _) => user.toFirestore(),
       );

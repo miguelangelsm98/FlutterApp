@@ -1,10 +1,13 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter_application/models/user.dart';
 
 class Post {
   String name;
   String? description;
   String? userUid;
   DateTime? createdDate;
+
+  CustomUser? user;
 
   Post({
     required this.name,
