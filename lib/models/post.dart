@@ -82,14 +82,15 @@ class Post {
     return FirebaseFirestore.instance.collection('posts').doc(postUid).delete();
   }
 
-  void addMesage(String message, String messageUserUid,
-      String messageUserAvatarPath) async {
+  void addMesage(String message, CustomUser user) async {
     Map<String, dynamic> messageDoc = <String, dynamic>{};
     messageDoc.putIfAbsent('message', () => message);
-    messageDoc.putIfAbsent('userUid', () => messageUserUid);
+    messageDoc.putIfAbsent('userUid', () => user.userUid);
     messageDoc.putIfAbsent(
         'createdDate', () => DateTime.now().toIso8601String());
-    messageDoc.putIfAbsent('userAvatarPath', () => messageUserAvatarPath);
+    messageDoc.putIfAbsent('userAvatarPath', () => user.avatarPath);
+    messageDoc.putIfAbsent('userName', () => user.name);
+    messageDoc.putIfAbsent('userLastName', () => user.lastName);
     await FirebaseFirestore.instance
         .collection('posts')
         .doc(postUid)
