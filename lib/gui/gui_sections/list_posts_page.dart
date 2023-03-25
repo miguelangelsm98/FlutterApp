@@ -3,6 +3,8 @@ import 'package:provider/provider.dart';
 
 import '../../main.dart';
 import '../../models/post.dart';
+import '../../models/user.dart';
+import 'chat_page.dart';
 
 class PostsListPage extends StatelessWidget {
   @override
@@ -60,7 +62,8 @@ class PostsListPage extends StatelessWidget {
                   controller: firstController,
                   itemCount: appState.currentUser!.posts.length,
                   itemBuilder: (BuildContext context, int index) {
-                    return createPost(appState.currentUser!.posts[index]);
+                    return createPost(
+                        appState.currentUser!.posts[index], appState, context);
                   }),
             ],
           ),
@@ -69,25 +72,135 @@ class PostsListPage extends StatelessWidget {
     );
   }
 
-  Widget createPost(Post p) {
+  Widget createPost(Post p, MyAppState appState, BuildContext context) {
     Widget widget = Container(
-      decoration: BoxDecoration(border: Border.all(color: Colors.black)),
-      child: Column(children: [
-        Text(
-          "Title: ${p.name}",
-          style: TextStyle(
-            fontSize: 20,
-            fontWeight: FontWeight.bold,
+        decoration: BoxDecoration(border: Border.all(color: Colors.black)),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Column(children: [
+              Text(
+                "Title: ${p.name}",
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              Text("Description: ${p.description!}"),
+              Text("Created Date: ${p.createdDate.toString()}"),
+              Text("Owner: ${p.user!.email}"),
+              SizedBox(
+                  height: 60,
+                  child: Image.network(p.user!.avatarPath!,
+                      fit: BoxFit.scaleDown)),
+              joinActivityWidget(p, appState, context),
+              Text("Signed up users: ${p.users!.length}"),
+            ]),
+          ],
+        ));
+
+    return widget;
+  }
+
+  Widget joinActivityWidget(Post p, MyAppState appState, BuildContext context) {
+    Widget widget;
+
+    if (p.userUid == appState.currentUser!.userUid) {
+      widget = Row(
+        children: [
+          ElevatedButton(
+            onPressed: () async {
+              p.remove();
+              appState.doGetPosts();
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.red,
+              // padding: EdgeInsets.symmetric(horizontal: 50, vertical: 20),
+              // textStyle: TextStyle(fontSize: 30, fontWeight: FontWeight.bold)
+            ),
+            child: Text("Remove Activity"),
           ),
+          ElevatedButton(
+            onPressed: () async {
+              await p.getMessages();
+              // ignore: use_build_context_synchronously
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const ChatPage(),
+                  // Pass the arguments as part of the RouteSettings. The
+                  // DetailScreen reads the arguments from these settings.
+                  settings: RouteSettings(
+                    arguments: p,
+                  ),
+                ),
+              );
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.grey,
+              // padding: EdgeInsets.symmetric(horizontal: 50, vertical: 20),
+              // textStyle: TextStyle(fontSize: 30, fontWeight: FontWeight.bold)
+            ),
+            child: Text("Open Chat"),
+          ),
+        ],
+      );
+    } else if (!p.users!.contains(appState.currentUser!.userUid)) {
+      widget = ElevatedButton(
+        onPressed: () async {
+          p.users?.add(appState.currentUser!.userUid!);
+          p.saveDatabase();
+          appState.doGetPosts();
+        },
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Colors.green,
+          // padding: EdgeInsets.symmetric(horizontal: 50, vertical: 20),
+          // textStyle: TextStyle(fontSize: 30, fontWeight: FontWeight.bold)
         ),
-        Text("Description: ${p.description!}"),
-        Text("Created Date: ${p.createdDate.toString()}"),
-        Text("Owner: ${p.user!.email}"),
-        SizedBox(
-            height: 60,
-            child: Image.network(p.user!.avatarPath!, fit: BoxFit.scaleDown)),
-      ]),
-    );
+        child: Text("Join Activity"),
+      );
+    } else {
+      widget = Row(
+        children: [
+          ElevatedButton(
+            onPressed: () async {
+              p.users?.remove(appState.currentUser!.userUid!);
+              p.saveDatabase();
+              appState.doGetPosts();
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.yellow,
+              // padding: EdgeInsets.symmetric(horizontal: 50, vertical: 20),
+              // textStyle: TextStyle(fontSize: 30, fontWeight: FontWeight.bold)
+            ),
+            child: Text("Leave Activity"),
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              await p.getMessages();
+              // ignore: use_build_context_synchronously
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const ChatPage(),
+                  // Pass the arguments as part of the RouteSettings. The
+                  // DetailScreen reads the arguments from these settings.
+                  settings: RouteSettings(
+                    arguments: p,
+                  ),
+                ),
+              );
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.grey,
+              // padding: EdgeInsets.symmetric(horizontal: 50, vertical: 20),
+              // textStyle: TextStyle(fontSize: 30, fontWeight: FontWeight.bold)
+            ),
+            child: Text("Open Chat"),
+          ),
+        ],
+      );
+    }
     return widget;
   }
 }

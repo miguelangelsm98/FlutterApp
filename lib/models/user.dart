@@ -41,13 +41,10 @@ class CustomUser {
 
     List<String> ownRequests = <String>[];
     List<String> friendRequests = <String>[];
-
     if (data?["ownRequests"] != null) {
       for (var request in data?["ownRequests"]) {
-        ownRequests.add(request);
-      }
+        ownRequests.add(request);      }
     }
-
     if (data?["friendRequests"] != null) {
       for (var request in data?["friendRequests"]) {
         friendRequests.add(request);

@@ -88,13 +88,14 @@ class MyAppState extends ChangeNotifier {
     await FirebaseFirestore.instance
         .collection("posts")
         .where("userUid", whereIn: currentUser?.closeFriends())
-        .orderBy("createdDate")
+        .orderBy("createdDate", descending: true)
         .get()
         .then(
       (querySnapshot) async {
         for (var docSnapshot in querySnapshot.docs) {
           Post p = Post.fromFirestore(docSnapshot, null);
           p.user = await getUserObjectFromUid(p.userUid!);
+          // await p.getMessages();
           currentUser?.posts.add(p);
         }
       },
