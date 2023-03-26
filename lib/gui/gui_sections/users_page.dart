@@ -1,5 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_application/gui/gui_sections/home_page.dart';
 import 'package:provider/provider.dart';
 
 import '../../main.dart';
@@ -78,6 +80,7 @@ class _UsersPageState extends State<UsersPage> {
                       appState: appState,
                     );
                   }),
+              profileWidget2(context),
             ],
           ),
         ),
@@ -177,4 +180,48 @@ class _UsersPageState extends State<UsersPage> {
     }
     return widget;
   }
+}
+
+Widget profileWidget2(BuildContext context) {
+  var appState = context.watch<MyAppState>();
+  var imagePath = appState.currentUser!.avatarPath;
+
+  return Row(
+    children: [
+      SizedBox(
+          height: 60, child: Image.network(imagePath!, fit: BoxFit.scaleDown)),
+      Column(
+        children: [
+          Text(
+            "Hello " "${appState.currentUser!.name}!",
+            style: TextStyle(
+                fontSize: 15,
+                fontWeight: FontWeight.w400,
+                color: Colors.black87),
+          ),
+          MaterialButton(
+            // height: 5,
+            onPressed: () async {
+              try {
+                await FirebaseAuth.instance.signOut();
+                appState.doUserLogout();
+              } on FirebaseAuthException catch (e) {
+                print(e.toString());
+              }
+            },
+            color: Color.fromARGB(255, 30, 226, 72),
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(40)),
+            child: Text(
+              "Logout",
+              style: TextStyle(
+                  fontSize: 15,
+                  fontWeight: FontWeight.w400,
+                  color: Colors.black87),
+            ),
+          ),
+        ],
+      ),
+    ],
+  );
 }

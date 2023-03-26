@@ -20,7 +20,7 @@ class _ChatPageState extends State<ChatPage> {
     final ScrollController firstController = ScrollController();
 
     final post = ModalRoute.of(context)!.settings.arguments as Post;
-    final messageController = TextEditingController();
+    var messageController = TextEditingController();
 
     // getUsers(appState);
 

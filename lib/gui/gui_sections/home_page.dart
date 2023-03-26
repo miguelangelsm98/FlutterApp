@@ -66,30 +66,27 @@ class _MyHomePageState extends State<MyHomePage> {
               // on narrow screens.
               return Column(
                 children: [
+                  // SafeArea(child: profileWidget2(context)),
                   Expanded(child: mainArea),
                   SafeArea(
                     child: BottomNavigationBar(
                       items: [
                         BottomNavigationBarItem(
-                          icon: Icon(Icons.logout),
-                          label: 'Logout',
-                        ),
+                            icon: Icon(Icons.post_add),
+                            label: 'Add Posts',
+                            backgroundColor: Colors.green),
                         BottomNavigationBarItem(
-                          icon: Icon(Icons.post_add),
-                          label: 'Add Post',
-                        ),
+                            icon: Icon(Icons.favorite),
+                            label: 'Posts',
+                            backgroundColor: Colors.green),
                         BottomNavigationBarItem(
-                          icon: Icon(Icons.favorite),
-                          label: 'Posts',
-                        ),
+                            icon: Icon(Icons.supervised_user_circle),
+                            label: 'Update User',
+                            backgroundColor: Colors.green),
                         BottomNavigationBarItem(
-                          icon: Icon(Icons.image),
-                          label: 'Image',
-                        ),
-                        BottomNavigationBarItem(
-                          icon: Icon(Icons.verified_user),
-                          label: 'User',
-                        ),
+                            icon: Icon(Icons.face),
+                            label: 'Users',
+                            backgroundColor: Colors.green),
                       ],
                       currentIndex: appState.selectedIndex,
                       onTap: (value) {
@@ -185,3 +182,5 @@ Widget profileWidget(BuildContext context) {
     ],
   );
 }
+
+
