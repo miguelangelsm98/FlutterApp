@@ -14,13 +14,20 @@ class ChatPage extends StatefulWidget {
 }
 
 class _ChatPageState extends State<ChatPage> {
+  TextEditingController messageController = TextEditingController();
+
+  // @override
+  // void initState() {
+  //   messageController.text = "Write a message"; // For testing purposes
+  //   super.initState();
+  // }
+
   @override
   Widget build(BuildContext context) {
     var appState = context.watch<MyAppState>();
     final ScrollController firstController = ScrollController();
 
     final post = ModalRoute.of(context)!.settings.arguments as Post;
-    var messageController = TextEditingController();
 
     // getUsers(appState);
 
@@ -149,7 +156,9 @@ class _ChatPageState extends State<ChatPage> {
                       curve: Curves.easeOut,
                       duration: const Duration(milliseconds: 300),
                     );
-                    setState(() {});
+                    setState(() {
+                      messageController.text = "";
+                    });
                     // firstController
                     //     .jumpTo(firstController.position.maxScrollExtent);
                   },

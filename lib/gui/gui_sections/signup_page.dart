@@ -7,14 +7,29 @@ import 'package:provider/provider.dart';
 
 import '../../main.dart';
 
-class SignupPage extends StatelessWidget {
+class SignupPage extends StatefulWidget {
+
+  @override
+  State<SignupPage> createState() => _SignupPageState();
+}
+
+class _SignupPageState extends State<SignupPage> {
+  TextEditingController emailController = TextEditingController();
+  TextEditingController password1Controller = TextEditingController();
+  TextEditingController password2Controller = TextEditingController();
+
+  @override
+  void initState() {
+    emailController.text = "@gmail.com"; // For testing purposes
+    password1Controller.text = "123123"; // For testing purposes
+    password2Controller.text = "123123"; // For testing purposes
+
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     var appState = context.watch<MyAppState>();
-
-    var emailController = TextEditingController(text: "@gmail.com");
-    var password1Controller = TextEditingController(text: "123123");
-    var password2Controller = TextEditingController(text: "123123");
 
     return Scaffold(
       resizeToAvoidBottomInset: false,

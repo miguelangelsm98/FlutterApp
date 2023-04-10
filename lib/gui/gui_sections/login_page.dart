@@ -12,13 +12,19 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
+  TextEditingController emailController = TextEditingController();
+  TextEditingController passwordController = TextEditingController();
+
+  @override
+  void initState() {
+    emailController.text = "david@gmail.com"; // For testing purposes
+    passwordController.text = "123123"; // For testing purposes
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     var appState = context.watch<MyAppState>();
-
-    final emailController = TextEditingController(text: "david@gmail.com");
-    final passwordController =
-        TextEditingController(text: "123123"); // For testing purposes
 
     return Scaffold(
       resizeToAvoidBottomInset: false,
