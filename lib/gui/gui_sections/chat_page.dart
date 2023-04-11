@@ -41,7 +41,7 @@ class _ChatPageState extends State<ChatPage> {
           bottom: 100, //display untill the height of bottom widget
           left: 0, right: 0,
           child: Scaffold(
-            resizeToAvoidBottomInset: false,
+            resizeToAvoidBottomInset: true,
             backgroundColor: Colors.white,
             appBar: AppBar(
               elevation: 0,
@@ -87,7 +87,7 @@ class _ChatPageState extends State<ChatPage> {
           left: 0,
           right: 0, //se
           child: Scaffold(
-            resizeToAvoidBottomInset: false,
+            resizeToAvoidBottomInset: true,
             backgroundColor: Colors.white,
             body: SizedBox(
               height: MediaQuery.of(context).size.height,

@@ -4,7 +4,9 @@ import 'package:provider/provider.dart';
 import '../../main.dart';
 import '../../models/post.dart';
 import '../../models/user.dart';
+import 'add_posts_page.dart';
 import 'chat_page.dart';
+import 'chat_page_2.dart';
 
 class PostsListPage extends StatelessWidget {
   @override
@@ -52,6 +54,21 @@ class PostsListPage extends StatelessWidget {
                   fontSize: 15,
                   color: Colors.grey[700],
                 ),
+              ),
+              SizedBox(
+                height: 30,
+              ),
+              ElevatedButton(
+                onPressed: () async {
+                  Navigator.of(context).push(
+                      MaterialPageRoute(builder: (context) => PostsAddPage()));
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.green,
+                  // padding: EdgeInsets.symmetric(horizontal: 50, vertical: 20),
+                  // textStyle: TextStyle(fontSize: 30, fontWeight: FontWeight.bold)
+                ),
+                child: Text("Create new Post"),
               ),
               SizedBox(
                 height: 30,
@@ -127,7 +144,7 @@ class PostsListPage extends StatelessWidget {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => const ChatPage(),
+                  builder: (context) => const ChatPage2(),
                   // Pass the arguments as part of the RouteSettings. The
                   // DetailScreen reads the arguments from these settings.
                   settings: RouteSettings(
