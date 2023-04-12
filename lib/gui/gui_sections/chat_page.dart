@@ -1,10 +1,8 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application/models/post.dart';
 import 'package:provider/provider.dart';
 
 import '../../main.dart';
-import '../../models/user.dart';
 
 class ChatPage extends StatefulWidget {
   const ChatPage({super.key});
@@ -16,12 +14,6 @@ class ChatPage extends StatefulWidget {
 class _ChatPageState extends State<ChatPage> {
   TextEditingController messageController = TextEditingController();
 
-  // @override
-  // void initState() {
-  //   messageController.text = "Write a message"; // For testing purposes
-  //   super.initState();
-  // }
-
   @override
   Widget build(BuildContext context) {
     var appState = context.watch<MyAppState>();
@@ -29,161 +21,96 @@ class _ChatPageState extends State<ChatPage> {
 
     final post = ModalRoute.of(context)!.settings.arguments as Post;
 
-    // getUsers(appState);
-
-    // final Stream<QuerySnapshot> usersStream =
-    //     FirebaseFirestore.instance.collection('users').snapshots();
-
-    return Stack(
-      children: [
-        Positioned(
-          top: 0, //display after the height of top widtet
-          bottom: 100, //display untill the height of bottom widget
-          left: 0, right: 0,
-          child: Scaffold(
-            resizeToAvoidBottomInset: true,
-            backgroundColor: Colors.white,
-            appBar: AppBar(
-              elevation: 0,
-              backgroundColor: Colors.white,
-              leading: IconButton(
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                  icon: Icon(
-                    Icons.arrow_back_ios,
-                    size: 20,
-                    color: Colors.black,
-                  )),
-            ),
-            body: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Column(
-                  children: <Widget>[
-                    Text(
-                      "${post.name} - Chat",
-                      style: TextStyle(
-                        fontSize: 30,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    SizedBox(
-                      height: 30,
-                    ),
-                    Text("Number of messages: ${post.messages!.length}"),
-                    SizedBox(
-                      height: 30,
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-        ),
-        Positioned(
-          top: 180,
-          bottom: 100,
-          left: 0,
-          right: 0, //se
-          child: Scaffold(
-            resizeToAvoidBottomInset: true,
-            backgroundColor: Colors.white,
-            body: SizedBox(
-              height: MediaQuery.of(context).size.height,
-              width: double.infinity,
-              child: SingleChildScrollView(
+    return Scaffold(
+      resizeToAvoidBottomInset: true,
+      backgroundColor: Colors.white,
+      // todo appbar
+      appBar: AppBar(
+        elevation: 0,
+        backgroundColor: Colors.white,
+        leading: IconButton(
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            icon: Icon(
+              Icons.arrow_back_ios,
+              size: 20,
+              color: Colors.black,
+            )),
+      ),
+      body: Column(
+        children: [
+          Expanded(
+            child: ListView.builder(
                 reverse: true,
-                physics: ScrollPhysics(),
-                child: Column(
-                  children: <Widget>[
-                    SingleChildScrollView(
-                      reverse: false,
-                      child: ListView.builder(
-                          physics: NeverScrollableScrollPhysics(),
-                          shrinkWrap: true,
-                          controller: firstController,
-                          itemCount: post.messages!.length,
-                          itemBuilder: (BuildContext context, int index) {
-                            return messageWidget(
-                                post.messages![index], appState);
-                          }),
-                    ),
-                  ],
-                ),
-              ),
-            ),
+                shrinkWrap: true,
+                controller: firstController,
+                itemCount: post.messages!.length,
+                itemBuilder: (BuildContext context, int index) {
+                  return messageWidget(
+                      post.messages![post.messages!.length - index - 1],
+                      appState);
+                }),
           ),
-        ),
-        Positioned(
-            //position at bottom
-            bottom: 0,
-            left: 0,
-            right: 0, //set left right to 0 for 100% width
-            child: Column(
+          SizedBox(
+            height: 60,
+            child: Row(
               children: [
-                SizedBox(
-                  height: 40,
-                  child: Card(
-                    child: TextField(
-                      controller: messageController,
-                      obscureText: false,
-                      decoration: InputDecoration(
-                        contentPadding:
-                            EdgeInsets.symmetric(vertical: 0, horizontal: 10),
-                        enabledBorder: OutlineInputBorder(
-                          borderSide: BorderSide(
-                            color: Colors.grey,
-                          ),
+                Expanded(
+                  child: TextField(
+                    controller: messageController,
+                    obscureText: false,
+                    decoration: InputDecoration(
+                      contentPadding:
+                          EdgeInsets.symmetric(vertical: 0, horizontal: 10),
+                      enabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: Colors.grey,
                         ),
-                        border: OutlineInputBorder(
-                            borderSide: BorderSide(color: Colors.grey)),
                       ),
+                      border: OutlineInputBorder(
+                          borderSide: BorderSide(color: Colors.grey)),
                     ),
                   ),
                 ),
                 MaterialButton(
-                  minWidth: double.infinity,
-                  height: 60,
+                  height: 40,
                   onPressed: () async {
                     post.addMesage(
                       messageController.text,
                       appState.currentUser!,
                     );
                     await post.getMessages();
-                    firstController.animateTo(
-                      firstController.position.maxScrollExtent,
-                      curve: Curves.easeOut,
-                      duration: const Duration(milliseconds: 300),
-                    );
                     setState(() {
                       messageController.text = "";
                     });
-                    // firstController
-                    //     .jumpTo(firstController.position.maxScrollExtent);
+                    // ignore: use_build_context_synchronously
+                    FocusScopeNode currentFocus = FocusScope.of(context);
+                    if (!currentFocus.hasPrimaryFocus) {
+                      currentFocus.unfocus();
+                    }
                   },
                   color: Colors.indigoAccent[400],
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(40)),
                   child: Text(
-                    "Add Message",
+                    "Send",
                     style: TextStyle(
                         fontWeight: FontWeight.w600,
-                        fontSize: 16,
+                        // fontSize: 16,
                         color: Colors.white70),
                   ),
                 ),
               ],
-            ))
-      ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 
   Widget messageWidget(Map<String, dynamic> message, MyAppState appState) {
     Widget widget;
-    MainAxisAlignment allignment;
-
-    DateTime messageDate = DateTime.parse(message['createdDate']);
 
     if (message['userUid'] == appState.currentUser!.userUid) {
       widget = Container(
@@ -196,7 +123,7 @@ class _ChatPageState extends State<ChatPage> {
                   Column(children: [
                     Text("${message['userName']} ${message['userLastName']}"),
                     Text("${message['message']}"),
-                    Text("${messageDate.hour}:${messageDate.minute}"),
+                    dateWidget(DateTime.parse(message['createdDate'])),
                   ]),
                   SizedBox(
                       height: 100,
@@ -221,14 +148,27 @@ class _ChatPageState extends State<ChatPage> {
                   Column(children: [
                     Text("${message['userName']} ${message['userLastName']}"),
                     Text("${message['message']}"),
-                    Text("${messageDate.hour}:${messageDate.minute}"),
+                    dateWidget(DateTime.parse(message['createdDate'])),
                   ]),
                 ],
               ),
             ],
           ));
     }
+    return widget;
+  }
 
+  Widget dateWidget(DateTime messageDate) {
+    Widget widget;
+    if ((messageDate.hour < 10) && (messageDate.minute < 10)) {
+      widget = Text("0${messageDate.hour}:0${messageDate.minute}");
+    } else if (messageDate.hour < 10) {
+      widget = Text("0${messageDate.hour}:${messageDate.minute}");
+    } else if (messageDate.minute < 10) {
+      widget = Text("${messageDate.hour}:0${messageDate.minute}");
+    } else {
+      widget = Text("${messageDate.hour}:${messageDate.minute}");
+    }
     return widget;
   }
 }

@@ -84,6 +84,7 @@ class MyAppState extends ChangeNotifier {
   }
 
   Future<void> doGetPosts() async {
+    print(currentUser?.closeFriends());
     currentUser?.posts.clear();
     await FirebaseFirestore.instance
         .collection("posts")

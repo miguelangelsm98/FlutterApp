@@ -12,19 +12,24 @@ class PostsAddPage extends StatefulWidget {
 }
 
 class _PostsAddPageState extends State<PostsAddPage> {
+  TextEditingController nameController = TextEditingController();
+  TextEditingController descriptionController = TextEditingController();
+  var dateController = TextEditingController(
+      text: DateFormat('dd-MM-yyyy').format(DateTime.now()));
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     var appState = context.watch<MyAppState>();
-
-    final nameController = TextEditingController();
-    final descriptionController = TextEditingController();
-    var dateController = TextEditingController(
-        text: DateFormat('dd-MM-yyyy').format(DateTime.now()));
     var dateIso = DateTime.now().toIso8601String();
     DateTime? pickedDate = DateTime.now();
 
     return Scaffold(
-      resizeToAvoidBottomInset: false,
+      resizeToAvoidBottomInset: true,
       backgroundColor: Colors.white,
       appBar: AppBar(
         elevation: 0,
@@ -133,7 +138,7 @@ class _PostsAddPageState extends State<PostsAddPage> {
                               postDate: DateTime.parse(dateIso));
                           post.addPost();
                           await appState.doGetPosts();
-                          setState(() {});
+                          Navigator.pop(context);
                         },
                         color: Colors.indigoAccent[400],
                         shape: RoundedRectangleBorder(

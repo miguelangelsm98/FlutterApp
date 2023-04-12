@@ -43,7 +43,8 @@ class CustomUser {
     List<String> friendRequests = <String>[];
     if (data?["ownRequests"] != null) {
       for (var request in data?["ownRequests"]) {
-        ownRequests.add(request);      }
+        ownRequests.add(request);
+      }
     }
     if (data?["friendRequests"] != null) {
       for (var request in data?["friendRequests"]) {
@@ -210,7 +211,7 @@ class CustomUser {
   }
 
   List<String> closeFriends() {
-    List<String> result = friends;
+    List<String> result = List.from(friends);
     result.add(userUid!);
     return result;
   }

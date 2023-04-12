@@ -3,10 +3,8 @@ import 'package:provider/provider.dart';
 
 import '../../main.dart';
 import '../../models/post.dart';
-import '../../models/user.dart';
 import 'add_posts_page.dart';
 import 'chat_page.dart';
-import 'chat_page_2.dart';
 
 class PostsListPage extends StatelessWidget {
   @override
@@ -16,7 +14,7 @@ class PostsListPage extends StatelessWidget {
     final ScrollController firstController = ScrollController();
 
     return Scaffold(
-      resizeToAvoidBottomInset: false,
+      resizeToAvoidBottomInset: true,
       backgroundColor: Colors.white,
       appBar: AppBar(
         elevation: 0,
@@ -38,30 +36,38 @@ class PostsListPage extends StatelessWidget {
           physics: ScrollPhysics(),
           child: Column(
             children: [
-              Text(
-                "Posts",
-                style: TextStyle(
-                  fontSize: 30,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              SizedBox(
-                height: 20,
-              ),
-              Text(
-                "Check created Posts",
-                style: TextStyle(
-                  fontSize: 15,
-                  color: Colors.grey[700],
-                ),
-              ),
-              SizedBox(
-                height: 30,
-              ),
+              // Text(
+              //   "Posts",
+              //   style: TextStyle(
+              //     fontSize: 30,
+              //     fontWeight: FontWeight.bold,
+              //   ),
+              // ),
+              // SizedBox(
+              //   height: 20,
+              // ),
+              // Text(
+              //   "Check created Posts",
+              //   style: TextStyle(
+              //     fontSize: 15,
+              //     color: Colors.grey[700],
+              //   ),
+              // ),
+              // SizedBox(
+              //   height: 30,
+              // ),
+
+              // Move to appbar
               ElevatedButton(
                 onPressed: () async {
-                  Navigator.of(context).push(
-                      MaterialPageRoute(builder: (context) => PostsAddPage()));
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => PostsAddPage(),
+                      // Pass the arguments as part of the RouteSettings. The
+                      // DetailScreen reads the arguments from these settings.
+                    ),
+                  );
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.green,
@@ -144,7 +150,7 @@ class PostsListPage extends StatelessWidget {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => const ChatPage2(),
+                  builder: (context) => const ChatPage(),
                   // Pass the arguments as part of the RouteSettings. The
                   // DetailScreen reads the arguments from these settings.
                   settings: RouteSettings(
