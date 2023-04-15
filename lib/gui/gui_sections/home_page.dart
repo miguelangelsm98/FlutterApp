@@ -1,15 +1,13 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_application/gui/gui_sections/settings_page.dart';
 import 'package:flutter_application/gui/gui_sections/update_user_page.dart';
-import 'package:flutter_application/gui/gui_sections/add_posts_page.dart';
 import 'package:flutter_application/gui/gui_sections/list_posts_page.dart';
-import 'package:flutter_application/gui/gui_sections/user_info_page.dart';
 import 'package:flutter_application/gui/gui_sections/users_page.dart';
 import 'package:provider/provider.dart';
 
 import '../../main.dart';
 
-import 'logout_page.dart';
 import 'login_page.dart';
 
 class MyHomePage extends StatefulWidget {
@@ -32,17 +30,17 @@ class _MyHomePageState extends State<MyHomePage> {
       Widget page;
 
       switch (appState.selectedIndex) {
+        // case 0:
+        //   page = PostsAddPage();
+        //   break;
         case 0:
-          page = PostsAddPage();
-          break;
-        case 1:
           page = PostsListPage();
           break;
-        case 2:
-          page = UpdateUserPage();
-          break;
-        case 3:
+        case 1:
           page = UsersPage();
+          break;
+        case 2:
+          page = SettingsPage();
           break;
         default:
           throw UnimplementedError('no widget for ${appState.selectedIndex}');
@@ -71,21 +69,21 @@ class _MyHomePageState extends State<MyHomePage> {
                   SafeArea(
                     child: BottomNavigationBar(
                       items: [
+                        // BottomNavigationBarItem(
+                        //     icon: Icon(Icons.post_add),
+                        //     label: 'Add Posts',
+                        //     backgroundColor: Colors.green),
                         BottomNavigationBarItem(
-                            icon: Icon(Icons.post_add),
-                            label: 'Add Posts',
-                            backgroundColor: Colors.green),
-                        BottomNavigationBarItem(
-                            icon: Icon(Icons.favorite),
+                            icon: Icon(Icons.list),
                             label: 'Posts',
                             backgroundColor: Colors.green),
                         BottomNavigationBarItem(
                             icon: Icon(Icons.supervised_user_circle),
-                            label: 'Update User',
+                            label: 'Users',
                             backgroundColor: Colors.green),
                         BottomNavigationBarItem(
-                            icon: Icon(Icons.face),
-                            label: 'Users',
+                            icon: Icon(Icons.settings),
+                            label: 'Settings',
                             backgroundColor: Colors.green),
                       ],
                       currentIndex: appState.selectedIndex,
@@ -104,21 +102,21 @@ class _MyHomePageState extends State<MyHomePage> {
                     child: NavigationRail(
                       extended: constraints.maxWidth >= 600,
                       destinations: [
+                        // NavigationRailDestination(
+                        //   icon: Icon(Icons.post_add),
+                        //   label: Text('Add Post'),
+                        // ),
                         NavigationRailDestination(
-                          icon: Icon(Icons.post_add),
-                          label: Text('Add Post'),
-                        ),
-                        NavigationRailDestination(
-                          icon: Icon(Icons.favorite),
+                          icon: Icon(Icons.list),
                           label: Text('Posts'),
                         ),
                         NavigationRailDestination(
                           icon: Icon(Icons.supervised_user_circle),
-                          label: Text('Update User'),
+                          label: Text('Users'),
                         ),
                         NavigationRailDestination(
-                          icon: Icon(Icons.face),
-                          label: Text('Users'),
+                          icon: Icon(Icons.settings),
+                          label: Text('Settings'),
                         ),
                       ],
                       selectedIndex: appState.selectedIndex,
@@ -182,5 +180,3 @@ Widget profileWidget(BuildContext context) {
     ],
   );
 }
-
-

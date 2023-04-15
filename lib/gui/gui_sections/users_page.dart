@@ -80,7 +80,7 @@ class _UsersPageState extends State<UsersPage> {
                       appState: appState,
                     );
                   }),
-              profileWidget2(context),
+              // profileWidget2(context),
             ],
           ),
         ),

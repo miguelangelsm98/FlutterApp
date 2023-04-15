@@ -136,7 +136,7 @@ class _PostsAddPageState extends State<PostsAddPage> {
                               userUid: appState.currentUser?.userUid,
                               createdDate: DateTime.now(),
                               postDate: DateTime.parse(dateIso));
-                          post.addPost();
+                          await post.addPost();
                           await appState.doGetPosts();
                           Navigator.pop(context);
                         },

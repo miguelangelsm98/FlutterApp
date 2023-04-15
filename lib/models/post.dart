@@ -62,7 +62,7 @@ class Post {
     };
   }
 
-  void addPost() async {
+  Future addPost() async {
     users = <String>[];
     users?.add(userUid!);
     DocumentReference addedDocRef =
@@ -91,6 +91,7 @@ class Post {
     messageDoc.putIfAbsent('userAvatarPath', () => user.avatarPath);
     messageDoc.putIfAbsent('userName', () => user.name);
     messageDoc.putIfAbsent('userLastName', () => user.lastName);
+    print("Adding message: $messageDoc to post $postUid");
     await FirebaseFirestore.instance
         .collection('posts')
         .doc(postUid)

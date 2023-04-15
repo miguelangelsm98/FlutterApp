@@ -169,7 +169,7 @@ Widget makeInput({label, controller, obsureText = false}) {
         height: 5,
       ),
       TextField(
-        autofocus: true,
+        autofocus: false,
         controller: controller,
         obscureText: obsureText,
         decoration: InputDecoration(
