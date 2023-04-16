@@ -133,8 +133,37 @@ class PostsListPage extends StatelessWidget {
         children: [
           ElevatedButton(
             onPressed: () async {
-              p.remove();
-              appState.doGetPosts();
+              Widget cancelButton = ElevatedButton(
+                child: Text("Cancel"),
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+              );
+              Widget continueButton = ElevatedButton(
+                child: Text("Continue"),
+                onPressed: () async {
+                  p.remove();
+                  appState.doGetPosts();
+                  // ignore: use_build_context_synchronously
+                  Navigator.pop(context);
+                },
+              );
+              // set up the AlertDialog
+              AlertDialog alert = AlertDialog(
+                title: Text("AlertDialog"),
+                content: Text("Are you sure you want to remove this post?"),
+                actions: [
+                  cancelButton,
+                  continueButton,
+                ],
+              );
+              // show the dialog
+              showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return alert;
+                },
+              );
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.red,

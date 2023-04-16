@@ -107,9 +107,16 @@ class _UsersPageState extends State<UsersPage> {
         ),
         SizedBox(
             height: 100,
-            child: Center(
-              child: Text("${user.name} ${user.lastName!}",
-                  textAlign: TextAlign.center),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Center(
+                  child: Text(user.name!, textAlign: TextAlign.center),
+                ),
+                Center(
+                  child: Text(user.lastName!, textAlign: TextAlign.center),
+                ),
+              ],
             )),
         SizedBox(
           width: 10,
@@ -139,30 +146,67 @@ class _UsersPageState extends State<UsersPage> {
         children: [
           ElevatedButton(
             onPressed: () async {
-              await currentUser.removeFriend(user);
-              await appState.doGetFriends();
-              await appState.doGetPosts();
+              // set up the buttons
+              Widget cancelButton = ElevatedButton(
+                child: Text("Cancel"),
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+              );
+              Widget continueButton = ElevatedButton(
+                child: Text("Continue"),
+                onPressed: () async {
+                  await currentUser.removeFriend(user);
+                  await appState.doGetFriends();
+                  await appState.doGetPosts();
+                  // ignore: use_build_context_synchronously
+                  Navigator.pop(context);
+                },
+              );
+              // set up the AlertDialog
+              AlertDialog alert = AlertDialog(
+                title: Text("AlertDialog"),
+                content: Text("Are you sure you want to remove this friend?"),
+                actions: [
+                  cancelButton,
+                  continueButton,
+                ],
+              );
+              // show the dialog
+              showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return alert;
+                },
+              );
             },
             child: Text("Remove Friend"),
           ),
-          ElevatedButton(
-            onPressed: () async {
-              String relationId = currentUser.friendRelations[user.userUid]!;
-              await currentUser.getMessages(relationId);
-              // ignore: use_build_context_synchronously
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => const ChatDirectPage(),
-                  // Pass the arguments as part of the RouteSettings. The
-                  // DetailScreen reads the arguments from these settings.
-                  settings: RouteSettings(
-                    arguments: user,
-                  ),
-                ),
-              );
-            },
-            child: Text("Chat"),
+          Row(
+            children: [
+              ElevatedButton(
+                onPressed: () async {
+                  String relationId =
+                      currentUser.friendRelations[user.userUid]!;
+                  await currentUser.getMessages(relationId);
+                  // ignore: use_build_context_synchronously
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const ChatDirectPage(),
+                      // Pass the arguments as part of the RouteSettings. The
+                      // DetailScreen reads the arguments from these settings.
+                      settings: RouteSettings(
+                        arguments: user,
+                      ),
+                    ),
+                  );
+                },
+                child: Text("Open Chat"),
+              ),
+              // SizedBox(width: 10),
+              // Text("+5"),
+            ],
           ),
         ],
       );
@@ -179,16 +223,74 @@ class _UsersPageState extends State<UsersPage> {
         children: [
           ElevatedButton(
             onPressed: () async {
-              await currentUser.acceptFriendRequest(user);
-              await appState.doGetFriends();
-              await appState.doGetPosts();
+              Widget cancelButton = ElevatedButton(
+                child: Text("Cancel"),
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+              );
+              Widget continueButton = ElevatedButton(
+                child: Text("Continue"),
+                onPressed: () async {
+                  await currentUser.acceptFriendRequest(user);
+                  await appState.doGetFriends();
+                  await appState.doGetPosts();
+                  // ignore: use_build_context_synchronously
+                  Navigator.pop(context);
+                },
+              );
+              // set up the AlertDialog
+              AlertDialog alert = AlertDialog(
+                title: Text("AlertDialog"),
+                content: Text("Are you sure you want to accept this request?"),
+                actions: [
+                  cancelButton,
+                  continueButton,
+                ],
+              );
+              // show the dialog
+              showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return alert;
+                },
+              );
             },
             child: Text("Accept Request"),
           ),
           ElevatedButton(
             onPressed: () async {
-              await currentUser.declineFriendRequest(user);
-              await appState.doGetFriends();
+              Widget cancelButton = ElevatedButton(
+                child: Text("Cancel"),
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+              );
+              Widget continueButton = ElevatedButton(
+                child: Text("Continue"),
+                onPressed: () async {
+                  await currentUser.declineFriendRequest(user);
+                  await appState.doGetFriends();
+                  // ignore: use_build_context_synchronously
+                  Navigator.pop(context);
+                },
+              );
+              // set up the AlertDialog
+              AlertDialog alert = AlertDialog(
+                title: Text("AlertDialog"),
+                content: Text("Are you sure you want to decline this request?"),
+                actions: [
+                  cancelButton,
+                  continueButton,
+                ],
+              );
+              // show the dialog
+              showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return alert;
+                },
+              );
             },
             child: Text("Decline Request"),
           ),

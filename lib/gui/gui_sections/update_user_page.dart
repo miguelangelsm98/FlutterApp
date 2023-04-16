@@ -127,21 +127,50 @@ class _UpdateUserPageState extends State<UpdateUserPage> {
                   minWidth: double.infinity,
                   height: 60,
                   onPressed: () async {
-                    if (pickedImage != null) {
-                      await FirebaseStorage.instance
-                          .ref('pictures/${user.userUid}')
-                          .putData(webImage);
-                      user.avatarPath = await FirebaseStorage.instance
-                          .ref("pictures/${user.userUid}")
-                          .getDownloadURL();
-                    }
-                    user.name = nameController.text;
-                    user.lastName = lastNameController.text;
-                    user.birthDate = DateTime.parse(dateIso);
-                    user.saveDatabase();
-                    setState(() {});
-                    Navigator.of(context).push(
-                        MaterialPageRoute(builder: (context) => MyHomePage()));
+                    Widget cancelButton = ElevatedButton(
+                      child: Text("Cancel"),
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                    );
+                    Widget okButton = ElevatedButton(
+                      child: Text("OK"),
+                      onPressed: () async {
+                        if (pickedImage != null) {
+                          await FirebaseStorage.instance
+                              .ref('pictures/${user.userUid}')
+                              .putData(webImage);
+                          user.avatarPath = await FirebaseStorage.instance
+                              .ref("pictures/${user.userUid}")
+                              .getDownloadURL();
+                        }
+                        user.name = nameController.text;
+                        user.lastName = lastNameController.text;
+                        user.birthDate = DateTime.parse(dateIso);
+                        user.saveDatabase();
+                        // setState(() {});
+                        // ignore: use_build_context_synchronously
+                        Navigator.of(context).push(MaterialPageRoute(
+                            builder: (context) => MyHomePage()));
+                        // ignore: use_build_context_synchronously
+                        // Navigator.pop(context);
+                      },
+                    );
+                    // set up the AlertDialog
+                    AlertDialog alert = AlertDialog(
+                      title: Text("AlertDialog"),
+                      content: Text("User successfully updated"),
+                      actions: [
+                        okButton,
+                      ],
+                    );
+                    // show the dialog
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return alert;
+                      },
+                    );
                   },
                   color: Colors.indigoAccent[400],
                   shape: RoundedRectangleBorder(

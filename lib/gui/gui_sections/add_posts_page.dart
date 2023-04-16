@@ -6,6 +6,8 @@ import '../../main.dart';
 
 import 'package:intl/intl.dart';
 
+import 'home_page.dart';
+
 class PostsAddPage extends StatefulWidget {
   @override
   State<PostsAddPage> createState() => _PostsAddPageState();
@@ -99,7 +101,10 @@ class _PostsAddPageState extends State<PostsAddPage> {
                           dateController.text = formattedDate;
                           dateIso = pickedDate!.toIso8601String();
                         }
-                      })
+                      }),
+                  SizedBox(
+                    height: 30,
+                  ),
                 ],
               ),
             ),
@@ -126,7 +131,30 @@ class _PostsAddPageState extends State<PostsAddPage> {
                         postDate: DateTime.parse(dateIso));
                     await post.addPost();
                     await appState.doGetPosts();
-                    Navigator.pop(context);
+
+                    Widget okButton = ElevatedButton(
+                      child: Text("OK"),
+                      onPressed: () {
+                        Navigator.of(context).push(MaterialPageRoute(
+                            builder: (context) => MyHomePage()));
+                      },
+                    );
+                    // set up the AlertDialog
+                    AlertDialog alert = AlertDialog(
+                      title: Text("AlertDialog"),
+                      content: Text("Post successfully created"),
+                      actions: [
+                        okButton,
+                      ],
+                    );
+                    // show the dialog
+                    // ignore: use_build_context_synchronously
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return alert;
+                      },
+                    );
                   },
                   color: Colors.indigoAccent[400],
                   shape: RoundedRectangleBorder(

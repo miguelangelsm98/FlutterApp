@@ -111,7 +111,7 @@ class CustomUser {
     }
   }
 
-  Future signUp() async {
+  Future signUp() async { 
     await saveAuth();
     await login();
     joinedDate = DateTime.now();
