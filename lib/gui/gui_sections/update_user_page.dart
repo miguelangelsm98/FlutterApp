@@ -39,7 +39,7 @@ class _UpdateUserPageState extends State<UpdateUserPage> {
     DateTime? pickedDate = DateTime.now();
 
     return Scaffold(
-      resizeToAvoidBottomInset: false,
+      resizeToAvoidBottomInset: true,
       backgroundColor: Colors.white,
       appBar: AppBar(
         elevation: 0,
@@ -58,71 +58,47 @@ class _UpdateUserPageState extends State<UpdateUserPage> {
         physics: ScrollPhysics(),
         child: Column(
           children: [
-            Column(
-              children: [
-                Text(
-                  "Add User Information",
-                  style: TextStyle(
-                    fontSize: 30,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                SizedBox(
-                  height: 20,
-                ),
-                Text(
-                  "Introduce your information",
-                  style: TextStyle(
-                    fontSize: 15,
-                    color: Colors.grey[700],
-                  ),
-                ),
-                SizedBox(
-                  height: 30,
-                )
-              ],
-            ),
+            // Column(
+            //   children: [
+            // Add to AppBar
+            // Text(
+            //   "Add User Information",
+            //   style: TextStyle(
+            //     fontSize: 30,
+            //     fontWeight: FontWeight.bold,
+            //   ),
+            // ),
+            // SizedBox(
+            //   height: 20,
+            // ),
+            // Text(
+            //   "Introduce your information",
+            //   style: TextStyle(
+            //     fontSize: 15,
+            //     color: Colors.grey[700],
+            //   ),
+            // ),
+            // SizedBox(
+            //   height: 30,
+            // )
+            //   ],
+            // ),
             SizedBox(
-              // height: MediaQuery.of(context).size.height,
-              width: double.infinity,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  Column(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            SizedBox(
-                                height: 150,
-                                child: pickedImage == null
-                                    ? Image.network(user.avatarPath!,
-                                        fit: BoxFit.scaleDown)
-                                    : kIsWeb
-                                        ? Image.memory(webImage,
-                                            fit: BoxFit.fill)
-                                        : Image.file(pickedImage!,
-                                            fit: BoxFit.scaleDown)),
-                            SizedBox(
-                              height: 30,
-                            ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                ElevatedButton(
-                                    onPressed: selectImage,
-                                    child: const Text("Select Image")),
-                              ],
-                            )
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
+                height: 150,
+                child: pickedImage == null
+                    ? Image.network(user.avatarPath!, fit: BoxFit.scaleDown)
+                    : kIsWeb
+                        ? Image.memory(webImage, fit: BoxFit.fill)
+                        : Image.file(pickedImage!, fit: BoxFit.scaleDown)),
+            SizedBox(
+              height: 30,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                ElevatedButton(
+                    onPressed: selectImage, child: const Text("Select Image")),
+              ],
             ),
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 40),

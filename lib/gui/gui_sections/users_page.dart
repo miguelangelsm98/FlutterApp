@@ -1,7 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_application/gui/gui_sections/home_page.dart';
 import 'package:provider/provider.dart';
 
 import '../../main.dart';
@@ -26,7 +25,7 @@ class _UsersPageState extends State<UsersPage> {
         FirebaseFirestore.instance.collection('users').snapshots();
 
     return Scaffold(
-      resizeToAvoidBottomInset: false,
+      resizeToAvoidBottomInset: true,
       backgroundColor: Colors.white,
       appBar: AppBar(
         elevation: 0,
@@ -48,26 +47,27 @@ class _UsersPageState extends State<UsersPage> {
           physics: ScrollPhysics(),
           child: Column(
             children: <Widget>[
-              Text(
-                "Users",
-                style: TextStyle(
-                  fontSize: 30,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              SizedBox(
-                height: 20,
-              ),
-              Text(
-                "Check all the users",
-                style: TextStyle(
-                  fontSize: 15,
-                  color: Colors.grey[700],
-                ),
-              ),
-              SizedBox(
-                height: 30,
-              ),
+              // Move to AppBar
+              // Text(
+              //   "Users",
+              //   style: TextStyle(
+              //     fontSize: 30,
+              //     fontWeight: FontWeight.bold,
+              //   ),
+              // ),
+              // SizedBox(
+              //   height: 20,
+              // ),
+              // Text(
+              //   "Check all the users",
+              //   style: TextStyle(
+              //     fontSize: 15,
+              //     color: Colors.grey[700],
+              //   ),
+              // ),
+              // SizedBox(
+              //   height: 30,
+              // ),
               ListView.builder(
                   physics: NeverScrollableScrollPhysics(),
                   shrinkWrap: true,

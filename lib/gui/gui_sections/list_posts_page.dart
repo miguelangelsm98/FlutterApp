@@ -36,6 +36,7 @@ class PostsListPage extends StatelessWidget {
           physics: ScrollPhysics(),
           child: Column(
             children: [
+              // Move to AppBar
               // Text(
               //   "Posts",
               //   style: TextStyle(
@@ -57,7 +58,6 @@ class PostsListPage extends StatelessWidget {
               //   height: 30,
               // ),
 
-              // Move to appbar
               ElevatedButton(
                 onPressed: () async {
                   Navigator.push(

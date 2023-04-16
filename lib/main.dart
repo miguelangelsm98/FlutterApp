@@ -77,7 +77,7 @@ class MyAppState extends ChangeNotifier {
   void doUserLogout() {
     selectedIndex = 0;
     isLoggedIn = false;
-    currentUser = null;
+    // currentUser = null;
     users.clear();
 
     notifyListeners();

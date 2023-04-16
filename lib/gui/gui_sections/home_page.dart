@@ -126,7 +126,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     ),
                   ),
                   Expanded(child: mainArea),
-                  SafeArea(child: profileWidget(context)),
+                  // SafeArea(child: profileWidget(context)),
                 ],
               );
             }
