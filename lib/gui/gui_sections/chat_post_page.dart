@@ -4,14 +4,14 @@ import 'package:provider/provider.dart';
 
 import '../../main.dart';
 
-class ChatPage extends StatefulWidget {
-  const ChatPage({super.key});
+class ChatPostPage extends StatefulWidget {
+  const ChatPostPage({super.key});
 
   @override
-  State<ChatPage> createState() => _ChatPageState();
+  State<ChatPostPage> createState() => _ChatPostPageState();
 }
 
-class _ChatPageState extends State<ChatPage> {
+class _ChatPostPageState extends State<ChatPostPage> {
   TextEditingController messageController = TextEditingController();
 
   @override
@@ -37,6 +37,7 @@ class _ChatPageState extends State<ChatPage> {
               size: 20,
               color: Colors.black,
             )),
+        title: Text("Chat - ${post.name}"),
       ),
       body: Column(
         children: [

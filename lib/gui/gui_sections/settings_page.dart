@@ -37,7 +37,7 @@ class _SettingsPageState extends State<SettingsPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text("Title"),
+        title: Text(""),
       ),
       body: SettingsList(
         sections: [

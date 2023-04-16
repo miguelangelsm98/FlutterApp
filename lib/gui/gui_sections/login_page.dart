@@ -30,17 +30,18 @@ class _LoginPageState extends State<LoginPage> {
       resizeToAvoidBottomInset: true,
       backgroundColor: Colors.white,
       appBar: AppBar(
-        elevation: 0,
-        backgroundColor: Colors.white,
-        leading: IconButton(
-            onPressed: () {
-              Navigator.pop(context);
-            },
-            icon: Icon(
-              Icons.arrow_back_ios,
-              size: 20,
-              color: Colors.black,
-            )),
+        title: Text(""),
+        // elevation: 0,
+        // backgroundColor: Colors.white,
+        // leading: IconButton(
+        //     onPressed: () {
+        //       Navigator.pop(context);
+        //     },
+        //     icon: Icon(
+        //       Icons.arrow_back_ios,
+        //       size: 20,
+        //       color: Colors.black,
+        //     )),
       ),
       body: SingleChildScrollView(
         physics: ScrollPhysics(),
@@ -125,8 +126,10 @@ class _LoginPageState extends State<LoginPage> {
                 Text("Dont have an account?"),
                 MaterialButton(
                   onPressed: () async {
-                    Navigator.of(context).push(
-                        MaterialPageRoute(builder: (context) => SignupPage()));
+                    appState.changeSelectedIndex(1);
+                    // setState(() {});
+                    // Navigator.of(context).push(
+                    //     MaterialPageRoute(builder: (context) => SignupPage()));
                   },
                   child: Text(
                     "Sign Up",
@@ -155,7 +158,7 @@ Widget makeInput({label, controller, obsureText = false}) {
         height: 5,
       ),
       TextField(
-        autofocus: false,
+        // autofocus: false,
         controller: controller,
         obscureText: obsureText,
         decoration: InputDecoration(

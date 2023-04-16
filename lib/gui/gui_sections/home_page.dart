@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application/gui/gui_sections/settings_page.dart';
+import 'package:flutter_application/gui/gui_sections/signup_page.dart';
 import 'package:flutter_application/gui/gui_sections/update_user_page.dart';
 import 'package:flutter_application/gui/gui_sections/list_posts_page.dart';
 import 'package:flutter_application/gui/gui_sections/users_page.dart';
@@ -24,11 +25,18 @@ class _MyHomePageState extends State<MyHomePage> {
     bool isLoggedIn = appState.isLoggedIn;
     var colorScheme = Theme.of(context).colorScheme;
 
-    if (!isLoggedIn) {
-      return LoginPage();
-    } else {
-      Widget page;
+    Widget page;
 
+    if (!isLoggedIn) {
+      switch (appState.selectedIndex) {
+        case 0:
+          return LoginPage();
+        case 1:
+          return SignupPage();
+        default:
+          throw UnimplementedError('no widget for ${appState.selectedIndex}');
+      }
+    } else {
       switch (appState.selectedIndex) {
         // case 0:
         //   page = PostsAddPage();

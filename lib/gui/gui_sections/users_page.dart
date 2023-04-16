@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 
 import '../../main.dart';
 import '../../models/user.dart';
+import 'chat_direct_page.dart';
 
 class UsersPage extends StatefulWidget {
   @override
@@ -28,17 +29,18 @@ class _UsersPageState extends State<UsersPage> {
       resizeToAvoidBottomInset: true,
       backgroundColor: Colors.white,
       appBar: AppBar(
-        elevation: 0,
-        backgroundColor: Colors.white,
-        leading: IconButton(
-            onPressed: () {
-              Navigator.pop(context);
-            },
-            icon: Icon(
-              Icons.arrow_back_ios,
-              size: 20,
-              color: Colors.black,
-            )),
+        title: Text(""),
+        // elevation: 0,
+        // backgroundColor: Colors.white,
+        // leading: IconButton(
+        //     onPressed: () {
+        //       Navigator.pop(context);
+        //     },
+        //     icon: Icon(
+        //       Icons.arrow_back_ios,
+        //       size: 20,
+        //       color: Colors.black,
+        //     )),
       ),
       body: SizedBox(
         height: MediaQuery.of(context).size.height,
@@ -48,26 +50,26 @@ class _UsersPageState extends State<UsersPage> {
           child: Column(
             children: <Widget>[
               // Move to AppBar
-              // Text(
-              //   "Users",
-              //   style: TextStyle(
-              //     fontSize: 30,
-              //     fontWeight: FontWeight.bold,
-              //   ),
-              // ),
-              // SizedBox(
-              //   height: 20,
-              // ),
-              // Text(
-              //   "Check all the users",
-              //   style: TextStyle(
-              //     fontSize: 15,
-              //     color: Colors.grey[700],
-              //   ),
-              // ),
-              // SizedBox(
-              //   height: 30,
-              // ),
+              Text(
+                "Users",
+                style: TextStyle(
+                  fontSize: 30,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              SizedBox(
+                height: 20,
+              ),
+              Text(
+                "Check all the users",
+                style: TextStyle(
+                  fontSize: 15,
+                  color: Colors.grey[700],
+                ),
+              ),
+              SizedBox(
+                height: 30,
+              ),
               ListView.builder(
                   physics: NeverScrollableScrollPhysics(),
                   shrinkWrap: true,
@@ -133,13 +135,36 @@ class _UsersPageState extends State<UsersPage> {
     Widget widget;
 
     if (currentUser.friends.contains(user.userUid)) {
-      widget = ElevatedButton(
-        onPressed: () async {
-          await currentUser.removeFriend(user);
-          await appState.doGetFriends();
-          await appState.doGetPosts();
-        },
-        child: Text("Delete friend"),
+      widget = Row(
+        children: [
+          ElevatedButton(
+            onPressed: () async {
+              await currentUser.removeFriend(user);
+              await appState.doGetFriends();
+              await appState.doGetPosts();
+            },
+            child: Text("DF"),
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              String relationId = currentUser.friendRelations[user.userUid]!;
+              await currentUser.getMessages(relationId);
+              // ignore: use_build_context_synchronously
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const ChatDirectPage(),
+                  // Pass the arguments as part of the RouteSettings. The
+                  // DetailScreen reads the arguments from these settings.
+                  settings: RouteSettings(
+                    arguments: user,
+                  ),
+                ),
+              );
+            },
+            child: Text("Chat"),
+          ),
+        ],
       );
     } else if (currentUser.ownRequests!.contains(user.userUid)) {
       widget = ElevatedButton(

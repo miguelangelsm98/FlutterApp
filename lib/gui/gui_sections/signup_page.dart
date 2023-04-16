@@ -38,7 +38,7 @@ class _SignupPageState extends State<SignupPage> {
         backgroundColor: Colors.white,
         leading: IconButton(
             onPressed: () {
-              Navigator.pop(context);
+              appState.changeSelectedIndex(0);
             },
             icon: Icon(
               Icons.arrow_back_ios,
@@ -140,8 +140,7 @@ class _SignupPageState extends State<SignupPage> {
                 Text("Already have an account? "),
                 MaterialButton(
                   onPressed: () async {
-                    Navigator.of(context).push(
-                        MaterialPageRoute(builder: (context) => MyHomePage()));
+                    appState.changeSelectedIndex(0);
                   },
                   child: Text(
                     "Log In",

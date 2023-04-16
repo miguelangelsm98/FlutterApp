@@ -19,6 +19,8 @@ class CustomUser {
 
   List<Post> posts = <Post>[];
   List<String> friends = <String>[];
+  Map<String, String> friendRelations = {};
+  Map<String, List<Map<String, dynamic>>?> friendMessages = {};
 
   CustomUser({
     this.userUid,
@@ -168,16 +170,16 @@ class CustomUser {
     });
 
     // Add friend relationship
-    await FirebaseFirestore.instance
-        .collection('friends')
-        .doc(friend.userUid! + userUid!)
-        .set({
+    String relationId = friend.userUid! + userUid!;
+    await FirebaseFirestore.instance.collection('friends').doc(relationId).set({
       "firstUserUid": friend.userUid,
       "secondUserUid": userUid,
     });
 
     friendRequests?.remove(friend.userUid!);
     friends.add(friend.userUid!);
+    friendRelations.putIfAbsent(friend.userUid!, () => relationId);
+    print(friendRelations);
   }
 
   Future declineFriendRequest(CustomUser friend) async {
@@ -199,21 +201,55 @@ class CustomUser {
 
   Future removeFriend(CustomUser friend) async {
     // Remove friend relationship
+    String? relationId = friendRelations[friend.userUid!];
     await FirebaseFirestore.instance
         .collection('friends')
-        .doc(friend.userUid! + userUid!)
+        .doc(relationId)
         .delete();
-    await FirebaseFirestore.instance
-        .collection('friends')
-        .doc(userUid! + friend.userUid!)
-        .delete();
+    // await FirebaseFirestore.instance
+    //     .collection('friends')
+    //     .doc(userUid! + friend.userUid!)
+    //     .delete();
     friends.remove(friend.userUid);
+    friendRelations.remove(relationId);
   }
 
   List<String> closeFriends() {
     List<String> result = List.from(friends);
     result.add(userUid!);
     return result;
+  }
+
+  void addMesage(String message, String relationId) async {
+    Map<String, dynamic> messageDoc = <String, dynamic>{};
+    messageDoc.putIfAbsent('message', () => message);
+    messageDoc.putIfAbsent('userUid', () => userUid);
+    messageDoc.putIfAbsent(
+        'createdDate', () => DateTime.now().toIso8601String());
+    messageDoc.putIfAbsent('userAvatarPath', () => avatarPath);
+    messageDoc.putIfAbsent('userName', () => name);
+    messageDoc.putIfAbsent('userLastName', () => lastName);
+    print("Adding message: $messageDoc to relationId $relationId");
+    await FirebaseFirestore.instance
+        .collection('friends')
+        .doc(relationId)
+        .collection('chat')
+        .add(messageDoc);
+  }
+
+  Future getMessages(String relationId) async {
+    friendMessages[relationId] = <Map<String, dynamic>>[];
+    // messages = <Map<String, dynamic>>[];
+    final ref = FirebaseFirestore.instance
+        .collection("friends")
+        .doc(relationId)
+        .collection("chat")
+        .orderBy("createdDate", descending: false);
+    final querySnap = await ref.get();
+    for (var message in querySnap.docs) {
+      friendMessages[relationId]!.add(message.data());
+    } // Convert to User object
+    
   }
 }
 

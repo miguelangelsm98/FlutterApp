@@ -4,7 +4,7 @@ import 'package:provider/provider.dart';
 import '../../main.dart';
 import '../../models/post.dart';
 import 'add_posts_page.dart';
-import 'chat_page.dart';
+import 'chat_post_page.dart';
 
 class PostsListPage extends StatelessWidget {
   @override
@@ -17,17 +17,18 @@ class PostsListPage extends StatelessWidget {
       resizeToAvoidBottomInset: true,
       backgroundColor: Colors.white,
       appBar: AppBar(
-        elevation: 0,
-        backgroundColor: Colors.white,
-        leading: IconButton(
-            onPressed: () {
-              Navigator.pop(context);
-            },
-            icon: Icon(
-              Icons.arrow_back_ios,
-              size: 20,
-              color: Colors.black,
-            )),
+        title: Text(""),
+        // elevation: 0,
+        // backgroundColor: Colors.white,
+        // leading: IconButton(
+        //     onPressed: () {
+        //       Navigator.pop(context);
+        //     },
+        //     icon: Icon(
+        //       Icons.arrow_back_ios,
+        //       size: 20,
+        //       color: Colors.black,
+        //     )),
       ),
       body: SizedBox(
         height: MediaQuery.of(context).size.height,
@@ -37,16 +38,16 @@ class PostsListPage extends StatelessWidget {
           child: Column(
             children: [
               // Move to AppBar
-              // Text(
-              //   "Posts",
-              //   style: TextStyle(
-              //     fontSize: 30,
-              //     fontWeight: FontWeight.bold,
-              //   ),
-              // ),
-              // SizedBox(
-              //   height: 20,
-              // ),
+              Text(
+                "Posts",
+                style: TextStyle(
+                  fontSize: 30,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              SizedBox(
+                height: 20,
+              ),
               // Text(
               //   "Check created Posts",
               //   style: TextStyle(
@@ -57,7 +58,6 @@ class PostsListPage extends StatelessWidget {
               // SizedBox(
               //   height: 30,
               // ),
-
               ElevatedButton(
                 onPressed: () async {
                   Navigator.push(
@@ -150,7 +150,7 @@ class PostsListPage extends StatelessWidget {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => const ChatPage(),
+                  builder: (context) => const ChatPostPage(),
                   // Pass the arguments as part of the RouteSettings. The
                   // DetailScreen reads the arguments from these settings.
                   settings: RouteSettings(
@@ -205,7 +205,7 @@ class PostsListPage extends StatelessWidget {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => const ChatPage(),
+                  builder: (context) => const ChatPostPage(),
                   // Pass the arguments as part of the RouteSettings. The
                   // DetailScreen reads the arguments from these settings.
                   settings: RouteSettings(

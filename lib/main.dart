@@ -49,7 +49,6 @@ class MyAppState extends ChangeNotifier {
 
   void changeSelectedIndex(int index) {
     selectedIndex = index;
-
     notifyListeners();
   }
 
@@ -113,6 +112,7 @@ class MyAppState extends ChangeNotifier {
 
   Future<void> doGetFriends() async {
     currentUser?.friends.clear();
+    currentUser?.friendRelations.clear();
 
     await FirebaseFirestore.instance
         .collection("friends")
@@ -121,7 +121,11 @@ class MyAppState extends ChangeNotifier {
         .then(
       (querySnapshot) {
         for (var docSnapshot in querySnapshot.docs) {
-          currentUser!.friends.add(docSnapshot.data()["secondUserUid"]);
+          String friendId = docSnapshot.data()["secondUserUid"];
+          String relationId =
+              (currentUser?.userUid)! + docSnapshot.data()["secondUserUid"];
+          currentUser!.friends.add(friendId);
+          currentUser!.friendRelations[friendId] = relationId;
         }
       },
       onError: (e) => print("Error getting document: $e"),
@@ -134,12 +138,15 @@ class MyAppState extends ChangeNotifier {
         .then(
       (querySnapshot) {
         for (var docSnapshot in querySnapshot.docs) {
-          currentUser!.friends.add(docSnapshot.data()["firstUserUid"]);
+          String friendId = docSnapshot.data()["firstUserUid"];
+          String relationId =
+              docSnapshot.data()["firstUserUid"] + (currentUser?.userUid)!;
+          currentUser!.friends.add(friendId);
+          currentUser!.friendRelations[friendId] = relationId;
         }
       },
       onError: (e) => print("Error getting document: $e"),
     );
-
     notifyListeners();
   }
 }
