@@ -58,31 +58,6 @@ class _UpdateUserPageState extends State<UpdateUserPage> {
         physics: ScrollPhysics(),
         child: Column(
           children: [
-            // Column(
-            //   children: [
-            // Add to AppBar
-            // Text(
-            //   "Add User Information",
-            //   style: TextStyle(
-            //     fontSize: 30,
-            //     fontWeight: FontWeight.bold,
-            //   ),
-            // ),
-            // SizedBox(
-            //   height: 20,
-            // ),
-            // Text(
-            //   "Introduce your information",
-            //   style: TextStyle(
-            //     fontSize: 15,
-            //     color: Colors.grey[700],
-            //   ),
-            // ),
-            // SizedBox(
-            //   height: 30,
-            // )
-            //   ],
-            // ),
             SizedBox(
                 height: 150,
                 child: pickedImage == null
@@ -130,17 +105,10 @@ class _UpdateUserPageState extends State<UpdateUserPage> {
                           dateController.text = formattedDate;
                           dateIso = pickedDate!.toIso8601String();
                         }
-
-                        // setState(() {
-                        //   dateFormatted = pickedDate.toIso8601String();
-                        // }); //set foratted date to TextField value.
-
-                        //when click we have to show the datepicker
-                      })
-                  // makeInput(
-                  //   label: "Birth Date",
-                  //   controller: birthDateController,
-                  // ),
+                      }),
+                  SizedBox(
+                    height: 30,
+                  ),
                 ],
               ),
             ),
@@ -222,20 +190,6 @@ class _UpdateUserPageState extends State<UpdateUserPage> {
       print('Something went wrong');
     }
   }
-
-  // Future uploadImage() async {
-  //   // upload file
-  //   await FirebaseStorage.instance
-  //       .ref('pictures/${user.userUid}')
-  //       .putData(webImage);
-  //   user.avatarPath = await FirebaseStorage.instance
-  //       .ref("pictures/${user.userUid}")
-  //       .getDownloadURL();
-  //   await user.saveDatabase();
-  //   setState(() {});
-  //   Navigator.of(context)
-  //       .push(MaterialPageRoute(builder: (context) => MyHomePage()));
-  // }
 }
 
 Widget makeInput({label, controller, obsureText = false}) {

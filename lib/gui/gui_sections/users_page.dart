@@ -135,7 +135,7 @@ class _UsersPageState extends State<UsersPage> {
     Widget widget;
 
     if (currentUser.friends.contains(user.userUid)) {
-      widget = Row(
+      widget = Column(
         children: [
           ElevatedButton(
             onPressed: () async {
@@ -143,7 +143,7 @@ class _UsersPageState extends State<UsersPage> {
               await appState.doGetFriends();
               await appState.doGetPosts();
             },
-            child: Text("DF"),
+            child: Text("Remove Friend"),
           ),
           ElevatedButton(
             onPressed: () async {
@@ -172,10 +172,10 @@ class _UsersPageState extends State<UsersPage> {
           await currentUser.removeFriendRequest(user);
           await appState.doGetFriends();
         },
-        child: Text("Cancel friend request"),
+        child: Text("Cancel Request"),
       );
     } else if (currentUser.friendRequests!.contains(user.userUid)) {
-      widget = Row(
+      widget = Column(
         children: [
           ElevatedButton(
             onPressed: () async {
@@ -200,53 +200,53 @@ class _UsersPageState extends State<UsersPage> {
           await currentUser.addFriendRequest(user);
           await appState.doGetFriends();
         },
-        child: Text("Send friend request"),
+        child: Text("Add Friend"),
       );
     }
     return widget;
   }
 }
 
-Widget profileWidget2(BuildContext context) {
-  var appState = context.watch<MyAppState>();
-  var imagePath = appState.currentUser!.avatarPath;
+// Widget profileWidget2(BuildContext context) {
+//   var appState = context.watch<MyAppState>();
+//   var imagePath = appState.currentUser!.avatarPath;
 
-  return Row(
-    children: [
-      SizedBox(
-          height: 60, child: Image.network(imagePath!, fit: BoxFit.scaleDown)),
-      Column(
-        children: [
-          Text(
-            "Hello " "${appState.currentUser!.name}!",
-            style: TextStyle(
-                fontSize: 15,
-                fontWeight: FontWeight.w400,
-                color: Colors.black87),
-          ),
-          MaterialButton(
-            // height: 5,
-            onPressed: () async {
-              try {
-                await FirebaseAuth.instance.signOut();
-                appState.doUserLogout();
-              } on FirebaseAuthException catch (e) {
-                print(e.toString());
-              }
-            },
-            color: Color.fromARGB(255, 30, 226, 72),
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(40)),
-            child: Text(
-              "Logout",
-              style: TextStyle(
-                  fontSize: 15,
-                  fontWeight: FontWeight.w400,
-                  color: Colors.black87),
-            ),
-          ),
-        ],
-      ),
-    ],
-  );
-}
+//   return Row(
+//     children: [
+//       SizedBox(
+//           height: 60, child: Image.network(imagePath!, fit: BoxFit.scaleDown)),
+//       Column(
+//         children: [
+//           Text(
+//             "Hello " "${appState.currentUser!.name}!",
+//             style: TextStyle(
+//                 fontSize: 15,
+//                 fontWeight: FontWeight.w400,
+//                 color: Colors.black87),
+//           ),
+//           MaterialButton(
+//             // height: 5,
+//             onPressed: () async {
+//               try {
+//                 await FirebaseAuth.instance.signOut();
+//                 appState.doUserLogout();
+//               } on FirebaseAuthException catch (e) {
+//                 print(e.toString());
+//               }
+//             },
+//             color: Color.fromARGB(255, 30, 226, 72),
+//             shape:
+//                 RoundedRectangleBorder(borderRadius: BorderRadius.circular(40)),
+//             child: Text(
+//               "Logout",
+//               style: TextStyle(
+//                   fontSize: 15,
+//                   fontWeight: FontWeight.w400,
+//                   color: Colors.black87),
+//             ),
+//           ),
+//         ],
+//       ),
+//     ],
+//   );
+// }

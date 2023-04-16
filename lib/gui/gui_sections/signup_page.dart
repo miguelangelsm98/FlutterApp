@@ -7,6 +7,25 @@ import 'package:provider/provider.dart';
 
 import '../../main.dart';
 
+import 'dart:io';
+
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+
+import 'package:flutter_application/models/user.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:provider/provider.dart';
+
+import '../../main.dart';
+import 'home_page.dart';
+
+import 'package:intl/intl.dart';
+
+const defaultAvatarPath =
+    "https://firebasestorage.googleapis.com/v0/b/tfg-project-a9320.appspot.com/o/pictures%2Fprofile1.png?alt=media&token=6edb382b-14d5-47f2-a17e-d274624c3e89";
+
 class SignupPage extends StatefulWidget {
   @override
   State<SignupPage> createState() => _SignupPageState();
@@ -16,6 +35,16 @@ class _SignupPageState extends State<SignupPage> {
   TextEditingController emailController = TextEditingController();
   TextEditingController password1Controller = TextEditingController();
   TextEditingController password2Controller = TextEditingController();
+  TextEditingController nameController = TextEditingController();
+  TextEditingController lastNameController = TextEditingController();
+  TextEditingController dateController = TextEditingController();
+  String dateIso = "";
+
+  File? pickedImage;
+  Uint8List webImage = Uint8List(8);
+  String imagePath = "";
+
+  // CustomUser user = CustomUser(email: "", password: "");
 
   @override
   void initState() {
@@ -29,6 +58,15 @@ class _SignupPageState extends State<SignupPage> {
   @override
   Widget build(BuildContext context) {
     var appState = context.watch<MyAppState>();
+    // user = appState.currentUser!;
+
+    // var nameController = TextEditingController(text: user.name);
+    // var lastNameController = TextEditingController(text: user.lastName);
+    // var dateController = TextEditingController(
+    //     text: DateFormat('dd-MM-yyyy').format(user.birthDate!));
+    // var dateIso = user.birthDate!.toIso8601String();
+    DateTime? pickedDate = DateTime(1900, 1, 1);
+    dateIso = pickedDate.toIso8601String();
 
     return Scaffold(
       resizeToAvoidBottomInset: true,
@@ -84,6 +122,36 @@ class _SignupPageState extends State<SignupPage> {
                       label: "Confirm Pasword",
                       controller: password2Controller,
                       obsureText: true),
+                  makeInput(label: "Name", controller: nameController),
+                  makeInput(
+                    label: "Last Name",
+                    controller: lastNameController,
+                  ),
+                  TextField(
+                      controller:
+                          dateController, //editing controller of this TextField
+                      decoration: const InputDecoration(
+                          icon: Icon(Icons.calendar_today), //icon of text field
+                          labelText: "Enter Birth Date" //label text of field
+                          ),
+                      readOnly: true, // when true user cannot edit text
+                      onTap: () async {
+                        pickedDate = await showDatePicker(
+                            context: context,
+                            initialDate: pickedDate!, //get today's date
+                            firstDate: DateTime(
+                                1900), //DateTime.now() - not to allow to choose before today.
+                            lastDate: DateTime.now());
+                        if (pickedDate != null) {
+                          String formattedDate = DateFormat('dd-MM-yyyy').format(
+                              pickedDate!); // format date in required form here we use yyyy-MM-dd that means time is removed
+                          dateController.text = formattedDate;
+                          dateIso = pickedDate!.toIso8601String();
+                        }
+                      }),
+                  SizedBox(
+                    height: 30,
+                  ),
                 ],
               ),
             ),
@@ -107,10 +175,23 @@ class _SignupPageState extends State<SignupPage> {
                         CustomUser u = CustomUser(
                             email: emailController.text,
                             password: password1Controller.text);
+
+                        // if (pickedImage != null) {
+                        //   await FirebaseStorage.instance
+                        //       .ref('pictures/${u.userUid}')
+                        //       .putData(webImage);
+                        //   u.avatarPath = await FirebaseStorage.instance
+                        //       .ref("pictures/${u.userUid}")
+                        //       .getDownloadURL();
+                        // }
+                        u.name = nameController.text;
+                        u.lastName = lastNameController.text;
+                        u.birthDate = DateTime.parse(dateIso);
+                        // u.saveDatabase();
+                        // setState(() {});
+
                         await u.signUp();
                         await appState.doUserLogin();
-                        Navigator.of(context).push(MaterialPageRoute(
-                            builder: (context) => UpdateUserPage()));
                       } on FirebaseAuthException catch (e) {
                         print(e.toString());
                       }
@@ -153,6 +234,35 @@ class _SignupPageState extends State<SignupPage> {
         ),
       ),
     );
+  }
+
+  Future selectImage() async {
+    if (!kIsWeb) {
+      final ImagePicker picker = ImagePicker();
+      XFile? image = await picker.pickImage(source: ImageSource.gallery);
+      if (image != null) {
+        var selected = File(image.path);
+        setState(() {
+          pickedImage = selected;
+        });
+      } else {
+        print('No image has been picked');
+      }
+    } else if (kIsWeb) {
+      final ImagePicker picker = ImagePicker();
+      XFile? image = await picker.pickImage(source: ImageSource.gallery);
+      if (image != null) {
+        var f = await image.readAsBytes();
+        setState(() {
+          webImage = f;
+          pickedImage = File('a');
+        });
+      } else {
+        print('No image has been picked');
+      }
+    } else {
+      print('Something went wrong');
+    }
   }
 }
 

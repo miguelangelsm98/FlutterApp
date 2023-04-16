@@ -115,9 +115,9 @@ class CustomUser {
     await saveAuth();
     await login();
     joinedDate = DateTime.now();
-    name = "";
-    lastName = "";
-    birthDate = DateTime(1900, 1, 1);
+    // name = "";
+    // lastName = "";
+    // birthDate ??= DateTime(1900, 1, 1);
     await saveDatabase();
   }
 
@@ -249,7 +249,6 @@ class CustomUser {
     for (var message in querySnap.docs) {
       friendMessages[relationId]!.add(message.data());
     } // Convert to User object
-    
   }
 }
 

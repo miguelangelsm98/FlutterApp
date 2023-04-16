@@ -63,6 +63,7 @@ class MyAppState extends ChangeNotifier {
     currentUser = await getUserObject();
     currentUser?.friends = <String>[];
     currentUser?.posts = <Post>[];
+    selectedIndex = 0;
 
     await doGetUsers();
     await doGetFriends();
