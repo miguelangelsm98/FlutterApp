@@ -37,7 +37,16 @@ class _SettingsPageState extends State<SettingsPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(""),
+        elevation: 0,
+        backgroundColor: Colors.white,
+        title: Row(
+          // mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            SizedBox(width: 40),
+            Text("Settings"),
+          ],
+        ),
+        automaticallyImplyLeading: false,
       ),
       body: SettingsList(
         sections: [
@@ -59,11 +68,11 @@ class _SettingsPageState extends State<SettingsPage> {
                   );
                 },
               ),
-              SettingsTile(
-                title: Text('Language'),
-                leading: Icon(Icons.language),
-                onPressed: (BuildContext context) {},
-              ),
+              // SettingsTile(
+              //   title: Text('Language'),
+              //   leading: Icon(Icons.language),
+              //   onPressed: (BuildContext context) {},
+              // ),
               SettingsTile(
                 title: Text('Log Out'),
                 leading: Icon(Icons.logout),

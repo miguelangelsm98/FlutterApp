@@ -17,7 +17,16 @@ class PostsListPage extends StatelessWidget {
       resizeToAvoidBottomInset: true,
       backgroundColor: Colors.white,
       appBar: AppBar(
-        title: Text(""),
+        elevation: 0,
+        backgroundColor: Colors.white,
+        title: Row(
+          // mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            SizedBox(width: 40),
+            Text("Posts"),
+          ],
+        ),
+        automaticallyImplyLeading: false,
         // elevation: 0,
         // backgroundColor: Colors.white,
         // leading: IconButton(
@@ -30,6 +39,21 @@ class PostsListPage extends StatelessWidget {
         //       color: Colors.black,
         //     )),
       ),
+      floatingActionButton: FloatingActionButton(
+        elevation: 10.0,
+        backgroundColor: Colors.green,
+        onPressed: () {
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => PostsAddPage(),
+                // Pass the arguments as part of the RouteSettings. The
+                // DetailScreen reads the arguments from these settings.
+              ));
+        },
+        child: Icon(Icons.add),
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.miniEndTop,
       body: SizedBox(
         height: MediaQuery.of(context).size.height,
         width: double.infinity,
@@ -38,16 +62,16 @@ class PostsListPage extends StatelessWidget {
           child: Column(
             children: [
               // Move to AppBar
-              Text(
-                "Posts",
-                style: TextStyle(
-                  fontSize: 30,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              SizedBox(
-                height: 20,
-              ),
+              // Text(
+              //   "Posts",
+              //   style: TextStyle(
+              //     fontSize: 30,
+              //     fontWeight: FontWeight.bold,
+              //   ),
+              // ),
+              // SizedBox(
+              //   height: 20,
+              // ),
               // Text(
               //   "Check created Posts",
               //   style: TextStyle(
@@ -58,24 +82,25 @@ class PostsListPage extends StatelessWidget {
               // SizedBox(
               //   height: 30,
               // ),
-              ElevatedButton(
-                onPressed: () async {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => PostsAddPage(),
-                      // Pass the arguments as part of the RouteSettings. The
-                      // DetailScreen reads the arguments from these settings.
-                    ),
-                  );
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.green,
-                  // padding: EdgeInsets.symmetric(horizontal: 50, vertical: 20),
-                  // textStyle: TextStyle(fontSize: 30, fontWeight: FontWeight.bold)
-                ),
-                child: Text("Create new Post"),
-              ),
+
+              // ElevatedButton(
+              //   onPressed: () async {
+              //     Navigator.push(
+              //       context,
+              //       MaterialPageRoute(
+              //         builder: (context) => PostsAddPage(),
+              //         // Pass the arguments as part of the RouteSettings. The
+              //         // DetailScreen reads the arguments from these settings.
+              //       ),
+              //     );
+              //   },
+              //   style: ElevatedButton.styleFrom(
+              //     backgroundColor: Colors.green,
+              //     // padding: EdgeInsets.symmetric(horizontal: 50, vertical: 20),
+              //     // textStyle: TextStyle(fontSize: 30, fontWeight: FontWeight.bold)
+              //   ),
+              //   child: Text("Create new Post"),
+              // ),
               SizedBox(
                 height: 30,
               ),
@@ -200,9 +225,38 @@ class PostsListPage extends StatelessWidget {
     } else if (!p.users!.contains(appState.currentUser!.userUid)) {
       widget = ElevatedButton(
         onPressed: () async {
-          p.users?.add(appState.currentUser!.userUid!);
-          p.saveDatabase();
-          appState.doGetPosts();
+          Widget cancelButton = ElevatedButton(
+            child: Text("Cancel"),
+            onPressed: () {
+              Navigator.pop(context);
+            },
+          );
+          Widget continueButton = ElevatedButton(
+            child: Text("Continue"),
+            onPressed: () async {
+              p.users?.add(appState.currentUser!.userUid!);
+              p.saveDatabase();
+              appState.doGetPosts();
+              // ignore: use_build_context_synchronously
+              Navigator.pop(context);
+            },
+          );
+          // set up the AlertDialog
+          AlertDialog alert = AlertDialog(
+            title: Text("AlertDialog"),
+            content: Text("Are you sure you want to join this activity?"),
+            actions: [
+              cancelButton,
+              continueButton,
+            ],
+          );
+          // show the dialog
+          showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return alert;
+            },
+          );
         },
         style: ElevatedButton.styleFrom(
           backgroundColor: Colors.green,
@@ -216,9 +270,38 @@ class PostsListPage extends StatelessWidget {
         children: [
           ElevatedButton(
             onPressed: () async {
-              p.users?.remove(appState.currentUser!.userUid!);
-              p.saveDatabase();
-              appState.doGetPosts();
+              Widget cancelButton = ElevatedButton(
+                child: Text("Cancel"),
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+              );
+              Widget continueButton = ElevatedButton(
+                child: Text("Continue"),
+                onPressed: () async {
+                  p.users?.remove(appState.currentUser!.userUid!);
+                  p.saveDatabase();
+                  appState.doGetPosts();
+                  // ignore: use_build_context_synchronously
+                  Navigator.pop(context);
+                },
+              );
+              // set up the AlertDialog
+              AlertDialog alert = AlertDialog(
+                title: Text("AlertDialog"),
+                content: Text("Are you sure you want to leave this activity?"),
+                actions: [
+                  cancelButton,
+                  continueButton,
+                ],
+              );
+              // show the dialog
+              showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return alert;
+                },
+              );
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.yellow,

@@ -33,10 +33,19 @@ class _UpdateUserPageState extends State<UpdateUserPage> {
 
     var nameController = TextEditingController(text: user.name);
     var lastNameController = TextEditingController(text: user.lastName);
-    var dateController = TextEditingController(
-        text: DateFormat('dd-MM-yyyy').format(user.birthDate!));
-    var dateIso = user.birthDate!.toIso8601String();
-    DateTime? pickedDate = DateTime.now();
+    TextEditingController dateController;
+    String dateIso;
+    DateTime? pickedDate;
+    if (user.birthDate != null) {
+      dateController = TextEditingController(
+          text: DateFormat('dd-MM-yyyy').format(user.birthDate!));
+      dateIso = user.birthDate!.toIso8601String();
+      pickedDate = user.birthDate;
+    } else {
+      dateController = TextEditingController();
+      dateIso = "";
+      pickedDate = DateTime.now();
+    }
 
     return Scaffold(
       resizeToAvoidBottomInset: true,
@@ -133,8 +142,8 @@ class _UpdateUserPageState extends State<UpdateUserPage> {
                         Navigator.pop(context);
                       },
                     );
-                    Widget okButton = ElevatedButton(
-                      child: Text("OK"),
+                    Widget continueButton = ElevatedButton(
+                      child: Text("Continue"),
                       onPressed: () async {
                         if (pickedImage != null) {
                           await FirebaseStorage.instance
@@ -159,9 +168,11 @@ class _UpdateUserPageState extends State<UpdateUserPage> {
                     // set up the AlertDialog
                     AlertDialog alert = AlertDialog(
                       title: Text("AlertDialog"),
-                      content: Text("User successfully updated"),
+                      content: Text(
+                          "Are you sure you want to update the information?"),
                       actions: [
-                        okButton,
+                        cancelButton,
+                        continueButton,
                       ],
                     );
                     // show the dialog

@@ -29,7 +29,16 @@ class _UsersPageState extends State<UsersPage> {
       resizeToAvoidBottomInset: true,
       backgroundColor: Colors.white,
       appBar: AppBar(
-        title: Text(""),
+        elevation: 0,
+        backgroundColor: Colors.white,
+        title: Row(
+          // mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            SizedBox(width: 40),
+            Text("Users"),
+          ],
+        ),
+        automaticallyImplyLeading: false,
         // elevation: 0,
         // backgroundColor: Colors.white,
         // leading: IconButton(
@@ -50,26 +59,26 @@ class _UsersPageState extends State<UsersPage> {
           child: Column(
             children: <Widget>[
               // Move to AppBar
-              Text(
-                "Users",
-                style: TextStyle(
-                  fontSize: 30,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              SizedBox(
-                height: 20,
-              ),
-              Text(
-                "Check all the users",
-                style: TextStyle(
-                  fontSize: 15,
-                  color: Colors.grey[700],
-                ),
-              ),
-              SizedBox(
-                height: 30,
-              ),
+              // Text(
+              //   "Users",
+              //   style: TextStyle(
+              //     fontSize: 30,
+              //     fontWeight: FontWeight.bold,
+              //   ),
+              // ),
+              // SizedBox(
+              //   height: 20,
+              // ),
+              // Text(
+              //   "Check all the users",
+              //   style: TextStyle(
+              //     fontSize: 15,
+              //     color: Colors.grey[700],
+              //   ),
+              // ),
+              // SizedBox(
+              //   height: 30,
+              // ),
               ListView.builder(
                   physics: NeverScrollableScrollPhysics(),
                   shrinkWrap: true,
@@ -234,9 +243,9 @@ class _UsersPageState extends State<UsersPage> {
                 onPressed: () async {
                   await currentUser.acceptFriendRequest(user);
                   await appState.doGetFriends();
-                  await appState.doGetPosts();
                   // ignore: use_build_context_synchronously
                   Navigator.pop(context);
+                  await appState.doGetPosts();
                 },
               );
               // set up the AlertDialog

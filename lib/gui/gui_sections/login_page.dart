@@ -30,7 +30,11 @@ class _LoginPageState extends State<LoginPage> {
       resizeToAvoidBottomInset: true,
       backgroundColor: Colors.white,
       appBar: AppBar(
+        elevation: 0,
+        backgroundColor: Colors.white,
         title: Text(""),
+        automaticallyImplyLeading: false,
+
         // elevation: 0,
         // backgroundColor: Colors.white,
         // leading: IconButton(

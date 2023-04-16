@@ -65,8 +65,9 @@ class _SignupPageState extends State<SignupPage> {
     // var dateController = TextEditingController(
     //     text: DateFormat('dd-MM-yyyy').format(user.birthDate!));
     // var dateIso = user.birthDate!.toIso8601String();
-    DateTime? pickedDate = DateTime(1900, 1, 1);
-    dateIso = pickedDate.toIso8601String();
+    // DateTime? pickedDate = DateTime(1900, 1, 1);
+    // dateIso = pickedDate.toIso8601String();
+    DateTime? pickedDate = DateTime.now();
 
     return Scaffold(
       resizeToAvoidBottomInset: true,
@@ -186,14 +187,37 @@ class _SignupPageState extends State<SignupPage> {
                         // }
                         u.name = nameController.text;
                         u.lastName = lastNameController.text;
-                        u.birthDate = DateTime.parse(dateIso);
+                        if (pickedDate != null) {
+                          u.birthDate = DateTime.parse(dateIso);
+                        }
                         // u.saveDatabase();
                         // setState(() {});
 
                         await u.signUp();
                         await appState.doUserLogin();
                       } on FirebaseAuthException catch (e) {
-                        print(e.toString());
+                        Widget okButton = ElevatedButton(
+                          child: Text("Ok"),
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                        );
+
+                        // set up the AlertDialog
+                        AlertDialog alert = AlertDialog(
+                          title: Text("AlertDialog"),
+                          content: Text(e.message.toString()),
+                          actions: [
+                            okButton,
+                          ],
+                        );
+                        // show the dialog
+                        showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return alert;
+                          },
+                        );
                       }
                     } else {
                       print("Passwords are not equal");
