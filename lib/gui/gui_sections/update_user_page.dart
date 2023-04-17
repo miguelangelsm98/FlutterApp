@@ -11,6 +11,7 @@ import 'package:provider/provider.dart';
 
 import '../../main.dart';
 import 'home_page.dart';
+import 'package:date_time_picker/date_time_picker.dart';
 
 import 'package:intl/intl.dart';
 
@@ -23,6 +24,7 @@ class _UpdateUserPageState extends State<UpdateUserPage> {
   File? pickedImage;
   Uint8List webImage = Uint8List(8);
   String imagePath = "";
+  String dateTime = DateTime.now().toString();
 
   CustomUser user = CustomUser(email: "", password: "");
 
@@ -33,18 +35,9 @@ class _UpdateUserPageState extends State<UpdateUserPage> {
 
     var nameController = TextEditingController(text: user.name);
     var lastNameController = TextEditingController(text: user.lastName);
-    TextEditingController dateController;
-    String dateIso;
-    DateTime? pickedDate;
+
     if (user.birthDate != null) {
-      dateController = TextEditingController(
-          text: DateFormat('dd-MM-yyyy').format(user.birthDate!));
-      dateIso = user.birthDate!.toIso8601String();
-      pickedDate = user.birthDate;
-    } else {
-      dateController = TextEditingController();
-      dateIso = "";
-      pickedDate = DateTime.now();
+      dateTime = user.birthDate.toString();
     }
 
     return Scaffold(
@@ -92,29 +85,21 @@ class _UpdateUserPageState extends State<UpdateUserPage> {
                   makeInput(
                     label: "Last Name",
                     controller: lastNameController,
+                  ),                  
+                  DateTimePicker(
+                    type: DateTimePickerType.date,
+                    dateMask: 'dd-MM-yyyy',
+                    initialValue: dateTime,
+                    firstDate: DateTime(1900),
+                    lastDate: DateTime.now(),
+                    dateLabelText: 'Birth Date',
+                    onChanged: (val) => dateTime = val,
+                    validator: (val) {
+                      print(val);
+                      return null;
+                    },
+                    onSaved: (val) => print(val),
                   ),
-                  TextField(
-                      controller:
-                          dateController, //editing controller of this TextField
-                      decoration: const InputDecoration(
-                          icon: Icon(Icons.calendar_today), //icon of text field
-                          labelText: "Enter Birth Date" //label text of field
-                          ),
-                      readOnly: true, // when true user cannot edit text
-                      onTap: () async {
-                        pickedDate = await showDatePicker(
-                            context: context,
-                            initialDate: pickedDate!, //get today's date
-                            firstDate: DateTime(
-                                1910), //DateTime.now() - not to allow to choose before today.
-                            lastDate: DateTime(2100));
-                        if (pickedDate != null) {
-                          String formattedDate = DateFormat('dd-MM-yyyy').format(
-                              pickedDate!); // format date in required form here we use yyyy-MM-dd that means time is removed
-                          dateController.text = formattedDate;
-                          dateIso = pickedDate!.toIso8601String();
-                        }
-                      }),
                   SizedBox(
                     height: 30,
                   ),
@@ -155,7 +140,7 @@ class _UpdateUserPageState extends State<UpdateUserPage> {
                         }
                         user.name = nameController.text;
                         user.lastName = lastNameController.text;
-                        user.birthDate = DateTime.parse(dateIso);
+                        user.birthDate = DateTime.parse(dateTime);
                         user.saveDatabase();
                         // setState(() {});
                         // ignore: use_build_context_synchronously

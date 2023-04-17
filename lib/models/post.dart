@@ -56,9 +56,9 @@ class Post {
       "name": name,
       if (description != null) "description": description,
       if (userUid != null) "userUid": userUid,
-      if (createdDate != null) "createdDate": createdDate?.toIso8601String(),
+      if (createdDate != null) "createdDate": createdDate?.toString(),
       if (users != null) "users": users,
-      if (postDate != null) "postDate": postDate?.toIso8601String(),
+      if (postDate != null) "postDate": postDate?.toString(),
     };
   }
 

@@ -136,6 +136,7 @@ class PostsListPage extends StatelessWidget {
               ),
               Text("Description: ${p.description!}"),
               Text("Created Date: ${p.createdDate.toString()}"),
+              Text("Post Date: ${p.postDate.toString()}"),
               Text("Owner: ${p.user!.email}"),
               SizedBox(
                   height: 60,

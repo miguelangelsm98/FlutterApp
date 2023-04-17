@@ -22,6 +22,7 @@ import '../../main.dart';
 import 'home_page.dart';
 
 import 'package:intl/intl.dart';
+import 'package:date_time_picker/date_time_picker.dart';
 
 const defaultAvatarPath =
     "https://firebasestorage.googleapis.com/v0/b/tfg-project-a9320.appspot.com/o/pictures%2Fprofile1.png?alt=media&token=6edb382b-14d5-47f2-a17e-d274624c3e89";
@@ -38,7 +39,9 @@ class _SignupPageState extends State<SignupPage> {
   TextEditingController nameController = TextEditingController();
   TextEditingController lastNameController = TextEditingController();
   TextEditingController dateController = TextEditingController();
-  String dateIso = "";
+  String dateTime = DateTime(1900).toString();
+
+  // String dateIso = "";
 
   File? pickedImage;
   Uint8List webImage = Uint8List(8);
@@ -67,7 +70,7 @@ class _SignupPageState extends State<SignupPage> {
     // var dateIso = user.birthDate!.toIso8601String();
     // DateTime? pickedDate = DateTime(1900, 1, 1);
     // dateIso = pickedDate.toIso8601String();
-    DateTime? pickedDate = DateTime.now();
+    // DateTime? pickedDate = DateTime.now();
 
     return Scaffold(
       resizeToAvoidBottomInset: true,
@@ -128,28 +131,20 @@ class _SignupPageState extends State<SignupPage> {
                     label: "Last Name",
                     controller: lastNameController,
                   ),
-                  TextField(
-                      controller:
-                          dateController, //editing controller of this TextField
-                      decoration: const InputDecoration(
-                          icon: Icon(Icons.calendar_today), //icon of text field
-                          labelText: "Enter Birth Date" //label text of field
-                          ),
-                      readOnly: true, // when true user cannot edit text
-                      onTap: () async {
-                        pickedDate = await showDatePicker(
-                            context: context,
-                            initialDate: pickedDate!, //get today's date
-                            firstDate: DateTime(
-                                1900), //DateTime.now() - not to allow to choose before today.
-                            lastDate: DateTime.now());
-                        if (pickedDate != null) {
-                          String formattedDate = DateFormat('dd-MM-yyyy').format(
-                              pickedDate!); // format date in required form here we use yyyy-MM-dd that means time is removed
-                          dateController.text = formattedDate;
-                          dateIso = pickedDate!.toIso8601String();
-                        }
-                      }),
+                  DateTimePicker(
+                    type: DateTimePickerType.date,
+                    dateMask: 'dd-MM-yyyy',
+                    initialValue: '',
+                    firstDate: DateTime(1900),
+                    lastDate: DateTime.now(),
+                    dateLabelText: 'Birth Date',
+                    onChanged: (val) => dateTime = val,
+                    validator: (val) {
+                      print(val);
+                      return null;
+                    },
+                    onSaved: (val) => print(val),
+                  ),
                   SizedBox(
                     height: 30,
                   ),
@@ -176,23 +171,9 @@ class _SignupPageState extends State<SignupPage> {
                         CustomUser u = CustomUser(
                             email: emailController.text,
                             password: password1Controller.text);
-
-                        // if (pickedImage != null) {
-                        //   await FirebaseStorage.instance
-                        //       .ref('pictures/${u.userUid}')
-                        //       .putData(webImage);
-                        //   u.avatarPath = await FirebaseStorage.instance
-                        //       .ref("pictures/${u.userUid}")
-                        //       .getDownloadURL();
-                        // }
                         u.name = nameController.text;
                         u.lastName = lastNameController.text;
-                        if (pickedDate != null) {
-                          u.birthDate = DateTime.parse(dateIso);
-                        }
-                        // u.saveDatabase();
-                        // setState(() {});
-
+                        u.birthDate = DateTime.parse(dateTime);
                         await u.signUp();
                         await appState.doUserLogin();
                       } on FirebaseAuthException catch (e) {

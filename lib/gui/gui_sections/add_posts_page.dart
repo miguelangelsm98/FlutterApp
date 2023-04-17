@@ -7,6 +7,7 @@ import '../../main.dart';
 import 'package:intl/intl.dart';
 
 import 'home_page.dart';
+import 'package:date_time_picker/date_time_picker.dart';
 
 class PostsAddPage extends StatefulWidget {
   @override
@@ -16,8 +17,10 @@ class PostsAddPage extends StatefulWidget {
 class _PostsAddPageState extends State<PostsAddPage> {
   TextEditingController nameController = TextEditingController();
   TextEditingController descriptionController = TextEditingController();
-  var dateController = TextEditingController(
-      text: DateFormat('dd-MM-yyyy').format(DateTime.now()));
+  String dateTime = DateTime.now().toString();
+
+  // var dateController = TextEditingController(
+  //     text: DateFormat('dd-MM-yyyy').format(DateTime.now()));
 
   @override
   void initState() {
@@ -27,8 +30,7 @@ class _PostsAddPageState extends State<PostsAddPage> {
   @override
   Widget build(BuildContext context) {
     var appState = context.watch<MyAppState>();
-    var dateIso = DateTime.now().toIso8601String();
-    DateTime? pickedDate = DateTime.now();
+    // DateTime? pickedDate = DateTime.now();
 
     return Scaffold(
       resizeToAvoidBottomInset: true,
@@ -80,28 +82,20 @@ class _PostsAddPageState extends State<PostsAddPage> {
                     label: "Description",
                     controller: descriptionController,
                   ),
-                  TextField(
-                      controller:
-                          dateController, //editing controller of this TextField
-                      decoration: const InputDecoration(
-                          icon: Icon(Icons.calendar_today), //icon of text field
-                          labelText: "Enter Activity Date" //label text of field
-                          ),
-                      readOnly: true, // when true user cannot edit text
-                      onTap: () async {
-                        pickedDate = await showDatePicker(
-                            context: context,
-                            initialDate: pickedDate!, //get today's date
-                            firstDate: DateTime
-                                .now(), //DateTime.now() - not to allow to choose before today.
-                            lastDate: DateTime(2100));
-                        if (pickedDate != null) {
-                          String formattedDate = DateFormat('dd-MM-yyyy').format(
-                              pickedDate!); // format date in required form here we use yyyy-MM-dd that means time is removed
-                          dateController.text = formattedDate;
-                          dateIso = pickedDate!.toIso8601String();
-                        }
-                      }),
+                  DateTimePicker(
+                    type: DateTimePickerType.dateTime,
+                    dateMask: 'dd-MM-yyyy hh:mm',
+                    initialValue: '',
+                    firstDate: DateTime.now(),
+                    lastDate: DateTime(2100),
+                    dateLabelText: 'Activity Date',
+                    onChanged: (val) => dateTime = val,
+                    validator: (val) {
+                      print(val);
+                      return null;
+                    },
+                    onSaved: (val) => print(val),
+                  ),
                   SizedBox(
                     height: 30,
                   ),
@@ -128,7 +122,7 @@ class _PostsAddPageState extends State<PostsAddPage> {
                         description: descriptionController.text,
                         userUid: appState.currentUser?.userUid,
                         createdDate: DateTime.now(),
-                        postDate: DateTime.parse(dateIso));
+                        postDate: DateTime.parse(dateTime));
                     await post.addPost();
                     await appState.doGetPosts();
 
