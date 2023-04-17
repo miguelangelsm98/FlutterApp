@@ -24,6 +24,7 @@ class _UpdateUserPageState extends State<UpdateUserPage> {
   File? pickedImage;
   Uint8List webImage = Uint8List(8);
   String imagePath = "";
+  
   String dateTime = DateTime.now().toString();
 
   CustomUser user = CustomUser(email: "", password: "");

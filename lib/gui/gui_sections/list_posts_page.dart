@@ -142,6 +142,9 @@ class PostsListPage extends StatelessWidget {
                   height: 60,
                   child: Image.network(p.user!.avatarPath!,
                       fit: BoxFit.scaleDown)),
+              SizedBox(
+                  height: 60,
+                  child: Image.network(p.picturePath!, fit: BoxFit.scaleDown)),
               joinActivityWidget(p, appState, context),
               Text("Signed up users: ${p.users!.length}"),
             ]),

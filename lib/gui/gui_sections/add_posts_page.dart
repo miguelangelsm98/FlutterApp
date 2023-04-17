@@ -1,3 +1,7 @@
+// import 'dart:html';
+import 'dart:typed_data';
+
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application/models/post.dart';
 import 'package:provider/provider.dart';
@@ -8,6 +12,13 @@ import 'package:intl/intl.dart';
 
 import 'home_page.dart';
 import 'package:date_time_picker/date_time_picker.dart';
+import 'package:image_picker/image_picker.dart';
+import 'dart:io';
+
+import 'package:flutter/foundation.dart';
+
+const defaultPicturePath =
+    "https://firebasestorage.googleapis.com/v0/b/tfg-project-a9320.appspot.com/o/pictures%2Fpicture1.jpg?alt=media&token=43ccd598-d79f-4c2b-93a5-2ccc773553cc";
 
 class PostsAddPage extends StatefulWidget {
   @override
@@ -18,6 +29,10 @@ class _PostsAddPageState extends State<PostsAddPage> {
   TextEditingController nameController = TextEditingController();
   TextEditingController descriptionController = TextEditingController();
   String dateTime = DateTime.now().toString();
+
+  File? pickedImage;
+  Uint8List webImage = Uint8List(8);
+  String imagePath = "";
 
   // var dateController = TextEditingController(
   //     text: DateFormat('dd-MM-yyyy').format(DateTime.now()));
@@ -36,6 +51,7 @@ class _PostsAddPageState extends State<PostsAddPage> {
       resizeToAvoidBottomInset: true,
       backgroundColor: Colors.white,
       appBar: AppBar(
+        title: Text("Add new Post"),
         elevation: 0,
         backgroundColor: Colors.white,
         leading: IconButton(
@@ -53,26 +69,43 @@ class _PostsAddPageState extends State<PostsAddPage> {
         child: Column(
           // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-            Text(
-              "Add Posts",
-              style: TextStyle(
-                fontSize: 30,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
             SizedBox(
-              height: 20,
-            ),
-            Text(
-              "Create a Post with Name and Description",
-              style: TextStyle(
-                fontSize: 15,
-                color: Colors.grey[700],
-              ),
-            ),
+                height: 150,
+                child: pickedImage == null
+                    ? Image.network(defaultPicturePath, fit: BoxFit.scaleDown)
+                    : kIsWeb
+                        ? Image.memory(webImage, fit: BoxFit.fill)
+                        : Image.file(pickedImage!, fit: BoxFit.scaleDown)),
             SizedBox(
               height: 30,
             ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                ElevatedButton(
+                    onPressed: selectImage, child: const Text("Select Image")),
+              ],
+            ),
+            // Text(
+            //   "Add Posts",
+            //   style: TextStyle(
+            //     fontSize: 30,
+            //     fontWeight: FontWeight.bold,
+            //   ),
+            // ),
+            // SizedBox(
+            //   height: 20,
+            // ),
+            // Text(
+            //   "Create a Post with Name and Description",
+            //   style: TextStyle(
+            //     fontSize: 15,
+            //     color: Colors.grey[700],
+            //   ),
+            // ),
+            // SizedBox(
+            //   height: 30,
+            // ),
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 40),
               child: Column(
@@ -102,6 +135,7 @@ class _PostsAddPageState extends State<PostsAddPage> {
                 ],
               ),
             ),
+
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 40),
               child: Container(
@@ -124,6 +158,15 @@ class _PostsAddPageState extends State<PostsAddPage> {
                         createdDate: DateTime.now(),
                         postDate: DateTime.parse(dateTime));
                     await post.addPost();
+                    if (pickedImage != null) {
+                      await FirebaseStorage.instance
+                          .ref('pictures/${post.postUid}')
+                          .putData(webImage);
+                      post.picturePath = await FirebaseStorage.instance
+                          .ref("pictures/${post.postUid}")
+                          .getDownloadURL();
+                    }
+                    await post.saveDatabase();
                     await appState.doGetPosts();
 
                     Widget okButton = ElevatedButton(
@@ -167,6 +210,35 @@ class _PostsAddPageState extends State<PostsAddPage> {
         ),
       ),
     );
+  }
+
+  Future selectImage() async {
+    if (!kIsWeb) {
+      final ImagePicker picker = ImagePicker();
+      XFile? image = await picker.pickImage(source: ImageSource.gallery);
+      if (image != null) {
+        var selected = File(image.path);
+        setState(() {
+          pickedImage = selected;
+        });
+      } else {
+        print('No image has been picked');
+      }
+    } else if (kIsWeb) {
+      final ImagePicker picker = ImagePicker();
+      XFile? image = await picker.pickImage(source: ImageSource.gallery);
+      if (image != null) {
+        var f = await image.readAsBytes();
+        setState(() {
+          webImage = f;
+          pickedImage = File('a');
+        });
+      } else {
+        print('No image has been picked');
+      }
+    } else {
+      print('Something went wrong');
+    }
   }
 }
 

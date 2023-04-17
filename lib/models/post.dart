@@ -1,6 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_application/models/user.dart';
 
+const defaultPicturePath =
+    "https://firebasestorage.googleapis.com/v0/b/tfg-project-a9320.appspot.com/o/pictures%2Fpicture1.jpg?alt=media&token=43ccd598-d79f-4c2b-93a5-2ccc773553cc";
+
 class Post {
   String? postUid;
   String name;
@@ -10,6 +13,7 @@ class Post {
   List<String>? users;
   DateTime? postDate;
   CustomUser? user;
+  String? picturePath;
 
   List<Map<String, dynamic>>? messages;
 
@@ -21,6 +25,7 @@ class Post {
     this.createdDate,
     this.users,
     this.postDate,
+    this.picturePath = defaultPicturePath,
   });
 
   factory Post.fromFirestore(
@@ -47,6 +52,7 @@ class Post {
       users: users,
       postDate:
           data?['postDate'] != null ? DateTime.parse(data?['postDate']) : null,
+      picturePath: data?['picturePath'],
     );
   }
 
@@ -59,6 +65,7 @@ class Post {
       if (createdDate != null) "createdDate": createdDate?.toString(),
       if (users != null) "users": users,
       if (postDate != null) "postDate": postDate?.toString(),
+      if (picturePath != null) "picturePath": picturePath,
     };
   }
 
