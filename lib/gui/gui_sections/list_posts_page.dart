@@ -107,7 +107,7 @@ class PostsListPage extends StatelessWidget {
   Widget createPost(Post p, MyAppState appState, BuildContext context) {
     Widget widget = Container(
         decoration: BoxDecoration(border: Border.all(color: Colors.black)),
-        height: 400,
+        // height: 400,
         child: Padding(
           padding: const EdgeInsets.all(12.0),
           child: Column(
@@ -117,6 +117,7 @@ class PostsListPage extends StatelessWidget {
                 children: [
                   SizedBox(
                     height: 120,
+                    width: 120,
                     child: Image.network(p.picturePath!, fit: BoxFit.scaleDown),
                   ),
                   Expanded(
