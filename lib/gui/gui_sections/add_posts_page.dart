@@ -33,6 +33,8 @@ class _PostsAddPageState extends State<PostsAddPage> {
   File? pickedImage;
   Uint8List webImage = Uint8List(8);
   String imagePath = "";
+  List<bool> selectedPrivacy = <bool>[true, false];
+  bool? isPrivate = true;
 
   // var dateController = TextEditingController(
   //     text: DateFormat('dd-MM-yyyy').format(DateTime.now()));
@@ -45,6 +47,11 @@ class _PostsAddPageState extends State<PostsAddPage> {
   @override
   Widget build(BuildContext context) {
     var appState = context.watch<MyAppState>();
+    const List<Widget> privacyOptions = <Widget>[
+      Text('Only my friends'),
+      Text('Everybody'),
+    ];
+
     // DateTime? pickedDate = DateTime.now();
 
     return Scaffold(
@@ -86,29 +93,10 @@ class _PostsAddPageState extends State<PostsAddPage> {
                     onPressed: selectImage, child: const Text("Select Image")),
               ],
             ),
-            // Text(
-            //   "Add Posts",
-            //   style: TextStyle(
-            //     fontSize: 30,
-            //     fontWeight: FontWeight.bold,
-            //   ),
-            // ),
-            // SizedBox(
-            //   height: 20,
-            // ),
-            // Text(
-            //   "Create a Post with Name and Description",
-            //   style: TextStyle(
-            //     fontSize: 15,
-            //     color: Colors.grey[700],
-            //   ),
-            // ),
-            // SizedBox(
-            //   height: 30,
-            // ),
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 40),
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   makeInput(label: "Name", controller: nameController),
                   makeInput(
@@ -132,10 +120,44 @@ class _PostsAddPageState extends State<PostsAddPage> {
                   SizedBox(
                     height: 30,
                   ),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "Who can see the post?",
+                        style: TextStyle(
+                            fontSize: 15,
+                            fontWeight: FontWeight.w400,
+                            color: Colors.black87),
+                      ),
+                      SizedBox(
+                        height: 5,
+                      ),
+                      ToggleButtons(
+                        direction: Axis.horizontal,
+                        onPressed: (int index) {
+                          setState(() {
+                            for (int i = 0; i < selectedPrivacy.length; i++) {
+                              selectedPrivacy[i] = i == index;
+                            }
+                            isPrivate = selectedPrivacy[0];
+                          });
+                        },
+                        constraints: const BoxConstraints(
+                          minHeight: 40.0,
+                          minWidth: 150.0,
+                        ),
+                        isSelected: selectedPrivacy,
+                        children: privacyOptions,
+                      ),
+                      SizedBox(
+                        height: 30,
+                      ),
+                    ],
+                  ),
                 ],
               ),
             ),
-
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 40),
               child: Container(
@@ -156,7 +178,8 @@ class _PostsAddPageState extends State<PostsAddPage> {
                         description: descriptionController.text,
                         userUid: appState.currentUser?.userUid,
                         createdDate: DateTime.now(),
-                        postDate: DateTime.parse(dateTime));
+                        postDate: DateTime.parse(dateTime),
+                        isPrivate: isPrivate);
                     await post.addPost();
                     if (pickedImage != null) {
                       await FirebaseStorage.instance

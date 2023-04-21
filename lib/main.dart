@@ -45,18 +45,17 @@ class MyAppState extends ChangeNotifier {
   bool isLoggedIn = false;
   CustomUser? currentUser = CustomUser(email: "", password: "");
   int selectedIndex = 0;
+
+  var friends = <CustomUser>[];
   var users = <CustomUser>[];
+  var myPosts = <Post>[];
+  var friendsPosts = <Post>[];
+  var publicPosts = <Post>[];
 
   void changeSelectedIndex(int index) {
     selectedIndex = index;
     notifyListeners();
   }
-
-  // Future<void> refreshCurrentUser() async {
-  //   currentUser = await getUserObject();
-
-  //   notifyListeners();
-  // }
 
   Future<void> doUserLogin() async {
     isLoggedIn = true;
@@ -79,16 +78,21 @@ class MyAppState extends ChangeNotifier {
     isLoggedIn = false;
     // currentUser = null;
     users.clear();
-
     notifyListeners();
   }
 
   Future<void> doGetPosts() async {
-    print(currentUser?.closeFriends());
-    currentUser?.posts.clear();
+    await doGetPublicPosts();
+    await doGetFriendsPosts();
+    await doGetMyPosts();
+  }
+
+  Future<void> doGetPublicPosts() async {
+    // print(currentUser?.closeFriends());
+    publicPosts.clear();
     await FirebaseFirestore.instance
         .collection("posts")
-        .where("userUid", whereIn: currentUser?.closeFriends())
+        .where("isPrivate", isEqualTo: false)
         .orderBy("createdDate", descending: true)
         .get()
         .then(
@@ -96,14 +100,99 @@ class MyAppState extends ChangeNotifier {
         for (var docSnapshot in querySnapshot.docs) {
           Post p = Post.fromFirestore(docSnapshot, null);
           p.user = await getUserObjectFromUid(p.userUid!);
-          // await p.getMessages();
-          currentUser?.posts.add(p);
+          publicPosts.add(p);
         }
       },
       onError: (e) => print("Error completing: $e"),
     );
     notifyListeners();
   }
+
+  Future<void> doGetFriendsPosts() async {
+    // print(currentUser?.closeFriends());
+    friendsPosts.clear();
+    await FirebaseFirestore.instance
+        .collection("posts")
+        .where("isPrivate", isEqualTo: false)
+        .orderBy("createdDate", descending: true)
+        .get()
+        .then(
+      (querySnapshot) async {
+        for (var docSnapshot in querySnapshot.docs) {
+          Post p = Post.fromFirestore(docSnapshot, null);
+          p.user = await getUserObjectFromUid(p.userUid!);
+          friendsPosts.add(p);
+        }
+      },
+      onError: (e) => print("Error completing: $e"),
+    );
+    notifyListeners();
+  }
+
+  Future<void> doGetMyPosts() async {
+    myPosts.clear();
+    await FirebaseFirestore.instance
+        .collection("posts")
+        .where("userUid", isEqualTo: currentUser?.userUid)
+        .orderBy("createdDate", descending: true)
+        .get()
+        .then(
+      (querySnapshot) async {
+        for (var docSnapshot in querySnapshot.docs) {
+          Post p = Post.fromFirestore(docSnapshot, null);
+          p.user = currentUser;
+          myPosts.add(p);
+        }
+      },
+      onError: (e) => print("Error completing: $e"),
+    );
+    notifyListeners();
+  }
+
+  // Future<void> doGetPosts_old() async {
+  //   // print(currentUser?.closeFriends());
+  //   posts.clear();
+  //   await FirebaseFirestore.instance
+  //       .collection("posts")
+  //       // .where("userUid", whereIn: currentUser?.closeFriends())
+  //       .orderBy("createdDate", descending: true)
+  //       .get()
+  //       .then(
+  //     (querySnapshot) async {
+  //       for (var docSnapshot in querySnapshot.docs) {
+  //         Post p = Post.fromFirestore(docSnapshot, null);
+  //         p.user = await getUserObjectFromUid(p.userUid!);
+  //         // await p.getMessages();
+  //         posts.add(p);
+  //         // currentUser?.posts.add(p);
+  //       }
+  //     },
+  //     onError: (e) => print("Error completing: $e"),
+  //   );
+  //   notifyListeners();
+  // }
+
+  // Future<void> doGetPosts_old() async {
+  //   // print(currentUser?.closeFriends());
+  //   currentUser?.posts.clear();
+  //   await FirebaseFirestore.instance
+  //       .collection("posts")
+  //       .where("userUid", whereIn: currentUser?.closeFriends())
+  //       .orderBy("createdDate", descending: true)
+  //       .get()
+  //       .then(
+  //     (querySnapshot) async {
+  //       for (var docSnapshot in querySnapshot.docs) {
+  //         Post p = Post.fromFirestore(docSnapshot, null);
+  //         p.user = await getUserObjectFromUid(p.userUid!);
+  //         // await p.getMessages();
+  //         currentUser?.posts.add(p);
+  //       }
+  //     },
+  //     onError: (e) => print("Error completing: $e"),
+  //   );
+  //   notifyListeners();
+  // }
 
   Future<void> doGetUsers() async {
     users.clear();
@@ -114,6 +203,7 @@ class MyAppState extends ChangeNotifier {
   Future<void> doGetFriends() async {
     currentUser?.friends.clear();
     currentUser?.friendRelations.clear();
+    friends.clear();
 
     await FirebaseFirestore.instance
         .collection("friends")
@@ -148,6 +238,13 @@ class MyAppState extends ChangeNotifier {
       },
       onError: (e) => print("Error getting document: $e"),
     );
+
+    for (var friendId in currentUser!.friends) {
+      CustomUser? friend = await getUserObjectFromUid(friendId);
+      friends.add(friend!);
+      users.remove(friend);
+    }
+
     notifyListeners();
   }
 }

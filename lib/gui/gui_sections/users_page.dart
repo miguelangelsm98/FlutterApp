@@ -18,85 +18,82 @@ class _UsersPageState extends State<UsersPage> {
   @override
   Widget build(BuildContext context) {
     var appState = context.watch<MyAppState>();
-    final ScrollController firstController = ScrollController();
+    // final ScrollController firstController = ScrollController();
 
     // getUsers(appState);
 
     final Stream<QuerySnapshot> usersStream =
         FirebaseFirestore.instance.collection('users').snapshots();
 
-    return Scaffold(
-      resizeToAvoidBottomInset: true,
-      backgroundColor: Colors.white,
-      appBar: AppBar(
-        elevation: 0,
+    return DefaultTabController(
+      length: 2,
+      child: Scaffold(
+        resizeToAvoidBottomInset: true,
         backgroundColor: Colors.white,
-        title: Row(
-          // mainAxisAlignment: MainAxisAlignment.center,
+        appBar: AppBar(
+          elevation: 0,
+          backgroundColor: Colors.white,
+          title: Row(
+            // mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              SizedBox(width: 40),
+              Text("Users"),
+            ],
+          ),
+          automaticallyImplyLeading: false,
+          bottom: const TabBar(
+            tabs: [Tab(icon: Text("Friends")), Tab(icon: Text("All Users"))],
+          ),
+        ),
+        body: TabBarView(
           children: [
-            SizedBox(width: 40),
-            Text("Users"),
+            // Friends Widget
+            listUsersWidget(
+              users: appState.friends,
+              appState: appState,
+            ),
+            // All users Widget
+            listUsersWidget(
+              users: appState.users,
+              appState: appState,
+            )
           ],
         ),
-        automaticallyImplyLeading: false,
-        // elevation: 0,
-        // backgroundColor: Colors.white,
-        // leading: IconButton(
-        //     onPressed: () {
-        //       Navigator.pop(context);
-        //     },
-        //     icon: Icon(
-        //       Icons.arrow_back_ios,
-        //       size: 20,
-        //       color: Colors.black,
-        //     )),
       ),
-      body: SizedBox(
+    );
+  }
+
+  Widget listUsersWidget(
+      {required List<CustomUser> users, required MyAppState appState}) {
+    final ScrollController controller = ScrollController();
+
+    if (users.isEmpty) {
+      return Center(child: Text("Add a friend in users view"));
+    } else {
+      return SizedBox(
         height: MediaQuery.of(context).size.height,
         width: double.infinity,
         child: SingleChildScrollView(
           physics: ScrollPhysics(),
           child: Column(
             children: <Widget>[
-              // Move to AppBar
-              // Text(
-              //   "Users",
-              //   style: TextStyle(
-              //     fontSize: 30,
-              //     fontWeight: FontWeight.bold,
-              //   ),
-              // ),
-              // SizedBox(
-              //   height: 20,
-              // ),
-              // Text(
-              //   "Check all the users",
-              //   style: TextStyle(
-              //     fontSize: 15,
-              //     color: Colors.grey[700],
-              //   ),
-              // ),
-              // SizedBox(
-              //   height: 30,
-              // ),
               ListView.builder(
                   physics: NeverScrollableScrollPhysics(),
                   shrinkWrap: true,
-                  controller: firstController,
-                  itemCount: appState.users.length,
+                  controller: controller,
+                  itemCount: users.length,
                   itemBuilder: (BuildContext context, int index) {
                     return userWidget(
                       currentUser: appState.currentUser!,
-                      user: appState.users[index],
+                      user: users[index],
                       appState: appState,
                     );
                   }),
-              // profileWidget2(context),
             ],
           ),
         ),
-      ),
-    );
+      );
+    }
   }
 
   Widget userWidget(

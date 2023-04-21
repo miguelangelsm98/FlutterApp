@@ -111,7 +111,7 @@ class CustomUser {
     }
   }
 
-  Future signUp() async { 
+  Future signUp() async {
     await saveAuth();
     await login();
     joinedDate = DateTime.now();
@@ -224,8 +224,7 @@ class CustomUser {
     Map<String, dynamic> messageDoc = <String, dynamic>{};
     messageDoc.putIfAbsent('message', () => message);
     messageDoc.putIfAbsent('userUid', () => userUid);
-    messageDoc.putIfAbsent(
-        'createdDate', () => DateTime.now().toIso8601String());
+    messageDoc.putIfAbsent('createdDate', () => DateTime.now().toString());
     messageDoc.putIfAbsent('userAvatarPath', () => avatarPath);
     messageDoc.putIfAbsent('userName', () => name);
     messageDoc.putIfAbsent('userLastName', () => lastName);

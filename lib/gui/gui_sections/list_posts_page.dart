@@ -13,111 +13,99 @@ class PostsListPage extends StatelessWidget {
 
     final ScrollController firstController = ScrollController();
 
-    return Scaffold(
-      resizeToAvoidBottomInset: true,
-      backgroundColor: Colors.white,
-      appBar: AppBar(
-        elevation: 0,
-        backgroundColor: Colors.white,
-        title: Row(
-          // mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            SizedBox(width: 40),
-            Text("Posts"),
-          ],
-        ),
-        automaticallyImplyLeading: false,
-        // elevation: 0,
-        // backgroundColor: Colors.white,
-        // leading: IconButton(
-        //     onPressed: () {
-        //       Navigator.pop(context);
-        //     },
-        //     icon: Icon(
-        //       Icons.arrow_back_ios,
-        //       size: 20,
-        //       color: Colors.black,
-        //     )),
-      ),
-      floatingActionButton: FloatingActionButton(
-        elevation: 10.0,
-        backgroundColor: Colors.green,
-        onPressed: () {
-          Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => PostsAddPage(),
-                // Pass the arguments as part of the RouteSettings. The
-                // DetailScreen reads the arguments from these settings.
-              ));
-        },
-        child: Icon(Icons.add),
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.miniEndTop,
-      body: SizedBox(
+    return DefaultTabController(
+        length: 3,
+        child: Scaffold(
+          resizeToAvoidBottomInset: true,
+          backgroundColor: Colors.white,
+          appBar: AppBar(
+            elevation: 0,
+            backgroundColor: Colors.white,
+            title: Row(
+              // mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                SizedBox(width: 40),
+                Text("Posts"),
+              ],
+            ),
+            automaticallyImplyLeading: false,
+            bottom: const TabBar(
+              tabs: [
+                Tab(icon: Text("Public Posts")),
+                Tab(icon: Text("Friends' Posts")),
+                Tab(icon: Text("My Posts"))
+              ],
+            ),
+          ),
+          floatingActionButton: FloatingActionButton(
+            elevation: 10.0,
+            backgroundColor: Colors.green,
+            onPressed: () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => PostsAddPage(),
+                    // Pass the arguments as part of the RouteSettings. The
+                    // DetailScreen reads the arguments from these settings.
+                  ));
+            },
+            child: Icon(Icons.add),
+          ),
+          floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
+          body: TabBarView(
+            children: [
+              // Public Posts Widget
+              listPostsWidget(
+                  posts: appState.publicPosts,
+                  appState: appState,
+                  context: context),
+              // Friends Posts Widget
+              listPostsWidget(
+                  posts: appState.friendsPosts,
+                  appState: appState,
+                  context: context),
+              // My posts Widget
+              listPostsWidget(
+                  posts: appState.myPosts,
+                  appState: appState,
+                  context: context),
+            ],
+          ),
+        ));
+  }
+
+  Widget listPostsWidget(
+      {required List<Post> posts,
+      required MyAppState appState,
+      required BuildContext context}) {
+    final ScrollController controller = ScrollController();
+
+    if (posts.isEmpty) {
+      return Center(child: Text("No posts to be shown"));
+    } else {
+      return SizedBox(
         height: MediaQuery.of(context).size.height,
         width: double.infinity,
         child: SingleChildScrollView(
           physics: ScrollPhysics(),
           child: Column(
             children: [
-              // Move to AppBar
-              // Text(
-              //   "Posts",
-              //   style: TextStyle(
-              //     fontSize: 30,
-              //     fontWeight: FontWeight.bold,
-              //   ),
-              // ),
-              // SizedBox(
-              //   height: 20,
-              // ),
-              // Text(
-              //   "Check created Posts",
-              //   style: TextStyle(
-              //     fontSize: 15,
-              //     color: Colors.grey[700],
-              //   ),
-              // ),
-              // SizedBox(
-              //   height: 30,
-              // ),
-
-              // ElevatedButton(
-              //   onPressed: () async {
-              //     Navigator.push(
-              //       context,
-              //       MaterialPageRoute(
-              //         builder: (context) => PostsAddPage(),
-              //         // Pass the arguments as part of the RouteSettings. The
-              //         // DetailScreen reads the arguments from these settings.
-              //       ),
-              //     );
-              //   },
-              //   style: ElevatedButton.styleFrom(
-              //     backgroundColor: Colors.green,
-              //     // padding: EdgeInsets.symmetric(horizontal: 50, vertical: 20),
-              //     // textStyle: TextStyle(fontSize: 30, fontWeight: FontWeight.bold)
-              //   ),
-              //   child: Text("Create new Post"),
-              // ),
               SizedBox(
                 height: 30,
               ),
               ListView.builder(
                   physics: NeverScrollableScrollPhysics(),
                   shrinkWrap: true,
-                  controller: firstController,
-                  itemCount: appState.currentUser!.posts.length,
+                  controller: controller,
+                  itemCount: posts.length,
                   itemBuilder: (BuildContext context, int index) {
-                    return createPost(
-                        appState.currentUser!.posts[index], appState, context);
+                    return createPost(posts[index], appState, context);
                   }),
             ],
           ),
         ),
-      ),
-    );
+      );
+    }
   }
 
   Widget createPost(Post p, MyAppState appState, BuildContext context) {
@@ -286,6 +274,7 @@ class PostsListPage extends StatelessWidget {
                   p.users?.remove(appState.currentUser!.userUid!);
                   p.saveDatabase();
                   appState.doGetPosts();
+
                   // ignore: use_build_context_synchronously
                   Navigator.pop(context);
                 },

@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_application/models/user.dart';
 
@@ -14,6 +16,7 @@ class Post {
   DateTime? postDate;
   CustomUser? user;
   String? picturePath;
+  bool? isPrivate;
 
   List<Map<String, dynamic>>? messages;
 
@@ -26,6 +29,7 @@ class Post {
     this.users,
     this.postDate,
     this.picturePath = defaultPicturePath,
+    this.isPrivate,
   });
 
   factory Post.fromFirestore(
@@ -42,18 +46,19 @@ class Post {
     }
 
     return Post(
-      postUid: data?['postUid'],
-      name: data?['name'],
-      description: data?['description'],
-      userUid: data?['userUid'],
-      createdDate: data?['createdDate'] != null
-          ? DateTime.parse(data?['createdDate'])
-          : null,
-      users: users,
-      postDate:
-          data?['postDate'] != null ? DateTime.parse(data?['postDate']) : null,
-      picturePath: data?['picturePath'],
-    );
+        postUid: data?['postUid'],
+        name: data?['name'],
+        description: data?['description'],
+        userUid: data?['userUid'],
+        createdDate: data?['createdDate'] != null
+            ? DateTime.parse(data?['createdDate'])
+            : null,
+        users: users,
+        postDate: data?['postDate'] != null
+            ? DateTime.parse(data?['postDate'])
+            : null,
+        picturePath: data?['picturePath'],
+        isPrivate: data?['isPrivate']);
   }
 
   Map<String, dynamic> toFirestore() {
@@ -66,6 +71,7 @@ class Post {
       if (users != null) "users": users,
       if (postDate != null) "postDate": postDate?.toString(),
       if (picturePath != null) "picturePath": picturePath,
+      if (isPrivate != null) "isPrivate": isPrivate,
     };
   }
 
@@ -124,16 +130,4 @@ class Post {
     return toFirestore().toString();
   }
 
-  // Django Model
-  // email = models.EmailField(('email address'), unique=True)
-
-  // # Optional attributes
-  // name = models.CharField(max_length = 32, blank=True, null=True)
-  // lastname = models.CharField(max_length = 32, blank=True, null=True)
-  // birth_date = models.DateField(blank=True, null=True)
-  // avatar = models.ImageField(default="pictures/default.png", upload_to='pictures/')
-  // is_company = models.BooleanField(default = False)
-  // is_staff = models.BooleanField(default = False)
-  // is_active = models.BooleanField(default = True)
-  // date_joined = models.DateTimeField(default = timezone.now)
 }
