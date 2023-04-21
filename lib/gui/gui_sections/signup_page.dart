@@ -37,7 +37,7 @@ class _SignupPageState extends State<SignupPage> {
   TextEditingController password1Controller = TextEditingController();
   TextEditingController password2Controller = TextEditingController();
   TextEditingController nameController = TextEditingController();
-  TextEditingController lastNameController = TextEditingController();
+  TextEditingController userNameController = TextEditingController();
   TextEditingController dateController = TextEditingController();
   String dateTime = DateTime(1900).toString();
 
@@ -126,10 +126,10 @@ class _SignupPageState extends State<SignupPage> {
                       label: "Confirm Pasword",
                       controller: password2Controller,
                       obsureText: true),
-                  makeInput(label: "Name", controller: nameController),
+                  makeInput(label: "Full Name", controller: nameController),
                   makeInput(
-                    label: "Last Name",
-                    controller: lastNameController,
+                    label: "User Name",
+                    controller: userNameController,
                   ),
                   DateTimePicker(
                     type: DateTimePickerType.date,
@@ -172,7 +172,7 @@ class _SignupPageState extends State<SignupPage> {
                             email: emailController.text,
                             password: password1Controller.text);
                         u.name = nameController.text;
-                        u.lastName = lastNameController.text;
+                        u.userName = userNameController.text;
                         u.birthDate = DateTime.parse(dateTime);
                         await u.signUp();
                         await appState.doUserLogin();

@@ -24,7 +24,7 @@ class _UpdateUserPageState extends State<UpdateUserPage> {
   File? pickedImage;
   Uint8List webImage = Uint8List(8);
   String imagePath = "";
-  
+
   String dateTime = DateTime.now().toString();
 
   CustomUser user = CustomUser(email: "", password: "");
@@ -35,7 +35,7 @@ class _UpdateUserPageState extends State<UpdateUserPage> {
     user = appState.currentUser!;
 
     var nameController = TextEditingController(text: user.name);
-    var lastNameController = TextEditingController(text: user.lastName);
+    var userNameController = TextEditingController(text: user.userName);
 
     if (user.birthDate != null) {
       dateTime = user.birthDate.toString();
@@ -82,11 +82,11 @@ class _UpdateUserPageState extends State<UpdateUserPage> {
               padding: EdgeInsets.symmetric(horizontal: 40),
               child: Column(
                 children: [
-                  makeInput(label: "Name", controller: nameController),
                   makeInput(
-                    label: "Last Name",
-                    controller: lastNameController,
-                  ),                  
+                    label: "User Name",
+                    controller: userNameController,
+                  ),
+                  makeInput(label: "Full Name", controller: nameController),
                   DateTimePicker(
                     type: DateTimePickerType.date,
                     dateMask: 'dd-MM-yyyy',
@@ -140,7 +140,7 @@ class _UpdateUserPageState extends State<UpdateUserPage> {
                               .getDownloadURL();
                         }
                         user.name = nameController.text;
-                        user.lastName = lastNameController.text;
+                        user.userName = userNameController.text;
                         user.birthDate = DateTime.parse(dateTime);
                         user.saveDatabase();
                         // setState(() {});

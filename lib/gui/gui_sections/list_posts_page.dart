@@ -6,6 +6,8 @@ import '../../models/post.dart';
 import 'add_posts_page.dart';
 import 'chat_post_page.dart';
 
+import 'package:intl/intl.dart';
+
 class PostsListPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -105,32 +107,56 @@ class PostsListPage extends StatelessWidget {
   Widget createPost(Post p, MyAppState appState, BuildContext context) {
     Widget widget = Container(
         decoration: BoxDecoration(border: Border.all(color: Colors.black)),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Column(children: [
-              Text(
-                "Title: ${p.name}",
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                ),
+        height: 400,
+        child: Padding(
+          padding: const EdgeInsets.all(12.0),
+          child: Column(
+            // crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Row(
+                children: [
+                  SizedBox(
+                    height: 120,
+                    child: Image.network(p.picturePath!, fit: BoxFit.scaleDown),
+                  ),
+                  Expanded(
+                    child: Column(children: [
+                      Text(
+                        p.name,
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      Text(
+                          DateFormat('dd-MM-yyyy – kk:mm').format(p.postDate!)),
+                      Text(p.user!.userName!),
+                      Text("Signed up users: ${p.users!.length}"),
+                      // Text("Created Date: ${p.createdDate.toString()}"),
+
+                      // SizedBox(
+                      //     height: 60,
+                      //     child: Image.network(p.user!.avatarPath!,
+                      //         fit: BoxFit.scaleDown)),
+                    ]),
+                  ),
+                ],
               ),
-              Text("Description: ${p.description!}"),
-              Text("Created Date: ${p.createdDate.toString()}"),
-              Text("Post Date: ${p.postDate.toString()}"),
-              Text("Owner: ${p.user!.email}"),
               SizedBox(
-                  height: 60,
-                  child: Image.network(p.user!.avatarPath!,
-                      fit: BoxFit.scaleDown)),
+                height: 20,
+              ),
+              Text(p.description!),
               SizedBox(
-                  height: 60,
-                  child: Image.network(p.picturePath!, fit: BoxFit.scaleDown)),
-              joinActivityWidget(p, appState, context),
-              Text("Signed up users: ${p.users!.length}"),
-            ]),
-          ],
+                height: 20,
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  joinActivityWidget(p, appState, context),
+                ],
+              ),
+            ],
+          ),
         ));
 
     return widget;

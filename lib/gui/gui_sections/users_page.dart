@@ -113,9 +113,9 @@ class _UsersPageState extends State<UsersPage> {
                 Center(
                   child: Text(user.name!, textAlign: TextAlign.center),
                 ),
-                Center(
-                  child: Text(user.lastName!, textAlign: TextAlign.center),
-                ),
+                // Center(
+                //   child: Text(user.userName!, textAlign: TextAlign.center),
+                // ),
               ],
             )),
         SizedBox(

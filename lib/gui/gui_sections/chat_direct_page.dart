@@ -134,7 +134,7 @@ class _ChatDirectPageState extends State<ChatDirectPage> {
               Row(
                 children: [
                   Column(children: [
-                    Text("${message['userName']} ${message['userLastName']}"),
+                    Text("${message['userName']}"),
                     Text("${message['message']}"),
                     dateWidget(DateTime.parse(message['createdDate'])),
                   ]),
@@ -159,7 +159,7 @@ class _ChatDirectPageState extends State<ChatDirectPage> {
                       child: Image.network(message['userAvatarPath'],
                           fit: BoxFit.scaleDown)),
                   Column(children: [
-                    Text("${message['userName']} ${message['userLastName']}"),
+                    Text("${message['userName']}"),
                     Text("${message['message']}"),
                     dateWidget(DateTime.parse(message['createdDate'])),
                   ]),

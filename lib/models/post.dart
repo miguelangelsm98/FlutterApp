@@ -1,4 +1,4 @@
-import 'dart:ffi';
+// import 'dart:ffi';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_application/models/user.dart';
@@ -103,7 +103,7 @@ class Post {
         'createdDate', () => DateTime.now().toIso8601String());
     messageDoc.putIfAbsent('userAvatarPath', () => user.avatarPath);
     messageDoc.putIfAbsent('userName', () => user.name);
-    messageDoc.putIfAbsent('userLastName', () => user.lastName);
+    messageDoc.putIfAbsent('userUserName', () => user.userName);
     print("Adding message: $messageDoc to post $postUid");
     await FirebaseFirestore.instance
         .collection('posts')
@@ -129,5 +129,4 @@ class Post {
   String toString() {
     return toFirestore().toString();
   }
-
 }

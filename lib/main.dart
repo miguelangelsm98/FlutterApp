@@ -252,6 +252,6 @@ class MyAppState extends ChangeNotifier {
       friends.add(friend!);
     }
 
-    // notifyListeners();
+    notifyListeners();
   }
 }

@@ -122,7 +122,7 @@ class _ChatPostPageState extends State<ChatPostPage> {
               Row(
                 children: [
                   Column(children: [
-                    Text("${message['userName']} ${message['userLastName']}"),
+                    Text("${message['userName']}"),
                     Text("${message['message']}"),
                     dateWidget(DateTime.parse(message['createdDate'])),
                   ]),
@@ -147,7 +147,7 @@ class _ChatPostPageState extends State<ChatPostPage> {
                       child: Image.network(message['userAvatarPath'],
                           fit: BoxFit.scaleDown)),
                   Column(children: [
-                    Text("${message['userName']} ${message['userLastName']}"),
+                    Text("${message['userName']}"),
                     Text("${message['message']}"),
                     dateWidget(DateTime.parse(message['createdDate'])),
                   ]),

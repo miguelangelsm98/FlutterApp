@@ -10,7 +10,7 @@ class CustomUser {
   String email;
   String password;
   String? name;
-  String? lastName;
+  String? userName;
   String? avatarPath;
   DateTime? birthDate;
   DateTime? joinedDate;
@@ -27,7 +27,7 @@ class CustomUser {
     required this.email,
     required this.password,
     this.name,
-    this.lastName,
+    this.userName,
     this.avatarPath = defaultAvatarPath,
     this.birthDate,
     this.joinedDate,
@@ -59,7 +59,7 @@ class CustomUser {
       email: data?['email'],
       password: "DefaultPassword",
       name: data?['name'],
-      lastName: data?['lastName'],
+      userName: data?['userName'],
       avatarPath: data?['avatarPath'],
       birthDate: data?['birthDate'] != null
           ? DateTime.parse(data?['birthDate'])
@@ -77,7 +77,7 @@ class CustomUser {
       if (userUid != null) "userUid": userUid,
       "email": email,
       if (name != null) "name": name,
-      if (lastName != null) "lastName": lastName,
+      if (userName != null) "userName": userName,
       if (avatarPath != null) "avatarPath": avatarPath,
       if (birthDate != null) "birthDate": birthDate?.toIso8601String(),
       if (joinedDate != null) "joinedDate": joinedDate?.toIso8601String(),
@@ -227,7 +227,7 @@ class CustomUser {
     messageDoc.putIfAbsent('createdDate', () => DateTime.now().toString());
     messageDoc.putIfAbsent('userAvatarPath', () => avatarPath);
     messageDoc.putIfAbsent('userName', () => name);
-    messageDoc.putIfAbsent('userLastName', () => lastName);
+    messageDoc.putIfAbsent('userUserName', () => userName);
     print("Adding message: $messageDoc to relationId $relationId");
     await FirebaseFirestore.instance
         .collection('friends')
