@@ -21,13 +21,7 @@ class PostsListPage extends StatelessWidget {
           appBar: AppBar(
             elevation: 0,
             backgroundColor: Colors.white,
-            title: Row(
-              // mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                SizedBox(width: 40),
-                Text("Posts"),
-              ],
-            ),
+            title: Center(child: Text("Posts")),
             automaticallyImplyLeading: false,
             bottom: const TabBar(
               tabs: [
@@ -85,7 +79,7 @@ class PostsListPage extends StatelessWidget {
     } else {
       return SizedBox(
         height: MediaQuery.of(context).size.height,
-        width: double.infinity,
+        // width: double.infinity,
         child: SingleChildScrollView(
           physics: ScrollPhysics(),
           child: Column(

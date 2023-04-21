@@ -79,6 +79,10 @@ class MyAppState extends ChangeNotifier {
     isLoggedIn = false;
     // currentUser = null;
     users.clear();
+    myPosts.clear;
+    friendsPosts.clear();
+    publicPosts.clear;
+
     notifyListeners();
   }
 
@@ -86,6 +90,7 @@ class MyAppState extends ChangeNotifier {
     await doGetPublicPosts();
     await doGetFriendsPosts();
     await doGetMyPosts();
+    notifyListeners();
   }
 
   Future<void> doGetPublicPosts() async {
@@ -106,7 +111,7 @@ class MyAppState extends ChangeNotifier {
       },
       onError: (e) => print("Error completing: $e"),
     );
-    notifyListeners();
+    // notifyListeners();
   }
 
   Future<void> doGetFriendsPosts() async {
@@ -129,7 +134,7 @@ class MyAppState extends ChangeNotifier {
         onError: (e) => print("Error completing: $e"),
       );
     }
-    notifyListeners();
+    // notifyListeners();
   }
 
   Future<void> doGetMyPosts() async {
@@ -149,7 +154,7 @@ class MyAppState extends ChangeNotifier {
       },
       onError: (e) => print("Error completing: $e"),
     );
-    notifyListeners();
+    // notifyListeners();
   }
 
   // Future<void> doGetPosts_old() async {
@@ -200,7 +205,7 @@ class MyAppState extends ChangeNotifier {
   Future<void> doGetUsers() async {
     users.clear();
     users = await getUserObjects(currentUser!.userUid!);
-    notifyListeners();
+    // notifyListeners();
   }
 
   Future<void> doGetFriends() async {
@@ -247,6 +252,6 @@ class MyAppState extends ChangeNotifier {
       friends.add(friend!);
     }
 
-    notifyListeners();
+    // notifyListeners();
   }
 }

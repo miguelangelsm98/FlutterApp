@@ -39,13 +39,7 @@ class _SettingsPageState extends State<SettingsPage> {
       appBar: AppBar(
         elevation: 0,
         backgroundColor: Colors.white,
-        title: Row(
-          // mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            SizedBox(width: 40),
-            Text("Settings"),
-          ],
-        ),
+        title: Center(child: Text("Settings")),
         automaticallyImplyLeading: false,
       ),
       body: SettingsList(

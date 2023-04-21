@@ -280,6 +280,8 @@ Future<List<CustomUser>> getUserObjects(String userUid) async {
   final ref = FirebaseFirestore.instance
       .collection("users")
       .where("userUid", isNotEqualTo: userUid)
+      .orderBy("userUid")
+      .orderBy("name", descending: true)
       .withConverter(
         fromFirestore: CustomUser.fromFirestore,
         toFirestore: (CustomUser user, _) => user.toFirestore(),

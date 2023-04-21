@@ -33,13 +33,7 @@ class _UsersPageState extends State<UsersPage> {
         appBar: AppBar(
           elevation: 0,
           backgroundColor: Colors.white,
-          title: Row(
-            // mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              SizedBox(width: 40),
-              Text("Users"),
-            ],
-          ),
+          title: Center(child: Text("Users")),
           automaticallyImplyLeading: false,
           bottom: const TabBar(
             tabs: [Tab(icon: Text("Friends")), Tab(icon: Text("All Users"))],
