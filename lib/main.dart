@@ -48,6 +48,7 @@ class MyAppState extends ChangeNotifier {
 
   var friends = <CustomUser>[];
   var users = <CustomUser>[];
+
   var myPosts = <Post>[];
   var friendsPosts = <Post>[];
   var publicPosts = <Post>[];
@@ -111,21 +112,23 @@ class MyAppState extends ChangeNotifier {
   Future<void> doGetFriendsPosts() async {
     // print(currentUser?.closeFriends());
     friendsPosts.clear();
-    await FirebaseFirestore.instance
-        .collection("posts")
-        .where("isPrivate", isEqualTo: false)
-        .orderBy("createdDate", descending: true)
-        .get()
-        .then(
-      (querySnapshot) async {
-        for (var docSnapshot in querySnapshot.docs) {
-          Post p = Post.fromFirestore(docSnapshot, null);
-          p.user = await getUserObjectFromUid(p.userUid!);
-          friendsPosts.add(p);
-        }
-      },
-      onError: (e) => print("Error completing: $e"),
-    );
+    for (var friendId in currentUser!.friends) {
+      await FirebaseFirestore.instance
+          .collection("posts")
+          .where("userUid", isEqualTo: friendId)
+          .orderBy("createdDate", descending: true)
+          .get()
+          .then(
+        (querySnapshot) async {
+          for (var docSnapshot in querySnapshot.docs) {
+            Post p = Post.fromFirestore(docSnapshot, null);
+            p.user = await getUserObjectFromUid(friendId);
+            friendsPosts.add(p);
+          }
+        },
+        onError: (e) => print("Error completing: $e"),
+      );
+    }
     notifyListeners();
   }
 
@@ -242,7 +245,6 @@ class MyAppState extends ChangeNotifier {
     for (var friendId in currentUser!.friends) {
       CustomUser? friend = await getUserObjectFromUid(friendId);
       friends.add(friend!);
-      users.remove(friend);
     }
 
     notifyListeners();
