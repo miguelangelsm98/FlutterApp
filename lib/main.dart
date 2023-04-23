@@ -68,10 +68,6 @@ class MyAppState extends ChangeNotifier {
     await doGetUsers();
     await doGetFriends();
     await doGetPosts();
-
-    // notifyListeners();
-
-    print("--- New user logged in: ${currentUser!.name} ---");
   }
 
   void doUserLogout() {

@@ -1,7 +1,3 @@
-import 'dart:io';
-
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -15,17 +11,10 @@ class UsersPage extends StatefulWidget {
 }
 
 class _UsersPageState extends State<UsersPage> {
-  var listener;
 
   @override
   Widget build(BuildContext context) {
     var appState = context.watch<MyAppState>();
-    // final ScrollController firstController = ScrollController();
-
-    // getUsers(appState);
-
-    final Stream<QuerySnapshot> usersStream =
-        FirebaseFirestore.instance.collection('users').snapshots();
 
     return DefaultTabController(
       length: 2,
@@ -35,10 +24,10 @@ class _UsersPageState extends State<UsersPage> {
         appBar: AppBar(
           elevation: 0,
           backgroundColor: Colors.white,
-          title: Center(child: Text("Users")),
+          title: Center(child: Text("Usuarios")),
           automaticallyImplyLeading: false,
           bottom: const TabBar(
-            tabs: [Tab(icon: Text("Friends")), Tab(icon: Text("All Users"))],
+            tabs: [Tab(icon: Text("Amigos")), Tab(icon: Text("Todos los usuarios"))],
           ),
         ),
         body: TabBarView(
@@ -64,7 +53,7 @@ class _UsersPageState extends State<UsersPage> {
     final ScrollController controller = ScrollController();
 
     if (users.isEmpty) {
-      return Center(child: Text("Add a friend in users view"));
+      return Center(child: Text("Añada un amigo"));
     } else {
       return SizedBox(
         height: MediaQuery.of(context).size.height,
@@ -146,15 +135,14 @@ class _UsersPageState extends State<UsersPage> {
         children: [
           ElevatedButton(
             onPressed: () async {
-              // set up the buttons
               Widget cancelButton = ElevatedButton(
-                child: Text("Cancel"),
+                child: Text("Cancelar"),
                 onPressed: () {
                   Navigator.pop(context);
                 },
               );
               Widget continueButton = ElevatedButton(
-                child: Text("Continue"),
+                child: Text("Continuar"),
                 onPressed: () async {
                   await currentUser.removeFriend(user);
                   await appState.doGetFriends();
@@ -163,10 +151,9 @@ class _UsersPageState extends State<UsersPage> {
                   Navigator.pop(context);
                 },
               );
-              // set up the AlertDialog
               AlertDialog alert = AlertDialog(
-                title: Text("AlertDialog"),
-                content: Text("Are you sure you want to remove this friend?"),
+                title: Text("Mensaje"),
+                content: Text("¿Está seguro de que desea borrar este amigo?"),
                 actions: [
                   cancelButton,
                   continueButton,
@@ -180,7 +167,7 @@ class _UsersPageState extends State<UsersPage> {
                 },
               );
             },
-            child: Text("Remove Friend"),
+            child: Text("Borrar amigo"),
           ),
           Row(
             children: [
@@ -194,18 +181,15 @@ class _UsersPageState extends State<UsersPage> {
                     context,
                     MaterialPageRoute(
                       builder: (context) => const ChatDirectPage(),
-                      // Pass the arguments as part of the RouteSettings. The
-                      // DetailScreen reads the arguments from these settings.
+
                       settings: RouteSettings(
                         arguments: user,
                       ),
                     ),
                   );
                 },
-                child: Text("Open Chat"),
+                child: Text("Abrir chat"),
               ),
-              // SizedBox(width: 10),
-              // Text("+5"),
             ],
           ),
         ],
@@ -216,7 +200,7 @@ class _UsersPageState extends State<UsersPage> {
           await currentUser.removeFriendRequest(user);
           await appState.doGetFriends();
         },
-        child: Text("Cancel Request"),
+        child: Text("Cancelar petición"),
       );
     } else if (currentUser.friendRequests!.contains(user.userUid)) {
       widget = Column(
@@ -224,13 +208,13 @@ class _UsersPageState extends State<UsersPage> {
           ElevatedButton(
             onPressed: () async {
               Widget cancelButton = ElevatedButton(
-                child: Text("Cancel"),
+                child: Text("Cancelar"),
                 onPressed: () {
                   Navigator.pop(context);
                 },
               );
               Widget continueButton = ElevatedButton(
-                child: Text("Continue"),
+                child: Text("Continuar"),
                 onPressed: () async {
                   await currentUser.acceptFriendRequest(user);
                   await appState.doGetFriends();
@@ -241,8 +225,8 @@ class _UsersPageState extends State<UsersPage> {
               );
               // set up the AlertDialog
               AlertDialog alert = AlertDialog(
-                title: Text("AlertDialog"),
-                content: Text("Are you sure you want to accept this request?"),
+                title: Text("Mensaje"),
+                content: Text("¿Está seguro de que desea aceptar esta petición?"),
                 actions: [
                   cancelButton,
                   continueButton,
@@ -256,18 +240,18 @@ class _UsersPageState extends State<UsersPage> {
                 },
               );
             },
-            child: Text("Accept Request"),
+            child: Text("Aceptar petición"),
           ),
           ElevatedButton(
             onPressed: () async {
               Widget cancelButton = ElevatedButton(
-                child: Text("Cancel"),
+                child: Text("Cancelar"),
                 onPressed: () {
                   Navigator.pop(context);
                 },
               );
               Widget continueButton = ElevatedButton(
-                child: Text("Continue"),
+                child: Text("Continuar"),
                 onPressed: () async {
                   await currentUser.declineFriendRequest(user);
                   await appState.doGetFriends();
@@ -277,8 +261,8 @@ class _UsersPageState extends State<UsersPage> {
               );
               // set up the AlertDialog
               AlertDialog alert = AlertDialog(
-                title: Text("AlertDialog"),
-                content: Text("Are you sure you want to decline this request?"),
+                title: Text("Mensaje"),
+                content: Text("¿Está seguro de que desea rechazar esta petición?"),
                 actions: [
                   cancelButton,
                   continueButton,
@@ -292,7 +276,7 @@ class _UsersPageState extends State<UsersPage> {
                 },
               );
             },
-            child: Text("Decline Request"),
+            child: Text("Rechazar petición"),
           ),
         ],
       );
@@ -302,53 +286,9 @@ class _UsersPageState extends State<UsersPage> {
           await currentUser.addFriendRequest(user);
           await appState.doGetFriends();
         },
-        child: Text("Add Friend"),
+        child: Text("Añadir amigo"),
       );
     }
     return widget;
   }
 }
-
-// Widget profileWidget2(BuildContext context) {
-//   var appState = context.watch<MyAppState>();
-//   var imagePath = appState.currentUser!.avatarPath;
-
-//   return Row(
-//     children: [
-//       SizedBox(
-//           height: 60, child: Image.network(imagePath!, fit: BoxFit.scaleDown)),
-//       Column(
-//         children: [
-//           Text(
-//             "Hello " "${appState.currentUser!.name}!",
-//             style: TextStyle(
-//                 fontSize: 15,
-//                 fontWeight: FontWeight.w400,
-//                 color: Colors.black87),
-//           ),
-//           MaterialButton(
-//             // height: 5,
-//             onPressed: () async {
-//               try {
-//                 await FirebaseAuth.instance.signOut();
-//                 appState.doUserLogout();
-//               } on FirebaseAuthException catch (e) {
-//                 print(e.toString());
-//               }
-//             },
-//             color: Color.fromARGB(255, 30, 226, 72),
-//             shape:
-//                 RoundedRectangleBorder(borderRadius: BorderRadius.circular(40)),
-//             child: Text(
-//               "Logout",
-//               style: TextStyle(
-//                   fontSize: 15,
-//                   fontWeight: FontWeight.w400,
-//                   color: Colors.black87),
-//             ),
-//           ),
-//         ],
-//       ),
-//     ],
-//   );
-// }

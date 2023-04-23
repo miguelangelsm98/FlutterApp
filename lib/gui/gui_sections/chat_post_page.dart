@@ -99,7 +99,7 @@ class _ChatPostPageState extends State<ChatPostPage> {
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(40)),
                   child: Text(
-                    "Send",
+                    "Enviar",
                     style: TextStyle(
                         fontWeight: FontWeight.w600,
                         // fontSize: 16,
@@ -180,8 +180,7 @@ class _ChatPostPageState extends State<ChatPostPage> {
     return appendDateWidget(
         widget,
         DateFormat('dd-MM-yyyy').format(DateTime.parse(message['createdDate'])),
-        index);
-    ;
+        index);    
   }
 
   Widget appendDateWidget(Widget widget, String date, int index) {

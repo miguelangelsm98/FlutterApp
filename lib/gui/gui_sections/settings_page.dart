@@ -6,27 +6,10 @@ import 'package:settings_ui/settings_ui.dart';
 
 import '../../main.dart';
 
-// class MyApp extends StatelessWidget {
-//   @override
-//   Widget build(BuildContext context) {
-//     return MaterialApp(
-//       title: 'Flutter Demo',
-//       home: MyHomePage(title: 'Flutter Demo Home Page'),
-//     );
-//   }
-// }
-
 class SettingsPage extends StatefulWidget {
   @override
   State<SettingsPage> createState() => _SettingsPageState();
 }
-
-// class SettingsPage extends StatefulWidget {
-//   SettingsPage({Key key, this.title}) : super(key: key);
-//   final String title;
-//   @override
-//   _MyHomePageState createState() => _MyHomePageState();
-// }
 
 class _SettingsPageState extends State<SettingsPage> {
   bool isSwitched = false;
@@ -39,36 +22,30 @@ class _SettingsPageState extends State<SettingsPage> {
       appBar: AppBar(
         elevation: 0,
         backgroundColor: Colors.white,
-        title: Center(child: Text("Settings")),
+        title: Center(child: Text("Herramientas")),
         automaticallyImplyLeading: false,
       ),
       body: SettingsList(
         sections: [
           SettingsSection(
             // titlePadding: EdgeInsets.all(20),
-            title: Text('Preferences'),
+            title: Text('Preferencias'),
             tiles: [
               SettingsTile(
-                title: Text('User information'),
+                title: Text('Información del usuario'),
                 leading: Icon(Icons.verified_user),
                 onPressed: (BuildContext context) {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
                       builder: (context) => UpdateUserPage(),
-                      // Pass the arguments as part of the RouteSettings. The
-                      // DetailScreen reads the arguments from these settings.
                     ),
                   );
                 },
               ),
-              // SettingsTile(
-              //   title: Text('Language'),
-              //   leading: Icon(Icons.language),
-              //   onPressed: (BuildContext context) {},
-              // ),
+
               SettingsTile(
-                title: Text('Log Out'),
+                title: Text('Desconectarse'),
                 leading: Icon(Icons.logout),
                 onPressed: (BuildContext context) async {
                   try {
@@ -79,17 +56,6 @@ class _SettingsPageState extends State<SettingsPage> {
                   }
                 },
               ),
-              // SettingsTile.switchTile(
-              //   title: Text('Use System Theme'),
-              //   leading: Icon(Icons.phone_android),
-              //   // switchValue: isSwitched,
-              //   onToggle: (value) {
-              //     setState(() {
-              //       isSwitched = value;
-              //     });
-              //   },
-              //   initialValue: null,
-              // ),
             ],
           ),
         ],

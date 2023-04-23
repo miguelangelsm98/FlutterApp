@@ -1,28 +1,13 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_application/gui/gui_sections/home_page.dart';
-import 'package:flutter_application/gui/gui_sections/update_user_page.dart';
 import 'package:flutter_application/models/user.dart';
 import 'package:provider/provider.dart';
-
-import '../../main.dart';
-
-import 'dart:io';
-
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
-
-import 'package:flutter_application/models/user.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:provider/provider.dart';
+import 'package:date_time_picker/date_time_picker.dart';
 
 import '../../main.dart';
-import 'home_page.dart';
-
-import 'package:intl/intl.dart';
-import 'package:date_time_picker/date_time_picker.dart';
+import 'dart:io';
 
 const defaultAvatarPath =
     "https://firebasestorage.googleapis.com/v0/b/tfg-project-a9320.appspot.com/o/pictures%2Fprofile1.png?alt=media&token=6edb382b-14d5-47f2-a17e-d274624c3e89";
@@ -40,8 +25,6 @@ class _SignupPageState extends State<SignupPage> {
   TextEditingController userNameController = TextEditingController();
   TextEditingController dateController = TextEditingController();
   String dateTime = DateTime(1900).toString();
-
-  // String dateIso = "";
 
   File? pickedImage;
   Uint8List webImage = Uint8List(8);
@@ -61,16 +44,6 @@ class _SignupPageState extends State<SignupPage> {
   @override
   Widget build(BuildContext context) {
     var appState = context.watch<MyAppState>();
-    // user = appState.currentUser!;
-
-    // var nameController = TextEditingController(text: user.name);
-    // var lastNameController = TextEditingController(text: user.lastName);
-    // var dateController = TextEditingController(
-    //     text: DateFormat('dd-MM-yyyy').format(user.birthDate!));
-    // var dateIso = user.birthDate!.toIso8601String();
-    // DateTime? pickedDate = DateTime(1900, 1, 1);
-    // dateIso = pickedDate.toIso8601String();
-    // DateTime? pickedDate = DateTime.now();
 
     return Scaffold(
       resizeToAvoidBottomInset: true,
@@ -91,10 +64,9 @@ class _SignupPageState extends State<SignupPage> {
       body: SingleChildScrollView(
         physics: ScrollPhysics(),
         child: Column(
-          // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
             Text(
-              "Sign up",
+              "Registrarse",
               style: TextStyle(
                 fontSize: 30,
                 fontWeight: FontWeight.bold,
@@ -104,7 +76,7 @@ class _SignupPageState extends State<SignupPage> {
               height: 20,
             ),
             Text(
-              "Create an Account",
+              "Crear una cuenta",
               style: TextStyle(
                 fontSize: 15,
                 color: Colors.grey[700],
@@ -119,16 +91,17 @@ class _SignupPageState extends State<SignupPage> {
                 children: [
                   makeInput(label: "Email", controller: emailController),
                   makeInput(
-                      label: "Password",
+                      label: "Contraseña",
                       controller: password1Controller,
                       obsureText: true),
                   makeInput(
-                      label: "Confirm Pasword",
+                      label: "Confirmar contraseña",
                       controller: password2Controller,
                       obsureText: true),
-                  makeInput(label: "Full Name", controller: nameController),
                   makeInput(
-                    label: "User Name",
+                      label: "Nombre completo", controller: nameController),
+                  makeInput(
+                    label: "Nombre de usuario",
                     controller: userNameController,
                   ),
                   DateTimePicker(
@@ -137,7 +110,7 @@ class _SignupPageState extends State<SignupPage> {
                     initialValue: '',
                     firstDate: DateTime(1900),
                     lastDate: DateTime.now(),
-                    dateLabelText: 'Birth Date',
+                    dateLabelText: 'Fecha de nacimiento',
                     onChanged: (val) => dateTime = val,
                     validator: (val) {
                       print(val);
@@ -178,7 +151,7 @@ class _SignupPageState extends State<SignupPage> {
                         await appState.doUserLogin();
                       } on FirebaseAuthException catch (e) {
                         Widget okButton = ElevatedButton(
-                          child: Text("Ok"),
+                          child: Text("OK"),
                           onPressed: () {
                             Navigator.pop(context);
                           },
@@ -186,7 +159,7 @@ class _SignupPageState extends State<SignupPage> {
 
                         // set up the AlertDialog
                         AlertDialog alert = AlertDialog(
-                          title: Text("AlertDialog"),
+                          title: Text("Mensaje"),
                           content: Text(e.message.toString()),
                           actions: [
                             okButton,
@@ -201,14 +174,14 @@ class _SignupPageState extends State<SignupPage> {
                         );
                       }
                     } else {
-                      print("Passwords are not equal");
+                      print("Las contraseñas no coinciden");
                     }
                   },
                   color: Colors.redAccent,
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(40)),
                   child: Text(
-                    "Sign Up",
+                    "Registrarse",
                     style: TextStyle(
                       fontWeight: FontWeight.w600,
                       fontSize: 16,
@@ -223,13 +196,13 @@ class _SignupPageState extends State<SignupPage> {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text("Already have an account? "),
+                Text("¿Ya tiene una cuenta? "),
                 MaterialButton(
                   onPressed: () async {
                     appState.changeSelectedIndex(0);
                   },
                   child: Text(
-                    "Log In",
+                    "Iniciar sesión",
                     style: TextStyle(fontWeight: FontWeight.w600, fontSize: 18),
                   ),
                 ),
@@ -251,7 +224,7 @@ class _SignupPageState extends State<SignupPage> {
           pickedImage = selected;
         });
       } else {
-        print('No image has been picked');
+        print('No se ha seleccionado imagen');
       }
     } else if (kIsWeb) {
       final ImagePicker picker = ImagePicker();
@@ -263,10 +236,10 @@ class _SignupPageState extends State<SignupPage> {
           pickedImage = File('a');
         });
       } else {
-        print('No image has been picked');
+        print('No se ha seleccionado imagen');
       }
     } else {
-      print('Something went wrong');
+      print('Algo ha ido mal');
     }
   }
 }

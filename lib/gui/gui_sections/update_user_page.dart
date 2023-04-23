@@ -1,7 +1,5 @@
 import 'dart:io';
 
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
@@ -13,8 +11,6 @@ import 'package:provider/provider.dart';
 import '../../main.dart';
 import 'home_page.dart';
 import 'package:date_time_picker/date_time_picker.dart';
-
-import 'package:intl/intl.dart';
 
 class UpdateUserPage extends StatefulWidget {
   @override
@@ -77,7 +73,8 @@ class _UpdateUserPageState extends State<UpdateUserPage> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 ElevatedButton(
-                    onPressed: selectImage, child: const Text("Select Image")),
+                    onPressed: selectImage,
+                    child: const Text("Seleccione una imagen")),
               ],
             ),
             SizedBox(
@@ -88,18 +85,19 @@ class _UpdateUserPageState extends State<UpdateUserPage> {
               child: Column(
                 children: [
                   makeInput(
-                      label: "User Name (Cannot Change)",
+                      label: "Nombre de usuario (Inmutable)",
                       controller: userNameController,
                       enabled: false,
                       filled: true),
-                  makeInput(label: "Full Name", controller: nameController),
+                  makeInput(
+                      label: "Nombre completo", controller: nameController),
                   DateTimePicker(
                     type: DateTimePickerType.date,
                     dateMask: 'dd-MM-yyyy',
                     initialValue: dateTime,
                     firstDate: DateTime(1900),
                     lastDate: DateTime.now(),
-                    dateLabelText: 'Birth Date',
+                    dateLabelText: 'Fecha de nacimiento',
                     onChanged: (val) => dateTime = val,
                     validator: (val) {
                       print(val);
@@ -129,40 +127,34 @@ class _UpdateUserPageState extends State<UpdateUserPage> {
                   height: 60,
                   onPressed: () async {
                     Widget cancelButton = ElevatedButton(
-                      child: Text("Cancel"),
+                      child: Text("Cancelar"),
                       onPressed: () {
                         Navigator.pop(context);
                       },
                     );
                     Widget continueButton = ElevatedButton(
-                      child: Text("Continue"),
+                      child: Text("Continuar"),
                       onPressed: () async {
                         if (pickedImage != null) {
-                          user.updateAvatarPath(webImage);                          
+                          user.updateAvatarPath(webImage);
                         }
                         user.name = nameController.text;
                         user.userName = userNameController.text;
                         user.birthDate = DateTime.parse(dateTime);
                         user.saveDatabase();
-                        // setState(() {});
-                        // ignore: use_build_context_synchronously
                         Navigator.of(context).push(MaterialPageRoute(
                             builder: (context) => MyHomePage()));
-                        // ignore: use_build_context_synchronously
-                        // Navigator.pop(context);
                       },
                     );
-                    // set up the AlertDialog
                     AlertDialog alert = AlertDialog(
-                      title: Text("AlertDialog"),
+                      title: Text("Mensaje"),
                       content: Text(
-                          "Are you sure you want to update the information?"),
+                          "¿Está seguro de que desea actualizar la información?"),
                       actions: [
                         cancelButton,
                         continueButton,
                       ],
                     );
-                    // show the dialog
                     showDialog(
                       context: context,
                       builder: (BuildContext context) {
@@ -174,7 +166,7 @@ class _UpdateUserPageState extends State<UpdateUserPage> {
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(40)),
                   child: Text(
-                    "Update user",
+                    "Actualizar información",
                     style: TextStyle(
                         fontWeight: FontWeight.w600,
                         fontSize: 16,
@@ -207,7 +199,7 @@ class _UpdateUserPageState extends State<UpdateUserPage> {
           webImage = f!;
         });
       } else {
-        print('No image has been picked');
+        print('No se ha seleccionado una imagen');
       }
     } else if (kIsWeb) {
       final ImagePicker picker = ImagePicker();
@@ -219,10 +211,10 @@ class _UpdateUserPageState extends State<UpdateUserPage> {
           pickedImage = File('a');
         });
       } else {
-        print('No image has been picked');
+        print('No se ha seleccionado una imagen');
       }
     } else {
-      print('Something went wrong');
+      print('Algo ha ido mal');
     }
   }
 }

@@ -1,6 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_application/gui/gui_sections/signup_page.dart';
 import 'package:flutter_application/models/user.dart';
 import 'package:provider/provider.dart';
 
@@ -34,25 +33,13 @@ class _LoginPageState extends State<LoginPage> {
         backgroundColor: Colors.white,
         title: Text(""),
         automaticallyImplyLeading: false,
-
-        // elevation: 0,
-        // backgroundColor: Colors.white,
-        // leading: IconButton(
-        //     onPressed: () {
-        //       Navigator.pop(context);
-        //     },
-        //     icon: Icon(
-        //       Icons.arrow_back_ios,
-        //       size: 20,
-        //       color: Colors.black,
-        //     )),
       ),
       body: SingleChildScrollView(
         physics: ScrollPhysics(),
         child: Column(
           children: [
             Text(
-              "Login",
+              "Iniciar sesión",
               style: TextStyle(
                 fontSize: 30,
                 fontWeight: FontWeight.bold,
@@ -62,11 +49,12 @@ class _LoginPageState extends State<LoginPage> {
               height: 20,
             ),
             Text(
-              "Welcome back ! Login with your credentials",
+              "¡Bienvenido de vuelta! Inicia sesión con tus credenciales",
               style: TextStyle(
                 fontSize: 15,
                 color: Colors.grey[700],
               ),
+              textAlign: TextAlign.center,
             ),
             SizedBox(
               height: 30,
@@ -77,7 +65,7 @@ class _LoginPageState extends State<LoginPage> {
                 children: [
                   makeInput(label: "Email", controller: emailController),
                   makeInput(
-                      label: "Password",
+                      label: "Contraseña",
                       controller: passwordController,
                       obsureText: true),
                 ],
@@ -112,7 +100,7 @@ class _LoginPageState extends State<LoginPage> {
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(40)),
                   child: Text(
-                    "Login",
+                    "Iniciar sesión",
                     style: TextStyle(
                         fontWeight: FontWeight.w600,
                         fontSize: 16,
@@ -127,7 +115,7 @@ class _LoginPageState extends State<LoginPage> {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text("Dont have an account?"),
+                Text("¿No tiene cuenta?"),
                 MaterialButton(
                   onPressed: () async {
                     appState.changeSelectedIndex(1);
@@ -136,7 +124,7 @@ class _LoginPageState extends State<LoginPage> {
                     //     MaterialPageRoute(builder: (context) => SignupPage()));
                   },
                   child: Text(
-                    "Sign Up",
+                    "Registrarse",
                     style: TextStyle(fontWeight: FontWeight.w600, fontSize: 18),
                   ),
                 ),

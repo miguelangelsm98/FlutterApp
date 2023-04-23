@@ -1,14 +1,9 @@
-// import 'dart:html';
-import 'dart:typed_data';
-
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application/models/post.dart';
 import 'package:provider/provider.dart';
 
 import '../../main.dart';
-
-import 'package:intl/intl.dart';
 
 import 'home_page.dart';
 import 'package:date_time_picker/date_time_picker.dart';
@@ -50,8 +45,8 @@ class _PostsAddPageState extends State<PostsAddPage> {
   Widget build(BuildContext context) {
     var appState = context.watch<MyAppState>();
     const List<Widget> privacyOptions = <Widget>[
-      Text('Only my friends'),
-      Text('Everybody'),
+      Text('Todos'),
+      Text('Solo amigos'),
     ];
 
     // DateTime? pickedDate = DateTime.now();
@@ -60,7 +55,7 @@ class _PostsAddPageState extends State<PostsAddPage> {
       resizeToAvoidBottomInset: true,
       backgroundColor: Colors.white,
       appBar: AppBar(
-        title: Text("Add new Post"),
+        title: Text("Añadir actividad"),
         elevation: 0,
         backgroundColor: Colors.white,
         leading: IconButton(
@@ -92,8 +87,12 @@ class _PostsAddPageState extends State<PostsAddPage> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 ElevatedButton(
-                    onPressed: selectImage, child: const Text("Select Image")),
+                    onPressed: selectImage,
+                    child: const Text("Seleccione una imagen")),
               ],
+            ),
+            SizedBox(
+              height: 20,
             ),
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 40),
@@ -101,12 +100,12 @@ class _PostsAddPageState extends State<PostsAddPage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   makeInput(
-                      label: "Name",
+                      label: "Nombre",
                       controller: nameController,
                       maxLines: 1,
                       maxLength: 32),
                   makeInput(
-                      label: "Description",
+                      label: "Descripción",
                       controller: descriptionController,
                       maxLines: 6,
                       maxLength: 180),
@@ -116,7 +115,7 @@ class _PostsAddPageState extends State<PostsAddPage> {
                     initialValue: '',
                     firstDate: DateTime.now(),
                     lastDate: DateTime(2100),
-                    dateLabelText: 'Activity Date',
+                    dateLabelText: 'Fecha de la actividad',
                     onChanged: (val) => dateTime = val,
                     validator: (val) {
                       print(val);
@@ -131,7 +130,7 @@ class _PostsAddPageState extends State<PostsAddPage> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        "Who can see the post?",
+                        "¿Quién puede ver la actividad?",
                         style: TextStyle(
                             fontSize: 15,
                             fontWeight: FontWeight.w400,
@@ -208,8 +207,8 @@ class _PostsAddPageState extends State<PostsAddPage> {
                     );
                     // set up the AlertDialog
                     AlertDialog alert = AlertDialog(
-                      title: Text("AlertDialog"),
-                      content: Text("Post successfully created"),
+                      title: Text("Mensaje"),
+                      content: Text("Actividad creada correctamente"),
                       actions: [
                         okButton,
                       ],
@@ -227,7 +226,7 @@ class _PostsAddPageState extends State<PostsAddPage> {
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(40)),
                   child: Text(
-                    "Create Post",
+                    "Crear actividad",
                     style: TextStyle(
                         fontWeight: FontWeight.w600,
                         fontSize: 16,
@@ -260,7 +259,7 @@ class _PostsAddPageState extends State<PostsAddPage> {
           webImage = f!;
         });
       } else {
-        print('No image has been picked');
+        print('No se ha seleccionado imagen');
       }
     } else if (kIsWeb) {
       final ImagePicker picker = ImagePicker();
@@ -272,10 +271,10 @@ class _PostsAddPageState extends State<PostsAddPage> {
           pickedImage = File('a');
         });
       } else {
-        print('No image has been picked');
+        print('No se ha seleccionado imagen');
       }
     } else {
-      print('Something went wrong');
+      print('Algo ha ido mal');
     }
   }
 }
@@ -309,7 +308,7 @@ Widget makeInput({label, controller, obsureText = false, maxLines, maxLength}) {
         ),
       ),
       SizedBox(
-        height: 30,
+        height: 15,
       )
     ],
   );

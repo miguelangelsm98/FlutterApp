@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_application/models/post.dart';
 import 'package:flutter_application/models/user.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -114,7 +113,7 @@ class _ChatDirectPageState extends State<ChatDirectPage> {
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(40)),
                   child: Text(
-                    "Send",
+                    "Enviar",
                     style: TextStyle(
                         fontWeight: FontWeight.w600,
                         // fontSize: 16,

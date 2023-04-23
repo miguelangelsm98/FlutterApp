@@ -13,8 +13,6 @@ class PostsListPage extends StatelessWidget {
   Widget build(BuildContext context) {
     var appState = context.watch<MyAppState>();
 
-    final ScrollController firstController = ScrollController();
-
     return DefaultTabController(
         length: 3,
         child: Scaffold(
@@ -23,13 +21,13 @@ class PostsListPage extends StatelessWidget {
           appBar: AppBar(
             elevation: 0,
             backgroundColor: Colors.white,
-            title: Center(child: Text("Posts")),
+            title: Center(child: Text("Actividades")),
             automaticallyImplyLeading: false,
             bottom: const TabBar(
               tabs: [
-                Tab(icon: Text("Public Posts")),
-                Tab(icon: Text("Friends' Posts")),
-                Tab(icon: Text("My Posts"))
+                Tab(icon: Text("Públicas")),
+                Tab(icon: Text("De amigos")),
+                Tab(icon: Text("Mías"))
               ],
             ),
           ),
@@ -40,9 +38,7 @@ class PostsListPage extends StatelessWidget {
               Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => PostsAddPage(),
-                    // Pass the arguments as part of the RouteSettings. The
-                    // DetailScreen reads the arguments from these settings.
+                    builder: (context) => PostsAddPage(),                    
                   ));
             },
             child: Icon(Icons.add),
@@ -77,7 +73,7 @@ class PostsListPage extends StatelessWidget {
     final ScrollController controller = ScrollController();
 
     if (posts.isEmpty) {
-      return Center(child: Text("No posts to be shown"));
+      return Center(child: Text("No hay actividades"));
     } else {
       return SizedBox(
         height: MediaQuery.of(context).size.height,
@@ -136,12 +132,6 @@ class PostsListPage extends StatelessWidget {
                               .format(p.postDate!)),
                           Text(p.user!.userName!),
                           Text("Signed up users: ${p.users!.length}"),
-                          // Text("Created Date: ${p.createdDate.toString()}"),
-
-                          // SizedBox(
-                          //     height: 60,
-                          //     child: Image.network(p.user!.avatarPath!,
-                          //         fit: BoxFit.scaleDown)),
                         ]),
                   ),
                 ],
@@ -175,13 +165,13 @@ class PostsListPage extends StatelessWidget {
           ElevatedButton(
             onPressed: () async {
               Widget cancelButton = ElevatedButton(
-                child: Text("Cancel"),
+                child: Text("Cancelar"),
                 onPressed: () {
                   Navigator.pop(context);
                 },
               );
               Widget continueButton = ElevatedButton(
-                child: Text("Continue"),
+                child: Text("Continuar"),
                 onPressed: () async {
                   await p.remove();
                   appState.doGetPosts();
@@ -191,8 +181,8 @@ class PostsListPage extends StatelessWidget {
               );
               // set up the AlertDialog
               AlertDialog alert = AlertDialog(
-                title: Text("AlertDialog"),
-                content: Text("Are you sure you want to remove this post?"),
+                title: Text("Mensaje"),
+                content: Text("¿Seguro que quiere eliminar la actividad?"),
                 actions: [
                   cancelButton,
                   continueButton,
@@ -211,7 +201,7 @@ class PostsListPage extends StatelessWidget {
               // padding: EdgeInsets.symmetric(horizontal: 50, vertical: 20),
               // textStyle: TextStyle(fontSize: 30, fontWeight: FontWeight.bold)
             ),
-            child: Text("Remove Activity"),
+            child: Text("Eliminar actividad"),
           ),
           ElevatedButton(
             onPressed: () async {
@@ -234,7 +224,7 @@ class PostsListPage extends StatelessWidget {
               // padding: EdgeInsets.symmetric(horizontal: 50, vertical: 20),
               // textStyle: TextStyle(fontSize: 30, fontWeight: FontWeight.bold)
             ),
-            child: Text("Open Chat"),
+            child: Text("Abrir chat"),
           ),
         ],
       );
@@ -242,13 +232,13 @@ class PostsListPage extends StatelessWidget {
       widget = ElevatedButton(
         onPressed: () async {
           Widget cancelButton = ElevatedButton(
-            child: Text("Cancel"),
+            child: Text("Cancelar"),
             onPressed: () {
               Navigator.pop(context);
             },
           );
           Widget continueButton = ElevatedButton(
-            child: Text("Continue"),
+            child: Text("Continuar"),
             onPressed: () async {
               p.users?.add(appState.currentUser!.userUid!);
               p.saveDatabase();
@@ -259,8 +249,8 @@ class PostsListPage extends StatelessWidget {
           );
           // set up the AlertDialog
           AlertDialog alert = AlertDialog(
-            title: Text("AlertDialog"),
-            content: Text("Are you sure you want to join this activity?"),
+            title: Text("Mensaje"),
+            content: Text("¿Seguro que quiere unirse a la actividad?"),
             actions: [
               cancelButton,
               continueButton,
@@ -279,7 +269,7 @@ class PostsListPage extends StatelessWidget {
           // padding: EdgeInsets.symmetric(horizontal: 50, vertical: 20),
           // textStyle: TextStyle(fontSize: 30, fontWeight: FontWeight.bold)
         ),
-        child: Text("Join Activity"),
+        child: Text("Unirse a actividad"),
       );
     } else {
       widget = Row(
@@ -287,13 +277,13 @@ class PostsListPage extends StatelessWidget {
           ElevatedButton(
             onPressed: () async {
               Widget cancelButton = ElevatedButton(
-                child: Text("Cancel"),
+                child: Text("Cancelar"),
                 onPressed: () {
                   Navigator.pop(context);
                 },
               );
               Widget continueButton = ElevatedButton(
-                child: Text("Continue"),
+                child: Text("Continuar"),
                 onPressed: () async {
                   p.users?.remove(appState.currentUser!.userUid!);
                   p.saveDatabase();
@@ -305,8 +295,8 @@ class PostsListPage extends StatelessWidget {
               );
               // set up the AlertDialog
               AlertDialog alert = AlertDialog(
-                title: Text("AlertDialog"),
-                content: Text("Are you sure you want to leave this activity?"),
+                title: Text("Mensaje"),
+                content: Text("¿Seguro que quiere abandonar la actividad?"),
                 actions: [
                   cancelButton,
                   continueButton,
@@ -325,7 +315,7 @@ class PostsListPage extends StatelessWidget {
               // padding: EdgeInsets.symmetric(horizontal: 50, vertical: 20),
               // textStyle: TextStyle(fontSize: 30, fontWeight: FontWeight.bold)
             ),
-            child: Text("Leave Activity"),
+            child: Text("Abandonar actividad"),
           ),
           ElevatedButton(
             onPressed: () async {
@@ -348,7 +338,7 @@ class PostsListPage extends StatelessWidget {
               // padding: EdgeInsets.symmetric(horizontal: 50, vertical: 20),
               // textStyle: TextStyle(fontSize: 30, fontWeight: FontWeight.bold)
             ),
-            child: Text("Open Chat"),
+            child: Text("Abrir chat"),
           ),
         ],
       );
