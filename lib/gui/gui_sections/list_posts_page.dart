@@ -38,7 +38,7 @@ class PostsListPage extends StatelessWidget {
               Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => PostsAddPage(),                    
+                    builder: (context) => PostsAddPage(),
                   ));
             },
             child: Icon(Icons.add),
@@ -121,8 +121,8 @@ class PostsListPage extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           Text(
-                            p.name,  
-                            textAlign: TextAlign.center,                          
+                            p.name,
+                            textAlign: TextAlign.center,
                             style: TextStyle(
                               fontSize: 20,
                               fontWeight: FontWeight.bold,
@@ -131,7 +131,7 @@ class PostsListPage extends StatelessWidget {
                           Text(DateFormat('dd-MM-yyyy – kk:mm')
                               .format(p.postDate!)),
                           Text(p.user!.userName!),
-                          Text("Signed up users: ${p.users!.length}"),
+                          Text("Usuarios registrados: ${p.users!.length}"),
                         ]),
                   ),
                 ],

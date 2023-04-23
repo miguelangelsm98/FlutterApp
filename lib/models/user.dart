@@ -243,7 +243,7 @@ class CustomUser {
     final querySnap = await ref.get();
     for (var message in querySnap.docs) {
       friendMessages[relationId]!.add(message.data());
-    } // Convert to User object
+    }
   }
 
   Future updateAvatarPath(Uint8List webImage) async {
@@ -265,7 +265,6 @@ class CustomUser {
       var querySnap = await ref.get();
       for (var doc in querySnap.docs) {
         print("Changing message $doc");
-
         await doc.reference.update({'userAvatarPath': avatarPath});
       }
     }
@@ -316,16 +315,14 @@ Future<List<CustomUser>> getUserObjects(String userUid) async {
   List<CustomUser> users = <CustomUser>[];
   final ref = FirebaseFirestore.instance
       .collection("users")
-      .where("userUid", isNotEqualTo: userUid)
-      .orderBy("userUid")
-      .orderBy("name", descending: true)
+      .orderBy("userName", descending: false)
       .withConverter(
         fromFirestore: CustomUser.fromFirestore,
         toFirestore: (CustomUser user, _) => user.toFirestore(),
       );
   final querySnap = await ref.get();
   for (var element in querySnap.docs) {
-    users.add(element.data());
-  } // Convert to User object
+    if (element['userUid'] != userUid) users.add(element.data());
+  }
   return users;
 }

@@ -11,7 +11,6 @@ class UsersPage extends StatefulWidget {
 }
 
 class _UsersPageState extends State<UsersPage> {
-
   @override
   Widget build(BuildContext context) {
     var appState = context.watch<MyAppState>();
@@ -27,7 +26,10 @@ class _UsersPageState extends State<UsersPage> {
           title: Center(child: Text("Usuarios")),
           automaticallyImplyLeading: false,
           bottom: const TabBar(
-            tabs: [Tab(icon: Text("Amigos")), Tab(icon: Text("Todos los usuarios"))],
+            tabs: [
+              Tab(icon: Text("Amigos")),
+              Tab(icon: Text("Todos los usuarios"))
+            ],
           ),
         ),
         body: TabBarView(
@@ -89,9 +91,6 @@ class _UsersPageState extends State<UsersPage> {
       Padding(
         padding: const EdgeInsets.all(8.0),
         child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
-          SizedBox(
-            width: 10,
-          ),
           Container(
               width: 70.0,
               height: 70.0,
@@ -103,23 +102,22 @@ class _UsersPageState extends State<UsersPage> {
           SizedBox(
             width: 10,
           ),
-          Center(
-            child: Text(user.name!, textAlign: TextAlign.center),
-          ),
+          SizedBox(
+              width: 100,
+              child: Text(user.userName!, textAlign: TextAlign.start)),
           SizedBox(
             width: 10,
           ),
-          SizedBox(
-            height: 100,
-            child: Center(
-              child: friendWidget(
-                  currentUser: currentUser, user: user, appState: appState),
+          Expanded(
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                friendWidget(
+                    currentUser: currentUser, user: user, appState: appState),
+              ],
             ),
           ),
         ]),
-      ),
-      SizedBox(
-        height: 25,
       ),
     ]);
   }
@@ -133,160 +131,171 @@ class _UsersPageState extends State<UsersPage> {
     if (currentUser.friends.contains(user.userUid)) {
       widget = Column(
         children: [
-          ElevatedButton(
-            onPressed: () async {
-              Widget cancelButton = ElevatedButton(
-                child: Text("Cancelar"),
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-              );
-              Widget continueButton = ElevatedButton(
-                child: Text("Continuar"),
-                onPressed: () async {
-                  await currentUser.removeFriend(user);
-                  await appState.doGetFriends();
-                  await appState.doGetPosts();
-                  // ignore: use_build_context_synchronously
-                  Navigator.pop(context);
-                },
-              );
-              AlertDialog alert = AlertDialog(
-                title: Text("Mensaje"),
-                content: Text("¿Está seguro de que desea borrar este amigo?"),
-                actions: [
-                  cancelButton,
-                  continueButton,
-                ],
-              );
-              // show the dialog
-              showDialog(
-                context: context,
-                builder: (BuildContext context) {
-                  return alert;
-                },
-              );
-            },
-            child: Text("Borrar amigo"),
+          SizedBox(
+            width: 150,
+            child: ElevatedButton(
+              onPressed: () async {
+                Widget cancelButton = ElevatedButton(
+                  child: Text("Cancelar"),
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                );
+                Widget continueButton = ElevatedButton(
+                  child: Text("Continuar"),
+                  onPressed: () async {
+                    await currentUser.removeFriend(user);
+                    await appState.doGetFriends();
+                    await appState.doGetPosts();
+                    // ignore: use_build_context_synchronously
+                    Navigator.pop(context);
+                  },
+                );
+                AlertDialog alert = AlertDialog(
+                  title: Text("Mensaje"),
+                  content: Text("¿Está seguro de que desea borrar este amigo?"),
+                  actions: [
+                    cancelButton,
+                    continueButton,
+                  ],
+                );
+                // show the dialog
+                showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return alert;
+                  },
+                );
+              },
+              child: Text("Borrar amigo"),
+            ),
           ),
-          Row(
-            children: [
-              ElevatedButton(
-                onPressed: () async {
-                  String relationId =
-                      currentUser.friendRelations[user.userUid]!;
-                  await currentUser.getMessages(relationId);
-                  // ignore: use_build_context_synchronously
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const ChatDirectPage(),
-
-                      settings: RouteSettings(
-                        arguments: user,
-                      ),
+          SizedBox(
+            width: 150,
+            child: ElevatedButton(
+              onPressed: () async {
+                String relationId = currentUser.friendRelations[user.userUid]!;
+                await currentUser.getMessages(relationId);
+                // ignore: use_build_context_synchronously
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const ChatDirectPage(),
+                    settings: RouteSettings(
+                      arguments: user,
                     ),
-                  );
-                },
-                child: Text("Abrir chat"),
-              ),
-            ],
+                  ),
+                );
+              },
+              child: Text("Abrir chat"),
+            ),
           ),
         ],
       );
     } else if (currentUser.ownRequests!.contains(user.userUid)) {
-      widget = ElevatedButton(
-        onPressed: () async {
-          await currentUser.removeFriendRequest(user);
-          await appState.doGetFriends();
-        },
-        child: Text("Cancelar petición"),
+      widget = SizedBox(
+        width: 150,
+        child: ElevatedButton(
+          onPressed: () async {
+            await currentUser.removeFriendRequest(user);
+            await appState.doGetFriends();
+          },
+          child: Text("Cancelar petición"),
+        ),
       );
     } else if (currentUser.friendRequests!.contains(user.userUid)) {
       widget = Column(
         children: [
-          ElevatedButton(
-            onPressed: () async {
-              Widget cancelButton = ElevatedButton(
-                child: Text("Cancelar"),
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-              );
-              Widget continueButton = ElevatedButton(
-                child: Text("Continuar"),
-                onPressed: () async {
-                  await currentUser.acceptFriendRequest(user);
-                  await appState.doGetFriends();
-                  // ignore: use_build_context_synchronously
-                  Navigator.pop(context);
-                  await appState.doGetPosts();
-                },
-              );
-              // set up the AlertDialog
-              AlertDialog alert = AlertDialog(
-                title: Text("Mensaje"),
-                content: Text("¿Está seguro de que desea aceptar esta petición?"),
-                actions: [
-                  cancelButton,
-                  continueButton,
-                ],
-              );
-              // show the dialog
-              showDialog(
-                context: context,
-                builder: (BuildContext context) {
-                  return alert;
-                },
-              );
-            },
-            child: Text("Aceptar petición"),
+          SizedBox(
+            width: 150,
+            child: ElevatedButton(
+              onPressed: () async {
+                Widget cancelButton = ElevatedButton(
+                  child: Text("Cancelar"),
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                );
+                Widget continueButton = ElevatedButton(
+                  child: Text("Continuar"),
+                  onPressed: () async {
+                    await currentUser.acceptFriendRequest(user);
+                    await appState.doGetFriends();
+                    // ignore: use_build_context_synchronously
+                    Navigator.pop(context);
+                    await appState.doGetPosts();
+                  },
+                );
+                AlertDialog alert = AlertDialog(
+                  title: Text("Mensaje"),
+                  content:
+                      Text("¿Está seguro de que desea aceptar esta petición?"),
+                  actions: [
+                    cancelButton,
+                    continueButton,
+                  ],
+                );
+                showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return alert;
+                  },
+                );
+              },
+              child: Text("Aceptar petición"),
+            ),
           ),
-          ElevatedButton(
-            onPressed: () async {
-              Widget cancelButton = ElevatedButton(
-                child: Text("Cancelar"),
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-              );
-              Widget continueButton = ElevatedButton(
-                child: Text("Continuar"),
-                onPressed: () async {
-                  await currentUser.declineFriendRequest(user);
-                  await appState.doGetFriends();
-                  // ignore: use_build_context_synchronously
-                  Navigator.pop(context);
-                },
-              );
-              // set up the AlertDialog
-              AlertDialog alert = AlertDialog(
-                title: Text("Mensaje"),
-                content: Text("¿Está seguro de que desea rechazar esta petición?"),
-                actions: [
-                  cancelButton,
-                  continueButton,
-                ],
-              );
-              // show the dialog
-              showDialog(
-                context: context,
-                builder: (BuildContext context) {
-                  return alert;
-                },
-              );
-            },
-            child: Text("Rechazar petición"),
+          SizedBox(
+            width: 150,
+            child: ElevatedButton(
+              onPressed: () async {
+                Widget cancelButton = ElevatedButton(
+                  child: Text("Cancelar"),
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                );
+                Widget continueButton = ElevatedButton(
+                  child: Text("Continuar"),
+                  onPressed: () async {
+                    await currentUser.declineFriendRequest(user);
+                    await appState.doGetFriends();
+                    // ignore: use_build_context_synchronously
+                    Navigator.pop(context);
+                  },
+                );
+                // set up the AlertDialog
+                AlertDialog alert = AlertDialog(
+                  title: Text("Mensaje"),
+                  content:
+                      Text("¿Está seguro de que desea rechazar esta petición?"),
+                  actions: [
+                    cancelButton,
+                    continueButton,
+                  ],
+                );
+                showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return alert;
+                  },
+                );
+              },
+              child: Text("Rechazar petición"),
+            ),
           ),
         ],
       );
     } else {
-      widget = ElevatedButton(
-        onPressed: () async {
-          await currentUser.addFriendRequest(user);
-          await appState.doGetFriends();
-        },
-        child: Text("Añadir amigo"),
+      widget = SizedBox(
+        width: 150,
+        child: ElevatedButton(
+          onPressed: () async {
+            await currentUser.addFriendRequest(user);
+            await appState.doGetFriends();
+          },
+          child: Text("Añadir amigo"),
+        ),
       );
     }
     return widget;

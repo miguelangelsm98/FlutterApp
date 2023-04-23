@@ -100,9 +100,10 @@ class _SignupPageState extends State<SignupPage> {
                       obsureText: true),
                   makeInput(
                       label: "Nombre completo", controller: nameController),
-                  makeInput(
+                  makeInputMaxLength(
                     label: "Nombre de usuario",
                     controller: userNameController,
+                    maxLength: 16,
                   ),
                   DateTimePicker(
                     type: DateTimePickerType.date,
@@ -244,7 +245,11 @@ class _SignupPageState extends State<SignupPage> {
   }
 }
 
-Widget makeInput({label, controller, obsureText = false}) {
+Widget makeInput({
+  label,
+  controller,
+  obsureText = false,
+}) {
   return Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
@@ -259,6 +264,45 @@ Widget makeInput({label, controller, obsureText = false}) {
       TextField(
         controller: controller,
         obscureText: obsureText,
+        decoration: InputDecoration(
+          contentPadding: EdgeInsets.symmetric(vertical: 0, horizontal: 10),
+          enabledBorder: OutlineInputBorder(
+            borderSide: BorderSide(
+              color: Colors.grey,
+            ),
+          ),
+          border:
+              OutlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
+        ),
+      ),
+      SizedBox(
+        height: 30,
+      )
+    ],
+  );
+}
+
+Widget makeInputMaxLength({
+  label,
+  controller,
+  obsureText = false,
+  maxLength,
+}) {
+  return Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      Text(
+        label,
+        style: TextStyle(
+            fontSize: 15, fontWeight: FontWeight.w400, color: Colors.black87),
+      ),
+      SizedBox(
+        height: 5,
+      ),
+      TextField(
+        controller: controller,
+        obscureText: obsureText,
+        maxLength: maxLength,
         decoration: InputDecoration(
           contentPadding: EdgeInsets.symmetric(vertical: 0, horizontal: 10),
           enabledBorder: OutlineInputBorder(

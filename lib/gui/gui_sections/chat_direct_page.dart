@@ -156,10 +156,6 @@ class _ChatDirectPageState extends State<ChatDirectPage> {
                                 fit: BoxFit.fill,
                                 image:
                                     NetworkImage(message['userAvatarPath'])))),
-                    // SizedBox(
-                    //     height: 100,
-                    //     child: Image.network(message['userAvatarPath'],
-                    //         fit: BoxFit.scaleDown)),
                   ],
                 ),
               ],
@@ -184,10 +180,6 @@ class _ChatDirectPageState extends State<ChatDirectPage> {
                                 fit: BoxFit.fill,
                                 image:
                                     NetworkImage(message['userAvatarPath'])))),
-                    // SizedBox(
-                    //     height: 100,
-                    //     child: Image.network(message['userAvatarPath'],
-                    //         fit: BoxFit.scaleDown)),
                     Column(children: [
                       Text("${message['userName']}"),
                       Text("${message['message']}"),
