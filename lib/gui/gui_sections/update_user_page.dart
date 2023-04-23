@@ -6,6 +6,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import 'package:flutter_application/models/user.dart';
+import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 
@@ -60,7 +61,7 @@ class _UpdateUserPageState extends State<UpdateUserPage> {
       body: SingleChildScrollView(
         physics: ScrollPhysics(),
         child: Column(
-          children: [
+          children: [            
             SizedBox(
                 height: 150,
                 child: pickedImage == null
@@ -142,6 +143,7 @@ class _UpdateUserPageState extends State<UpdateUserPage> {
                           user.avatarPath = await FirebaseStorage.instance
                               .ref("pictures/${user.userUid}")
                               .getDownloadURL();
+                          print(user.avatarPath);
                         }
                         user.name = nameController.text;
                         user.userName = userNameController.text;
@@ -197,9 +199,17 @@ class _UpdateUserPageState extends State<UpdateUserPage> {
       final ImagePicker picker = ImagePicker();
       XFile? image = await picker.pickImage(source: ImageSource.gallery);
       if (image != null) {
-        var selected = File(image.path);
+        File? croppedImage = await ImageCropper().cropImage(
+          sourcePath: image.path,
+          maxWidth: 1080,
+          maxHeight: 1080,
+          aspectRatio: CropAspectRatio(ratioX: 1.0, ratioY: 1.0),
+        );
+        var f = await croppedImage?.readAsBytes();
+        var selected = File((croppedImage?.path)!);
         setState(() {
           pickedImage = selected;
+          webImage = f!;
         });
       } else {
         print('No image has been picked');
@@ -208,9 +218,14 @@ class _UpdateUserPageState extends State<UpdateUserPage> {
       final ImagePicker picker = ImagePicker();
       XFile? image = await picker.pickImage(source: ImageSource.gallery);
       if (image != null) {
-        var f = await image.readAsBytes();
+        File? croppedImage = await ImageCropper().cropImage(
+            sourcePath: image.path,
+            maxWidth: 1080,
+            maxHeight: 1080,
+            aspectRatio: CropAspectRatio(ratioX: 1.0, ratioY: 1.0));
+        var f = await croppedImage?.readAsBytes();
         setState(() {
-          webImage = f;
+          webImage = f!;
           pickedImage = File('a');
         });
       } else {

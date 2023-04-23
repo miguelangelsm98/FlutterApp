@@ -187,21 +187,21 @@ class _ChatPostPageState extends State<ChatPostPage> {
       }
     } else {
       if (currentDay == "") {
-        currentDay = date;
         return Column(
           children: [
             SizedBox(height: 15),
-            Text(currentDay),
+            Text(date),
             SizedBox(height: 15),
             widget,
           ],
         );
       } else if (date != currentDay) {
         String dateToPrint = currentDay;
-        currentDay = date;
+        // currentDay = date;
+        currentDay = "";
         return Column(children: [
           SizedBox(height: 15),
-          Text(currentDay),
+          Text(date),
           SizedBox(height: 15),
           widget,
           SizedBox(height: 15),
@@ -209,10 +209,11 @@ class _ChatPostPageState extends State<ChatPostPage> {
           SizedBox(height: 15),
         ]);
       } else {
+        currentDay = "";
         return Column(
           children: [
             SizedBox(height: 15),
-            Text(currentDay),
+            Text(date),
             SizedBox(height: 15),
             widget,
           ],

@@ -145,7 +145,7 @@ class _PostsAddPageState extends State<PostsAddPage> {
                         },
                         constraints: const BoxConstraints(
                           minHeight: 40.0,
-                          minWidth: 150.0,
+                          minWidth: 135.0,
                         ),
                         isSelected: selectedPrivacy,
                         children: privacyOptions,
