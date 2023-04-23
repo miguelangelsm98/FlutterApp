@@ -136,12 +136,14 @@ class _UpdateUserPageState extends State<UpdateUserPage> {
                       child: Text("Continuar"),
                       onPressed: () async {
                         if (pickedImage != null) {
-                          user.updateAvatarPath(webImage);
+                          await user.updateAvatarPath(webImage);
                         }
                         user.name = nameController.text;
                         user.userName = userNameController.text;
                         user.birthDate = DateTime.parse(dateTime);
+                        print("Saving user...");
                         user.saveDatabase();
+                        // ignore: use_build_context_synchronously
                         Navigator.of(context).push(MaterialPageRoute(
                             builder: (context) => MyHomePage()));
                       },

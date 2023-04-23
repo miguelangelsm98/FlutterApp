@@ -251,11 +251,14 @@ class CustomUser {
     await FirebaseStorage.instance.ref('pictures/$userUid').putData(webImage);
 
     // Get image path and add it to user object
+    print("Adding avatar picture to storage");
     avatarPath = await FirebaseStorage.instance
         .ref("pictures/$userUid")
         .getDownloadURL();
+    print("Avatar path: $avatarPath");
 
     // Update all direct chat messages
+    print("Updating chat images");
     for (String relationId in friendRelations.values) {
       var ref = FirebaseFirestore.instance
           .collection("friends")
@@ -270,6 +273,7 @@ class CustomUser {
     }
 
     // Update all post chat messages
+    print("Updating post images");
     var ref = FirebaseFirestore.instance.collection("posts");
     var querySnap = await ref.get();
     for (var doc in querySnap.docs) {
@@ -280,7 +284,7 @@ class CustomUser {
           .where("userUid", isEqualTo: userUid);
       var querySnap2 = await ref2.get();
       for (var doc2 in querySnap2.docs) {
-        print("Changing message $doc2");
+        print("Changing post $doc2");
         await doc2.reference.update({'userAvatarPath': avatarPath});
       }
     }

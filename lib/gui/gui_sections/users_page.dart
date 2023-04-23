@@ -55,7 +55,7 @@ class _UsersPageState extends State<UsersPage> {
     final ScrollController controller = ScrollController();
 
     if (users.isEmpty) {
-      return Center(child: Text("Añada un amigo"));
+      return Center(child: Text("No hay usuarios"));
     } else {
       return SizedBox(
         height: MediaQuery.of(context).size.height,

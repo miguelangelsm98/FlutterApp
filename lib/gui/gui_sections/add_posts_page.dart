@@ -33,9 +33,6 @@ class _PostsAddPageState extends State<PostsAddPage> {
   List<bool> selectedPrivacy = <bool>[true, false];
   bool? isPrivate = true;
 
-  // var dateController = TextEditingController(
-  //     text: DateFormat('dd-MM-yyyy').format(DateTime.now()));
-
   @override
   void initState() {
     super.initState();
@@ -45,11 +42,9 @@ class _PostsAddPageState extends State<PostsAddPage> {
   Widget build(BuildContext context) {
     var appState = context.watch<MyAppState>();
     const List<Widget> privacyOptions = <Widget>[
-      Text('Todos'),
       Text('Solo amigos'),
+      Text('Todos'),
     ];
-
-    // DateTime? pickedDate = DateTime.now();
 
     return Scaffold(
       resizeToAvoidBottomInset: true,
