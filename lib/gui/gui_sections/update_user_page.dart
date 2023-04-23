@@ -69,7 +69,7 @@ class _UpdateUserPageState extends State<UpdateUserPage> {
                         ? Image.memory(webImage, fit: BoxFit.fill)
                         : Image.file(pickedImage!, fit: BoxFit.scaleDown)),
             SizedBox(
-              height: 30,
+              height: 10,
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -78,14 +78,18 @@ class _UpdateUserPageState extends State<UpdateUserPage> {
                     onPressed: selectImage, child: const Text("Select Image")),
               ],
             ),
+            SizedBox(
+              height: 30,
+            ),
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 40),
               child: Column(
                 children: [
                   makeInput(
-                    label: "User Name",
-                    controller: userNameController,
-                  ),
+                      label: "User Name (Cannot Change)",
+                      controller: userNameController,
+                      enabled: false,
+                      filled: true),
                   makeInput(label: "Full Name", controller: nameController),
                   DateTimePicker(
                     type: DateTimePickerType.date,
@@ -218,7 +222,13 @@ class _UpdateUserPageState extends State<UpdateUserPage> {
   }
 }
 
-Widget makeInput({label, controller, obsureText = false}) {
+Widget makeInput({
+  label,
+  controller,
+  obsureText = false,
+  enabled = true,
+  filled = false,
+}) {
   return Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
@@ -234,15 +244,17 @@ Widget makeInput({label, controller, obsureText = false}) {
         controller: controller,
         obscureText: obsureText,
         decoration: InputDecoration(
-          contentPadding: EdgeInsets.symmetric(vertical: 0, horizontal: 10),
-          enabledBorder: OutlineInputBorder(
-            borderSide: BorderSide(
-              color: Colors.grey,
+            contentPadding: EdgeInsets.symmetric(vertical: 0, horizontal: 10),
+            enabledBorder: OutlineInputBorder(
+              borderSide: BorderSide(
+                color: Colors.grey,
+              ),
             ),
-          ),
-          border:
-              OutlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
-        ),
+            border:
+                OutlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
+            enabled: enabled,
+            filled: filled,
+            fillColor: Color.fromARGB(255, 230, 227, 227)),
       ),
       SizedBox(
         height: 30,

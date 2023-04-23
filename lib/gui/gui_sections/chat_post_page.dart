@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application/models/post.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 import '../../main.dart';
@@ -13,11 +14,13 @@ class ChatPostPage extends StatefulWidget {
 
 class _ChatPostPageState extends State<ChatPostPage> {
   TextEditingController messageController = TextEditingController();
+  String currentDay = "";
 
   @override
   Widget build(BuildContext context) {
     var appState = context.watch<MyAppState>();
     final ScrollController firstController = ScrollController();
+    currentDay = "";
 
     final post = ModalRoute.of(context)!.settings.arguments as Post;
 
@@ -50,7 +53,8 @@ class _ChatPostPageState extends State<ChatPostPage> {
                 itemBuilder: (BuildContext context, int index) {
                   return messageWidget(
                       post.messages![post.messages!.length - index - 1],
-                      appState);
+                      appState,
+                      post.messages!.length - index - 1);
                 }),
           ),
           SizedBox(
@@ -110,7 +114,8 @@ class _ChatPostPageState extends State<ChatPostPage> {
     );
   }
 
-  Widget messageWidget(Map<String, dynamic> message, MyAppState appState) {
+  Widget messageWidget(
+      Map<String, dynamic> message, MyAppState appState, int index) {
     Widget widget;
 
     if (message['userUid'] == appState.currentUser!.userUid) {
@@ -156,7 +161,64 @@ class _ChatPostPageState extends State<ChatPostPage> {
             ],
           ));
     }
-    return widget;
+    return appendDateWidget(
+        widget,
+        DateFormat('dd-MM-yyyy').format(DateTime.parse(message['createdDate'])),
+        index);
+    ;
+  }
+
+  Widget appendDateWidget(Widget widget, String date, int index) {
+    if (index != 0) {
+      if (currentDay == "") {
+        currentDay = date;
+        return widget;
+      } else if (date != currentDay) {
+        String dateToPrint = currentDay;
+        currentDay = date;
+        return Column(children: [
+          widget,
+          SizedBox(height: 15),
+          Text(dateToPrint),
+          SizedBox(height: 15),
+        ]);
+      } else {
+        return widget;
+      }
+    } else {
+      if (currentDay == "") {
+        currentDay = date;
+        return Column(
+          children: [
+            SizedBox(height: 15),
+            Text(currentDay),
+            SizedBox(height: 15),
+            widget,
+          ],
+        );
+      } else if (date != currentDay) {
+        String dateToPrint = currentDay;
+        currentDay = date;
+        return Column(children: [
+          SizedBox(height: 15),
+          Text(currentDay),
+          SizedBox(height: 15),
+          widget,
+          SizedBox(height: 15),
+          Text(dateToPrint),
+          SizedBox(height: 15),
+        ]);
+      } else {
+        return Column(
+          children: [
+            SizedBox(height: 15),
+            Text(currentDay),
+            SizedBox(height: 15),
+            widget,
+          ],
+        );
+      }
+    }
   }
 
   Widget dateWidget(DateTime messageDate) {
