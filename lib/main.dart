@@ -155,52 +155,7 @@ class MyAppState extends ChangeNotifier {
       onError: (e) => print("Error completing: $e"),
     );
     // notifyListeners();
-  }
-
-  // Future<void> doGetPosts_old() async {
-  //   // print(currentUser?.closeFriends());
-  //   posts.clear();
-  //   await FirebaseFirestore.instance
-  //       .collection("posts")
-  //       // .where("userUid", whereIn: currentUser?.closeFriends())
-  //       .orderBy("createdDate", descending: true)
-  //       .get()
-  //       .then(
-  //     (querySnapshot) async {
-  //       for (var docSnapshot in querySnapshot.docs) {
-  //         Post p = Post.fromFirestore(docSnapshot, null);
-  //         p.user = await getUserObjectFromUid(p.userUid!);
-  //         // await p.getMessages();
-  //         posts.add(p);
-  //         // currentUser?.posts.add(p);
-  //       }
-  //     },
-  //     onError: (e) => print("Error completing: $e"),
-  //   );
-  //   notifyListeners();
-  // }
-
-  // Future<void> doGetPosts_old() async {
-  //   // print(currentUser?.closeFriends());
-  //   currentUser?.posts.clear();
-  //   await FirebaseFirestore.instance
-  //       .collection("posts")
-  //       .where("userUid", whereIn: currentUser?.closeFriends())
-  //       .orderBy("createdDate", descending: true)
-  //       .get()
-  //       .then(
-  //     (querySnapshot) async {
-  //       for (var docSnapshot in querySnapshot.docs) {
-  //         Post p = Post.fromFirestore(docSnapshot, null);
-  //         p.user = await getUserObjectFromUid(p.userUid!);
-  //         // await p.getMessages();
-  //         currentUser?.posts.add(p);
-  //       }
-  //     },
-  //     onError: (e) => print("Error completing: $e"),
-  //   );
-  //   notifyListeners();
-  // }
+  }  
 
   Future<void> doGetUsers() async {
     users.clear();

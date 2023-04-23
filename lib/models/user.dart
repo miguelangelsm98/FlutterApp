@@ -1,5 +1,8 @@
+import 'dart:typed_data';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter_application/models/post.dart';
 
 const defaultAvatarPath =
@@ -115,9 +118,6 @@ class CustomUser {
     await saveAuth();
     await login();
     joinedDate = DateTime.now();
-    // name = "";
-    // lastName = "";
-    // birthDate ??= DateTime(1900, 1, 1);
     await saveDatabase();
   }
 
@@ -206,10 +206,6 @@ class CustomUser {
         .collection('friends')
         .doc(relationId)
         .delete();
-    // await FirebaseFirestore.instance
-    //     .collection('friends')
-    //     .doc(userUid! + friend.userUid!)
-    //     .delete();
     friends.remove(friend.userUid);
     friendRelations.remove(relationId);
   }
@@ -248,6 +244,50 @@ class CustomUser {
     for (var message in querySnap.docs) {
       friendMessages[relationId]!.add(message.data());
     } // Convert to User object
+  }
+
+  Future updateAvatarPath(Uint8List webImage) async {
+    // Upload image to Storage
+    await FirebaseStorage.instance.ref('pictures/$userUid').putData(webImage);
+
+    // Get image path and add it to user object
+    avatarPath = await FirebaseStorage.instance
+        .ref("pictures/$userUid")
+        .getDownloadURL();
+
+    // Update all direct chat messages
+    print("Changing picture in chats");
+
+    for (String relationId in friendRelations.values) {
+      var ref = FirebaseFirestore.instance
+          .collection("friends")
+          .doc(relationId)
+          .collection("chat")
+          .where("userUid", isEqualTo: userUid);
+      var querySnap = await ref.get();
+      for (var doc in querySnap.docs) {
+        print("Changing message $doc");
+
+        await doc.reference.update({'userAvatarPath': avatarPath});
+      }
+    }
+
+    // Update all post chat messages
+    print("Changing picture in posts");
+    var ref = FirebaseFirestore.instance.collection("posts");
+    var querySnap = await ref.get();
+    for (var doc in querySnap.docs) {
+      var ref2 = FirebaseFirestore.instance
+          .collection("posts")
+          .doc(doc.data()["postUid"])
+          .collection("chat")
+          .where("userUid", isEqualTo: userUid);
+      var querySnap2 = await ref2.get();
+      for (var doc2 in querySnap2.docs) {
+        print("Changing message $doc2");
+        await doc2.reference.update({'userAvatarPath': avatarPath});
+      }
+    }
   }
 }
 

@@ -121,44 +121,60 @@ class _ChatPostPageState extends State<ChatPostPage> {
     if (message['userUid'] == appState.currentUser!.userUid) {
       widget = Container(
           decoration: BoxDecoration(border: Border.all(color: Colors.black)),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              Row(
-                children: [
-                  Column(children: [
-                    Text("${message['userName']}"),
-                    Text("${message['message']}"),
-                    dateWidget(DateTime.parse(message['createdDate'])),
-                  ]),
-                  SizedBox(
-                      height: 100,
-                      child: Image.network(message['userAvatarPath'],
-                          fit: BoxFit.scaleDown)),
-                ],
-              ),
-            ],
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                Row(
+                  children: [
+                    Column(children: [
+                      Text("${message['userName']}"),
+                      Text("${message['message']}"),
+                      dateWidget(DateTime.parse(message['createdDate'])),
+                    ]),
+                    Container(
+                        width: 90.0,
+                        height: 90.0,
+                        decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            image: DecorationImage(
+                                fit: BoxFit.fill,
+                                image:
+                                    NetworkImage(message['userAvatarPath'])))),
+                  ],
+                ),
+              ],
+            ),
           ));
     } else {
       widget = Container(
           decoration: BoxDecoration(border: Border.all(color: Colors.black)),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  SizedBox(
-                      height: 100,
-                      child: Image.network(message['userAvatarPath'],
-                          fit: BoxFit.scaleDown)),
-                  Column(children: [
-                    Text("${message['userName']}"),
-                    Text("${message['message']}"),
-                    dateWidget(DateTime.parse(message['createdDate'])),
-                  ]),
-                ],
-              ),
-            ],
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Container(
+                        width: 90.0,
+                        height: 90.0,
+                        decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            image: DecorationImage(
+                                fit: BoxFit.fill,
+                                image:
+                                    NetworkImage(message['userAvatarPath'])))),
+                    Column(children: [
+                      Text("${message['userName']}"),
+                      Text("${message['message']}"),
+                      dateWidget(DateTime.parse(message['createdDate'])),
+                    ]),
+                  ],
+                ),
+              ],
+            ),
           ));
     }
     return appendDateWidget(

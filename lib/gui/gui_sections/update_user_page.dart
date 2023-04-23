@@ -138,13 +138,7 @@ class _UpdateUserPageState extends State<UpdateUserPage> {
                       child: Text("Continue"),
                       onPressed: () async {
                         if (pickedImage != null) {
-                          await FirebaseStorage.instance
-                              .ref('pictures/${user.userUid}')
-                              .putData(webImage);
-                          user.avatarPath = await FirebaseStorage.instance
-                              .ref("pictures/${user.userUid}")
-                              .getDownloadURL();
-                          print(user.avatarPath);
+                          user.updateAvatarPath(webImage);                          
                         }
                         user.name = nameController.text;
                         user.userName = userNameController.text;
