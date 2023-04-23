@@ -61,14 +61,15 @@ class _UpdateUserPageState extends State<UpdateUserPage> {
       body: SingleChildScrollView(
         physics: ScrollPhysics(),
         child: Column(
-          children: [            
+          children: [
             SizedBox(
                 height: 150,
+                width: 150,
                 child: pickedImage == null
-                    ? Image.network(user.avatarPath!, fit: BoxFit.scaleDown)
+                    ? Image.network(user.avatarPath!, fit: BoxFit.contain)
                     : kIsWeb
-                        ? Image.memory(webImage, fit: BoxFit.fill)
-                        : Image.file(pickedImage!, fit: BoxFit.scaleDown)),
+                        ? Image.memory(webImage, fit: BoxFit.contain)
+                        : Image.file(pickedImage!, fit: BoxFit.contain)),
             SizedBox(
               height: 10,
             ),
@@ -218,14 +219,9 @@ class _UpdateUserPageState extends State<UpdateUserPage> {
       final ImagePicker picker = ImagePicker();
       XFile? image = await picker.pickImage(source: ImageSource.gallery);
       if (image != null) {
-        File? croppedImage = await ImageCropper().cropImage(
-            sourcePath: image.path,
-            maxWidth: 1080,
-            maxHeight: 1080,
-            aspectRatio: CropAspectRatio(ratioX: 1.0, ratioY: 1.0));
-        var f = await croppedImage?.readAsBytes();
+        var f = await image.readAsBytes();
         setState(() {
-          webImage = f!;
+          webImage = f;
           pickedImage = File('a');
         });
       } else {

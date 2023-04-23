@@ -13,6 +13,8 @@ import 'package:intl/intl.dart';
 import 'home_page.dart';
 import 'package:date_time_picker/date_time_picker.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:image_cropper/image_cropper.dart';
+
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
@@ -84,7 +86,7 @@ class _PostsAddPageState extends State<PostsAddPage> {
                         ? Image.memory(webImage, fit: BoxFit.fill)
                         : Image.file(pickedImage!, fit: BoxFit.scaleDown)),
             SizedBox(
-              height: 30,
+              height: 10,
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -240,9 +242,17 @@ class _PostsAddPageState extends State<PostsAddPage> {
       final ImagePicker picker = ImagePicker();
       XFile? image = await picker.pickImage(source: ImageSource.gallery);
       if (image != null) {
-        var selected = File(image.path);
+        File? croppedImage = await ImageCropper().cropImage(
+          sourcePath: image.path,
+          maxWidth: 1080,
+          maxHeight: 1080,
+          aspectRatio: CropAspectRatio(ratioX: 1.0, ratioY: 1.0),
+        );
+        var f = await croppedImage?.readAsBytes();
+        var selected = File((croppedImage?.path)!);
         setState(() {
           pickedImage = selected;
+          webImage = f!;
         });
       } else {
         print('No image has been picked');

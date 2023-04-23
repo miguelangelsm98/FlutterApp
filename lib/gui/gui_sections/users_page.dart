@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -95,40 +97,38 @@ class _UsersPageState extends State<UsersPage> {
       required CustomUser user,
       required MyAppState appState}) {
     return Column(children: [
-      Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        SizedBox(
-          width: 10,
-        ),
-        SizedBox(
-            height: 100,
-            child: Image.network(user.avatarPath!, fit: BoxFit.scaleDown)),
-        SizedBox(
-          width: 10,
-        ),
-        SizedBox(
-            height: 100,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Center(
-                  child: Text(user.name!, textAlign: TextAlign.center),
-                ),
-                // Center(
-                //   child: Text(user.userName!, textAlign: TextAlign.center),
-                // ),
-              ],
-            )),
-        SizedBox(
-          width: 10,
-        ),
-        SizedBox(
-          height: 100,
-          child: Center(
-            child: friendWidget(
-                currentUser: currentUser, user: user, appState: appState),
+      Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
+          SizedBox(
+            width: 10,
           ),
-        ),
-      ]),
+          Container(
+              width: 70.0,
+              height: 70.0,
+              decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  image: DecorationImage(
+                      fit: BoxFit.fill,
+                      image: NetworkImage(user.avatarPath!)))),
+          SizedBox(
+            width: 10,
+          ),
+          Center(
+            child: Text(user.name!, textAlign: TextAlign.center),
+          ),
+          SizedBox(
+            width: 10,
+          ),
+          SizedBox(
+            height: 100,
+            child: Center(
+              child: friendWidget(
+                  currentUser: currentUser, user: user, appState: appState),
+            ),
+          ),
+        ]),
+      ),
       SizedBox(
         height: 25,
       ),
