@@ -256,8 +256,6 @@ class CustomUser {
         .getDownloadURL();
 
     // Update all direct chat messages
-    print("Changing picture in chats");
-
     for (String relationId in friendRelations.values) {
       var ref = FirebaseFirestore.instance
           .collection("friends")
@@ -273,7 +271,6 @@ class CustomUser {
     }
 
     // Update all post chat messages
-    print("Changing picture in posts");
     var ref = FirebaseFirestore.instance.collection("posts");
     var querySnap = await ref.get();
     for (var doc in querySnap.docs) {

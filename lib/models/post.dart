@@ -92,6 +92,14 @@ class Post {
   }
 
   Future remove() async {
+    var ref = FirebaseFirestore.instance
+        .collection("posts")
+        .doc(postUid)
+        .collection("chat");
+    var querySnap = await ref.get();
+    for (var doc in querySnap.docs) {
+      doc.reference.delete();
+    }
     return FirebaseFirestore.instance.collection('posts').doc(postUid).delete();
   }
 

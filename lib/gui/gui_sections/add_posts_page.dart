@@ -100,11 +100,16 @@ class _PostsAddPageState extends State<PostsAddPage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  makeInput(label: "Name", controller: nameController),
                   makeInput(
-                    label: "Description",
-                    controller: descriptionController,
-                  ),
+                      label: "Name",
+                      controller: nameController,
+                      maxLines: 1,
+                      maxLength: 32),
+                  makeInput(
+                      label: "Description",
+                      controller: descriptionController,
+                      maxLines: 6,
+                      maxLength: 180),
                   DateTimePicker(
                     type: DateTimePickerType.dateTime,
                     dateMask: 'dd-MM-yyyy hh:mm',
@@ -275,7 +280,7 @@ class _PostsAddPageState extends State<PostsAddPage> {
   }
 }
 
-Widget makeInput({label, controller, obsureText = false}) {
+Widget makeInput({label, controller, obsureText = false, maxLines, maxLength}) {
   return Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
@@ -290,6 +295,8 @@ Widget makeInput({label, controller, obsureText = false}) {
       TextField(
         controller: controller,
         obscureText: obsureText,
+        maxLines: maxLines,
+        maxLength: maxLength,
         decoration: InputDecoration(
           contentPadding: EdgeInsets.symmetric(vertical: 0, horizontal: 10),
           enabledBorder: OutlineInputBorder(

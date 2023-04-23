@@ -49,9 +49,9 @@ class MyAppState extends ChangeNotifier {
   var friends = <CustomUser>[];
   var users = <CustomUser>[];
 
-  var myPosts = <Post>[];
-  var friendsPosts = <Post>[];
   var publicPosts = <Post>[];
+  var friendsPosts = <Post>[];
+  var myPosts = <Post>[];
 
   void changeSelectedIndex(int index) {
     selectedIndex = index;
@@ -77,11 +77,10 @@ class MyAppState extends ChangeNotifier {
   void doUserLogout() {
     selectedIndex = 0;
     isLoggedIn = false;
-    // currentUser = null;
     users.clear();
-    myPosts.clear;
-    friendsPosts.clear();
     publicPosts.clear;
+    friendsPosts.clear();
+    myPosts.clear;
 
     notifyListeners();
   }
@@ -94,12 +93,11 @@ class MyAppState extends ChangeNotifier {
   }
 
   Future<void> doGetPublicPosts() async {
-    // print(currentUser?.closeFriends());
     publicPosts.clear();
     await FirebaseFirestore.instance
         .collection("posts")
         .where("isPrivate", isEqualTo: false)
-        .orderBy("createdDate", descending: true)
+        .orderBy("postDate", descending: false)
         .get()
         .then(
       (querySnapshot) async {
@@ -111,17 +109,15 @@ class MyAppState extends ChangeNotifier {
       },
       onError: (e) => print("Error completing: $e"),
     );
-    // notifyListeners();
   }
 
   Future<void> doGetFriendsPosts() async {
-    // print(currentUser?.closeFriends());
     friendsPosts.clear();
     for (var friendId in currentUser!.friends) {
       await FirebaseFirestore.instance
           .collection("posts")
           .where("userUid", isEqualTo: friendId)
-          .orderBy("createdDate", descending: true)
+          .orderBy("postDate", descending: false)
           .get()
           .then(
         (querySnapshot) async {
@@ -134,7 +130,6 @@ class MyAppState extends ChangeNotifier {
         onError: (e) => print("Error completing: $e"),
       );
     }
-    // notifyListeners();
   }
 
   Future<void> doGetMyPosts() async {
@@ -142,7 +137,7 @@ class MyAppState extends ChangeNotifier {
     await FirebaseFirestore.instance
         .collection("posts")
         .where("userUid", isEqualTo: currentUser?.userUid)
-        .orderBy("createdDate", descending: true)
+        .orderBy("postDate", descending: false)
         .get()
         .then(
       (querySnapshot) async {
@@ -154,13 +149,11 @@ class MyAppState extends ChangeNotifier {
       },
       onError: (e) => print("Error completing: $e"),
     );
-    // notifyListeners();
-  }  
+  }
 
   Future<void> doGetUsers() async {
     users.clear();
     users = await getUserObjects(currentUser!.userUid!);
-    // notifyListeners();
   }
 
   Future<void> doGetFriends() async {

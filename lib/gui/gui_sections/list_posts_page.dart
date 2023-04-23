@@ -121,25 +121,28 @@ class PostsListPage extends StatelessWidget {
                     child: Image.network(p.picturePath!, fit: BoxFit.scaleDown),
                   ),
                   Expanded(
-                    child: Column(children: [
-                      Text(
-                        p.name,
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      Text(
-                          DateFormat('dd-MM-yyyy – kk:mm').format(p.postDate!)),
-                      Text(p.user!.userName!),
-                      Text("Signed up users: ${p.users!.length}"),
-                      // Text("Created Date: ${p.createdDate.toString()}"),
+                    child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Text(
+                            p.name,  
+                            textAlign: TextAlign.center,                          
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          Text(DateFormat('dd-MM-yyyy – kk:mm')
+                              .format(p.postDate!)),
+                          Text(p.user!.userName!),
+                          Text("Signed up users: ${p.users!.length}"),
+                          // Text("Created Date: ${p.createdDate.toString()}"),
 
-                      // SizedBox(
-                      //     height: 60,
-                      //     child: Image.network(p.user!.avatarPath!,
-                      //         fit: BoxFit.scaleDown)),
-                    ]),
+                          // SizedBox(
+                          //     height: 60,
+                          //     child: Image.network(p.user!.avatarPath!,
+                          //         fit: BoxFit.scaleDown)),
+                        ]),
                   ),
                 ],
               ),
@@ -180,7 +183,7 @@ class PostsListPage extends StatelessWidget {
               Widget continueButton = ElevatedButton(
                 child: Text("Continue"),
                 onPressed: () async {
-                  p.remove();
+                  await p.remove();
                   appState.doGetPosts();
                   // ignore: use_build_context_synchronously
                   Navigator.pop(context);
