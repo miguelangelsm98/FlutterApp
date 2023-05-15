@@ -110,7 +110,6 @@ class Post {
     messageDoc.putIfAbsent('userAvatarPath', () => user.avatarPath);
     messageDoc.putIfAbsent('userName', () => user.name);
     messageDoc.putIfAbsent('userUserName', () => user.userName);
-    print("Adding message: $messageDoc to post $postUid");
     await FirebaseFirestore.instance
         .collection('posts')
         .doc(postUid)

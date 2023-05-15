@@ -9,8 +9,8 @@ const defaultAvatarPath =
     "https://firebasestorage.googleapis.com/v0/b/tfg-project-a9320.appspot.com/o/pictures%2Fprofile1.png?alt=media&token=6edb382b-14d5-47f2-a17e-d274624c3e89";
 
 class CustomUser {
-  String? userUid;
-  String email;
+  String? userUid;              
+  String email;                 
   String password;
   String? name;
   String? userName;
@@ -162,20 +162,18 @@ class CustomUser {
     });
 
     // Remove user from own requests of friend
-    await FirebaseFirestore.instance
-        .collection('users')
-        .doc(friend.userUid)
-        .update({
-      "ownRequests": FieldValue.arrayRemove([userUid]),
+    await FirebaseFirestore.instance.collection('users').doc(friend.userUid)
+        .update({"ownRequests": FieldValue.arrayRemove([userUid]),
     });
 
     // Add friend relationship
-    String relationId = friend.userUid! + userUid!;
+    String relationId = getRelationId(friend.userUid!, userUid!);
     await FirebaseFirestore.instance.collection('friends').doc(relationId).set({
       "firstUserUid": friend.userUid,
       "secondUserUid": userUid,
     });
 
+    // Fix local arrays
     friendRequests?.remove(friend.userUid!);
     friends.add(friend.userUid!);
     friendRelations.putIfAbsent(friend.userUid!, () => relationId);
@@ -224,7 +222,6 @@ class CustomUser {
     messageDoc.putIfAbsent('userAvatarPath', () => avatarPath);
     messageDoc.putIfAbsent('userName', () => name);
     messageDoc.putIfAbsent('userUserName', () => userName);
-    print("Adding message: $messageDoc to relationId $relationId");
     await FirebaseFirestore.instance
         .collection('friends')
         .doc(relationId)
@@ -250,12 +247,10 @@ class CustomUser {
     // Upload image to Storage
     await FirebaseStorage.instance.ref('pictures/$userUid').putData(webImage);
 
-    // Get image path and add it to user object
-    print("Adding avatar picture to storage");
+    // Get image path 
     avatarPath = await FirebaseStorage.instance
         .ref("pictures/$userUid")
         .getDownloadURL();
-    print("Avatar path: $avatarPath");
 
     // Update all direct chat messages
     print("Updating chat images");
@@ -329,4 +324,13 @@ Future<List<CustomUser>> getUserObjects(String userUid) async {
     if (element['userUid'] != userUid) users.add(element.data());
   }
   return users;
+}
+
+String getRelationId(String uid1, String uid2)
+{
+  if(uid1.compareTo(uid2)<0){
+    return uid1+uid2;  
+  }else{
+    return uid2+uid1;
+  }
 }
